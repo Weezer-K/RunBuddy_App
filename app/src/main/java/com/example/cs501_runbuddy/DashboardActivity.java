@@ -175,7 +175,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         Point = new LatLng(10.349895, -71.107755);
         pointList.add(Point);
         mapAPI.addMarker(new MarkerOptions().position(Point).title("TestPoint"));
-        mapAPI.moveCamera(CameraUpdateFactory.newLatLng(Point));
+        mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(Point, 12.0f));
 
         nextLoc.setOnClickListener(new View.OnClickListener() {
             @Override
