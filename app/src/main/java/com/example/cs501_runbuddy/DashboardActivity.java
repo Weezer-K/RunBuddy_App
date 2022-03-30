@@ -83,7 +83,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             }
         };
 
-        Switch sw_gps = new Switch(this);
+        Switch sw_gps = findViewById(R.id.sw_gps);
 
         sw_gps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +96,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        Switch sw_locationUpdates = new Switch(this);
+        Switch sw_locationUpdates = findViewById(R.id.sw_locationUpdates);
 
         sw_locationUpdates.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +109,6 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        updateGPS();
     }
 
     private void stopLocationUpdates() {
@@ -118,8 +117,8 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
         updateGPS();
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     }
 
     @Override
@@ -163,8 +162,13 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     private void updateUIWithLocation(Location location) {
-        location.getLatitude();
-        location.getLongitude();
+        if(location==null){
+
+        }else{
+            location.getLatitude();
+            location.getLongitude();
+            Toast.makeText(this,location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 
