@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class DashboardActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -63,6 +64,9 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     // Variable necessary for calculating running data
     private Instant startTime;
     private double totalDistance;
+
+    // Used to indicate if timer is on or off
+    private boolean timerOn = true;
 
 
     @Override
@@ -129,6 +133,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
         updateGPS();
+        updateTime();
     }
 
     private void stopLocationUpdates() {
@@ -210,7 +215,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                         secondString = "0" + secondString;
                     }
                     String timeElapsed = minutes + ":" + secondString;
-                    tv_time.setText("Time: " + timeElapsed);
+                    //tv_time.setText("Time: " + timeElapsed);
 
                     double hours = temp/60000/60.0;
                     double pace = totalDistance/hours;
@@ -229,6 +234,44 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap) {
         mapAPI = googleMap;
 
+    }
+    //Used to update the time every second
+    public void updateTime(){
+        Thread t = new Thread(() -> {
+            while(timerOn){
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    double startTimeMilis = startTime.toEpochMilli();
+                    double endTimeMilis = Instant.now().toEpochMilli();
+                    double temp = endTimeMilis - startTimeMilis;
+                    int minutes = (int) temp / 60000;
+                    int seconds = (int) (temp % 60000) / 1000;
+                    String secondString = Integer.toString(seconds);
+                    if (secondString.length() == 1) {
+                        secondString = "0" + secondString;
+                    }
+                    String timeElapsed = minutes + ":" + secondString;
+                    //tv_time.setText("Time: " + timeElapsed);
+
+                    setTime(timeElapsed);
+                }
+            }
+        });
+        t.start();
+    }
+
+    //Used to set UI for updateTime function
+    public void setTime(String time){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv_time.setText("Time: " + time);
+            }
+        });
     }
 
     // given two coordinates, calculate the distance in miles
