@@ -41,18 +41,16 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
     private LocationCallback locationCallBack;
 
-    private Location currentLocation;
-    private ArrayList<Location> savedLocations;
 
-    private final int DEFAULT_UPDATE_INTERVAL = 30;
+    private final int DEFAULT_UPDATE_INTERVAL = 10;
     private final int FASTEST_UPDATE_INTERVAL = 5;
     private final int PERMISSIONS_FINE_LOCATION = 99;
 
     private GoogleMap mapAPI;
     private SupportMapFragment mapFragment;
     private Button nextLoc;
-    private LatLng Point;
-    private ArrayList<LatLng> pointList = new ArrayList<LatLng>();
+    private LatLng currentLocation;
+    private ArrayList<LatLng> savedLocations = new ArrayList<LatLng>();
 
     private Polyline poly;
 
@@ -64,9 +62,8 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
 
-        nextLoc = (Button) findViewById(R.id.nexLoc);
 
-        savedLocations = new ArrayList<Location>();
+
 
         locationRequest = LocationRequest.create()
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
@@ -108,7 +105,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }
         });
-
+        updateGPS();
     }
 
     private void stopLocationUpdates() {
@@ -143,14 +140,14 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                 DashboardActivity.this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-        == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
+            //fusedLocationProviderClient.setMockMode(false);
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
                     new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
+
                             updateUIWithLocation(location);
-                            currentLocation = location;
-                            savedLocations.add(location);
                         }
                     });
         } else {
@@ -162,11 +159,16 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     private void updateUIWithLocation(Location location) {
-        if(location==null){
 
-        }else{
-            location.getLatitude();
-            location.getLongitude();
+        if(location!=null){
+            currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            savedLocations.add(currentLocation);
+            mapAPI.clear();
+            poly = mapAPI.addPolyline(new PolylineOptions().add(savedLocations.get(0)));
+            poly.setPoints(savedLocations);
+            poly.setVisible(true);
+            mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
+            mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12.0f));
             Toast.makeText(this,location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -175,28 +177,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mapAPI = googleMap;
-        poly = googleMap.addPolyline(new PolylineOptions().add(new LatLng(10.349895, -71.107755)));
-        Point = new LatLng(10.349895, -71.107755);
-        pointList.add(Point);
-        mapAPI.addMarker(new MarkerOptions().position(Point).title("TestPoint"));
-        mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(Point, 12.0f));
 
-        nextLoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Double y = Point.latitude + 5;
-                Double x = Point.longitude;
-                Point = new LatLng(y, x);
-                pointList.add(Point);
-                mapAPI.clear();
-                poly = googleMap.addPolyline(new PolylineOptions().add(pointList.get(0)));
-                poly.setPoints(pointList);
-                poly.setVisible(true);
-                mapAPI.addMarker(new MarkerOptions().position(Point).title("TestPoint"));
-                mapAPI.moveCamera(CameraUpdateFactory.newLatLng(Point));
-            }
-        });
     }
 
     // given two coordinates, calculate the distance in miles
