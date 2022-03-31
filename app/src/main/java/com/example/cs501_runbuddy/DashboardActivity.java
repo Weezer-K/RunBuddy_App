@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -60,7 +61,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
     // Variable necessary for calculating running data
     private Instant startTime;
-    private Double totalDistance;
+    private double totalDistance;
 
 
     @Override
@@ -68,7 +69,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        tv_pace = findViewById(R.id.tv_time);
+        tv_pace = findViewById(R.id.tv_pace);
         tv_distance = findViewById(R.id.tv_distance);
         tv_time = findViewById(R.id.tv_time);
 
@@ -148,8 +149,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateGPS();
                 } else {
-                    Toast.makeText(this, "This app requires permission to be granted" +
-                            " in order to work properly", Toast.LENGTH_SHORT).show();
+
                     finish();
                 }
                 break;
@@ -190,12 +190,12 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             poly.setVisible(true);
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
             mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12.0f));
-            Toast.makeText(this,location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
             if(savedLocations.size()>1) {
 
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
-                tv_distance.setText("Distance: " + totalDistance + " mi");
+                DecimalFormat df = new DecimalFormat("0.00");
+                tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -211,10 +211,10 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                     String timeElapsed = minutes + ":" + secondString;
                     tv_time.setText("Time: " + timeElapsed);
 
-                    double hours = minutes/60.0;
+                    double hours = temp/60000/60.0;
                     double pace = totalDistance/hours;
 
-                    tv_pace.setText("Pace: " + pace + " mi/h");
+                    tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
 
             }
