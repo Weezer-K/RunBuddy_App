@@ -7,13 +7,12 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,6 +30,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.time.Instant;
 import java.util.ArrayList;
 
 public class DashboardActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -48,16 +48,37 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
     private GoogleMap mapAPI;
     private SupportMapFragment mapFragment;
-    private Button nextLoc;
     private LatLng currentLocation;
     private ArrayList<LatLng> savedLocations = new ArrayList<LatLng>();
 
     private Polyline poly;
 
+
+    private TextView tv_pace;
+    private TextView tv_distance;
+    private TextView tv_time;
+
+    // Variable necessary for calculating running data
+    private Instant startTime;
+    private Double totalDistance;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        tv_pace = findViewById(R.id.tv_time);
+        tv_distance = findViewById(R.id.tv_distance);
+        tv_time = findViewById(R.id.tv_time);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startTime = Instant.now();
+        }
+
+
+        totalDistance = 0.0;
+
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
@@ -170,6 +191,33 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
             mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12.0f));
             Toast.makeText(this,location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+            if(savedLocations.size()>1) {
+
+                LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
+                totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
+                tv_distance.setText("Distance: " + totalDistance + " mi");
+
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    double startTimeMilis = startTime.toEpochMilli();
+                    double endTimeMilis = Instant.now().toEpochMilli();
+                    double temp = endTimeMilis - startTimeMilis;
+                    int minutes = (int) temp / 60000;
+                    int seconds = (int) (temp % 60000) / 1000;
+                    String secondString = Integer.toString(seconds);
+                    if (secondString.length() == 1) {
+                        secondString = "0" + secondString;
+                    }
+                    String timeElapsed = minutes + ":" + secondString;
+                    tv_time.setText("Time: " + timeElapsed);
+
+                    double hours = minutes/60.0;
+                    double pace = totalDistance/hours;
+
+                    tv_pace.setText("Pace: " + pace + " mi/h");
+                }
+
+            }
         }
     }
 
