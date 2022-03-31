@@ -7,17 +7,30 @@
     tools:context=".DashboardActivity">
 
     <TextView
+        android:id="@+id/heartBeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HB/Min:0"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_pace"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
         android:id="@+id/tv_pace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pace: 0 mi/h"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_distance"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_distance"
         app:layout_constraintTop_toBottomOf="@+id/tv_distance"
-        app:layout_constraintVertical_bias="0.153" />
+        app:layout_constraintVertical_bias="0.157" />
 
     <fragment
         android:id="@+id/mapAPI"
@@ -57,10 +70,11 @@
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="100dp"
         android:text="Distance: 0 mi"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
@@ -71,9 +85,10 @@
         android:text="Time: 00:00"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_pace"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_pace"
         app:layout_constraintTop_toBottomOf="@+id/tv_pace"
-        app:layout_constraintVertical_bias="0.189" />
+        app:layout_constraintVertical_bias="0.196" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

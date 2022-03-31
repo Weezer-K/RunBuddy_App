@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -68,7 +69,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         tv_pace = findViewById(R.id.tv_pace);
         tv_distance = findViewById(R.id.tv_distance);
         tv_time = findViewById(R.id.tv_time);
@@ -189,9 +190,9 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             poly.setPoints(savedLocations);
             poly.setVisible(true);
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
-            mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12.0f));
-            if(savedLocations.size()>1) {
 
+            if(savedLocations.size()>1) {
+                mapAPI.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -217,6 +218,8 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                     tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
 
+            }else{
+                mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
             }
         }
     }

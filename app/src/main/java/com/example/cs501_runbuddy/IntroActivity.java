@@ -1,9 +1,12 @@
 package com.example.cs501_runbuddy;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,14 +14,17 @@ public class IntroActivity extends AppCompatActivity {
 
     private Button goToSignIn;
     private Button goToSignUp;
+    private ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         goToSignIn = (Button) findViewById(R.id.goToSignIn);
         goToSignUp = (Button) findViewById(R.id.goToSignUp);
+        img = (ImageView) findViewById(R.id.imageView);
+        img.setImageResource(R.drawable.zombierunner);
 
         goToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override

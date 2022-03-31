@@ -20,9 +20,9 @@
         android:id="@+id/goToSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="56dp"
         android:text="Sign In"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -30,9 +30,9 @@
         android:id="@+id/goToSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="46dp"
         android:text="Sign Up"
+        app:layout_constraintEnd_toEndOf="@+id/goToSignIn"
         app:layout_constraintStart_toStartOf="@+id/goToSignIn"
         app:layout_constraintTop_toBottomOf="@+id/goToSignIn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

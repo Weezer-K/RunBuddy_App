@@ -10,23 +10,26 @@
         android:id="@+id/emailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="199dp"
         android:ems="10"
         android:hint="Enter email address"
         android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="48dp"
         android:ems="10"
         android:hint="Enter password"
         android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/emailAddress"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/emailAddress"
         app:layout_constraintTop_toBottomOf="@+id/emailAddress" />
 
@@ -34,8 +37,10 @@
         android:id="@+id/signInAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
         android:text="Sign In"
-        tools:layout_editor_absoluteX="150dp"
-        tools:layout_editor_absoluteY="379dp" />
+        app:layout_constraintEnd_toEndOf="@+id/password"
+        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
