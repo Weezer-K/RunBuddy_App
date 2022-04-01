@@ -13,13 +13,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CS501RunBuddy"
-
+        android:name=".RunBuddyApplication"
         >
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key">
         </meta-data>
+
+        <meta-data
+            android:name="com.example.cs501_runbuddy.CLIENT_ID"
+            android:value="23876X"/>
+        <meta-data
+            android:name="com.example.cs501_runbuddy.REDIRECT_URL"
+            android:value="https://finished"/>
 
         <activity
             android:name=".IntroActivity"
@@ -39,6 +46,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".FitbitActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DataActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

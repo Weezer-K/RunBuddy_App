@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CS501-RunBuddy"
 include ':app'
+include ':fitbitapi'
+include ':fitbitauth'
+include ':fitbitapi'
+include ':fitbitcommon'
