@@ -2,7 +2,6 @@ package com.example.cs501_runbuddy;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +25,8 @@ public class IntroActivity extends AppCompatActivity {
         img = (ImageView) findViewById(R.id.imageView);
         img.setImageResource(R.drawable.zombierunner);
 
+
+        //Used to initiate the sign in page for registered users
         goToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,6 +35,7 @@ public class IntroActivity extends AppCompatActivity {
             }
         });
 
+        //Used to initiate the sign in page for unregistered users
         goToSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

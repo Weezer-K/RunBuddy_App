@@ -13,15 +13,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fitbit.authentication.AuthenticationHandler;
+import com.fitbit.authentication.AuthenticationManager;
+import com.fitbit.authentication.AuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity implements AuthenticationHandler {
 
     private FirebaseAuth mAuth;
     private EditText email;
@@ -68,7 +72,7 @@ public class SignInActivity extends AppCompatActivity {
             String uid = user.getUid();
         }
     }
-
+    //Used to sign in existing users
     private void signInUser() {
         if (email.getText().toString().equals("") || !isEmailValid(email.getText().toString())) {
             // If sign in fails, display a message to the user.
@@ -83,8 +87,13 @@ public class SignInActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                Intent goToDashBoard = new Intent(getApplicationContext(), DashboardActivity.class);
-                                startActivity(goToDashBoard);
+                                if(AuthenticationManager.isLoggedIn()){
+                                    Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                                    startActivity(intent);
+                                }else{
+                                    AuthenticationManager.login(SignInActivity.this);
+                                }
+
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -98,5 +107,22 @@ public class SignInActivity extends AppCompatActivity {
 
     private boolean isEmailValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    //Will check if fitbit sign up is finished and go to main activity
+    @Override
+    public void onAuthFinished(AuthenticationResult result) {
+        if(result.isSuccessful()){
+            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+            startActivity(intent);
+        }else{
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        AuthenticationManager.onActivityResult(requestCode, resultCode, data, (AuthenticationHandler)this);
     }
 }

@@ -1,21 +1,28 @@
 package com.example.cs501_runbuddy;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+
+import com.fitbit.api.loaders.ResourceLoaderResult;
+import com.fitbit.api.models.User;
+import com.fitbit.api.models.UserContainer;
+import com.fitbit.api.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -36,7 +43,12 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class DashboardActivity extends FragmentActivity implements OnMapReadyCallback {
+//import androidx.loader.app.LoaderManager;
+//import androidx.loader.content.Loader;
+
+
+
+public class DashboardActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
 
     private LocationRequest locationRequest;
 
@@ -60,6 +72,10 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     private TextView tv_pace;
     private TextView tv_distance;
     private TextView tv_time;
+    private TextView tv_gender;
+    private TextView tv_weight;
+    private TextView tv_age;
+    private ImageView profilePic;
 
     // Variable necessary for calculating running data
     private Instant startTime;
@@ -77,6 +93,10 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         tv_pace = findViewById(R.id.tv_pace);
         tv_distance = findViewById(R.id.tv_distance);
         tv_time = findViewById(R.id.tv_time);
+        tv_gender = (TextView) findViewById(R.id.tv_gender);
+        profilePic = (ImageView) findViewById(R.id.profilePicImageView);
+        tv_age = (TextView) findViewById(R.id.tv_age);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startTime = Instant.now();
@@ -132,9 +152,16 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }
         });
+        //Used to update movement data based of a specific interval
         updateGPS();
+        //Creates a thread to make the timer change every second
+        //Hence why it was not included in the last function
         updateTime();
+        getLoaderManager().initLoader(1, null, this).forceLoad();
+
+
     }
+
 
     private void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
@@ -162,6 +189,8 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+
+    //Used to update the latitude and longitude of the GPS based off the phone's gps
     private void updateGPS() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
                 DashboardActivity.this);
@@ -185,9 +214,13 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    //Helper function for updateGPS()
+    //Helps with updating the location, path drawn, and overall pace
     private void updateUIWithLocation(Location location) {
 
         if(location!=null){
+
+            //Draws marker and polyline and clears old marker
             currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             savedLocations.add(currentLocation);
             mapAPI.clear();
@@ -196,30 +229,30 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
             poly.setVisible(true);
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
 
+            //Moves camera and updates distance
             if(savedLocations.size()>1) {
+                //Used to move runner location
                 mapAPI.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
                 DecimalFormat df = new DecimalFormat("0.00");
                 tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
-
+                //Pace calculation
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     double startTimeMilis = startTime.toEpochMilli();
                     double endTimeMilis = Instant.now().toEpochMilli();
                     double temp = endTimeMilis - startTimeMilis;
-                    int minutes = (int) temp / 60000;
                     int seconds = (int) (temp % 60000) / 1000;
                     String secondString = Integer.toString(seconds);
+                    //Used when seconds are single digits
+                    //So we don't get a time reading like 2:9 instead of 2:09
                     if (secondString.length() == 1) {
                         secondString = "0" + secondString;
                     }
-                    String timeElapsed = minutes + ":" + secondString;
-                    //tv_time.setText("Time: " + timeElapsed);
 
                     double hours = temp/60000/60.0;
                     double pace = totalDistance/hours;
-
                     tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
 
@@ -295,4 +328,52 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
+
+
+
+
+
+    @NonNull
+    @Override
+    public Loader<ResourceLoaderResult<UserContainer>> onCreateLoader(int id, @Nullable Bundle args) {
+        return UserService.getLoggedInUserLoader(DashboardActivity.this);
+    }
+
+    //Makes the profile data usable
+    @Override
+    public void onLoadFinished(Loader<ResourceLoaderResult<UserContainer>> loader, ResourceLoaderResult<UserContainer> data) {
+        if (data.isSuccessful()) {
+            bindProfileInfo(data.getResult().getUser());
+        }
+
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ResourceLoaderResult<UserContainer>> loader) {
+
+    }
+
+    //Uses info obtained from fitBit and sets the appropriate
+    //Views to display them
+    public void bindProfileInfo(User user) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String age = "Age: "+user.getAge().toString();
+        String avatar = user.getAvatar(); //Profile picture
+        String gender = "Sex: "+ user.getGender(); //Gender
+
+        tv_gender.setText(gender);
+        tv_age.setText(age);
+        //Avatar returns a url to an image so I made a helper to set the imageView to it
+        new DownloadImageTask((ImageView) findViewById(R.id.profilePicImageView)).execute(avatar);
+    }
+
+    //Work in progress function not part of demonstration
+    //Don't look classified
+    public void forLater(){
+        getLoaderManager().getLoader(1).forceLoad();
+    }
+
+
+
 }

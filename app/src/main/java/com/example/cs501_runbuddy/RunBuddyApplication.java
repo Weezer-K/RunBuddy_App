@@ -1,12 +1,6 @@
 package com.example.cs501_runbuddy;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 
 import com.fitbit.authentication.AuthenticationConfiguration;
 import com.fitbit.authentication.AuthenticationConfigurationBuilder;
@@ -45,34 +39,7 @@ public class RunBuddyApplication extends Application {
      * successfully connecting to the Fitbit API. Here we include our client credentials,
      * requested scopes, and  where to return after login
      */
-    public static AuthenticationConfiguration generateAuthenticationConfiguration(Context context, Class<? extends Activity> mainActivityClass) {
 
-        try {
-            ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            Bundle bundle = ai.metaData;
-
-            // Load clientId and redirectUrl from application manifest
-            String clientId = bundle.getString("com.example.cs501_runbuddy.CLIENT_ID");
-            String redirectUrl = bundle.getString("com.example.cs501_runbuddy.REDIRECT_URL");
-
-
-            ClientCredentials CLIENT_CREDENTIALS = new ClientCredentials(clientId, CLIENT_SECRET, redirectUrl);
-
-            return new AuthenticationConfigurationBuilder()
-
-                    .setClientCredentials(CLIENT_CREDENTIALS)
-                    .setEncryptionKey(SECURE_KEY)
-                    .setTokenExpiresIn(2592000L) // 30 days
-                    .setBeforeLoginActivity(new Intent(context, mainActivityClass))
-                    .addRequiredScopes(Scope.profile, Scope.settings)
-                    .addOptionalScopes(Scope.activity, Scope.weight)
-                    .setLogoutOnAuthFailure(true)
-                    .build();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * 1. When the application starts, load our keys and configure the AuthenticationManager
@@ -80,6 +47,12 @@ public class RunBuddyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AuthenticationManager.configure(this, generateAuthenticationConfiguration(this, FitbitActivity.class));
+        ClientCredentials CLIENT_CREDENTIALS = new ClientCredentials("23876X", CLIENT_SECRET, "https://finished");
+        AuthenticationConfiguration config = new AuthenticationConfigurationBuilder()
+                .setClientCredentials(CLIENT_CREDENTIALS)
+                .setEncryptionKey(SECURE_KEY)
+                .addRequiredScopes(Scope.profile, Scope.settings, Scope.heartrate, Scope.activity)
+                .build();
+        AuthenticationManager.configure(this, config);
     }
 }

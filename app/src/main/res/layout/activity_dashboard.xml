@@ -7,14 +7,14 @@
     tools:context=".DashboardActivity">
 
     <TextView
-        android:id="@+id/heartBeat"
+        android:id="@+id/tv_gender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HB/Min:0"
+        android:text="Gender:0"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintHorizontal_bias="0.936"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_pace"
         app:layout_constraintVertical_bias="1.0" />
@@ -79,6 +79,19 @@
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
     <TextView
+        android:id="@+id/tv_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Age:0"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.736"
+        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_time"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -90,5 +103,17 @@
         app:layout_constraintStart_toStartOf="@+id/tv_pace"
         app:layout_constraintTop_toBottomOf="@+id/tv_pace"
         app:layout_constraintVertical_bias="0.196" />
+
+    <ImageView
+        android:id="@+id/profilePicImageView"
+        android:layout_width="64dp"
+        android:layout_height="71dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_distance"
+        app:layout_constraintEnd_toEndOf="@+id/tv_gender"
+        app:layout_constraintHorizontal_bias="0.894"
+        app:layout_constraintStart_toEndOf="@+id/tv_distance"
+        app:layout_constraintTop_toBottomOf="@+id/sw_locationUpdates"
+        app:layout_constraintVertical_bias="0.0"
+        tools:src="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

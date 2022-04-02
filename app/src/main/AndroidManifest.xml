@@ -2,34 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cs501_runbuddy">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".RunBuddyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CS501RunBuddy"
-        android:name=".RunBuddyApplication"
-        >
+        android:theme="@style/Theme.CS501RunBuddy">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/map_key">
-        </meta-data>
-
-        <meta-data
-            android:name="com.example.cs501_runbuddy.CLIENT_ID"
-            android:value="23876X"/>
-        <meta-data
-            android:name="com.example.cs501_runbuddy.REDIRECT_URL"
-            android:value="https://finished"/>
+            android:value="@string/map_key"></meta-data>
 
         <activity
-            android:name=".IntroActivity"
+            android:name=".DashboardActivity"
             android:exported="false" />
         <activity
             android:name=".SignInActivity"
@@ -38,7 +29,7 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".IntroActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,12 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".FitbitActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DataActivity"
-            android:exported="false" />
     </application>
 
 </manifest>
