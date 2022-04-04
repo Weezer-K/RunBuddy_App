@@ -67,8 +67,6 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     private ArrayList<LatLng> savedLocations = new ArrayList<LatLng>();
 
     private Polyline poly;
-
-
     private TextView tv_pace;
     private TextView tv_distance;
     private TextView tv_time;
@@ -364,7 +362,7 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
         tv_gender.setText(gender);
         tv_age.setText(age);
-        //Avatar returns a url to an image so I made a helper to set the imageView to it
+        //Avatar returns a url to an image so I made a helper class to set the imageView to it
         new DownloadImageTask((ImageView) findViewById(R.id.profilePicImageView)).execute(avatar);
     }
 

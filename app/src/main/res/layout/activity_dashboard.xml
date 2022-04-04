@@ -14,10 +14,10 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.936"
+        app:layout_constraintHorizontal_bias="0.853"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_pace"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tv_pace"
@@ -35,14 +35,14 @@
     <fragment
         android:id="@+id/mapAPI"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="414dp"
-        android:layout_height="402dp"
+        android:layout_width="match_parent"
+        android:layout_height="318dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"></fragment>
+        app:layout_constraintVertical_bias="0.005"></fragment>
 
     <Switch
         android:id="@+id/sw_gps"
@@ -86,8 +86,8 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.736"
-        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_gender"
         app:layout_constraintTop_toTopOf="@+id/tv_time"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -110,8 +110,8 @@
         android:layout_height="71dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_distance"
         app:layout_constraintEnd_toEndOf="@+id/tv_gender"
-        app:layout_constraintHorizontal_bias="0.894"
-        app:layout_constraintStart_toEndOf="@+id/tv_distance"
+        app:layout_constraintHorizontal_bias="0.718"
+        app:layout_constraintStart_toStartOf="@+id/tv_gender"
         app:layout_constraintTop_toBottomOf="@+id/sw_locationUpdates"
         app:layout_constraintVertical_bias="0.0"
         tools:src="@tools:sample/avatars" />
