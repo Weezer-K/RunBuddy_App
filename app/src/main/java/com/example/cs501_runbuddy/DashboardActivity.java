@@ -55,6 +55,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
     private LocationRequest locationRequest;
 
+    //This is the gps sensor
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private LocationCallback locationCallBack;
@@ -108,12 +109,12 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         spotifyApp = new SpotifyFragment();
 
 
-
+        //Spawning the spotify fragment
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .replace(R.id.spotifyUi, spotifyApp)
                 .commit();
-
+        //Hiding the spotify fragment
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .hide(spotifyApp)
@@ -133,13 +134,16 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         mapFragment.getMapAsync(this);
 
 
-
+        //This defines how often and precise we will request
+        //data from the gps sensor
         locationRequest = LocationRequest.create()
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
                 .setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setMaxWaitTime(1000 * DEFAULT_UPDATE_INTERVAL);
 
+        //This is the callback function that is called everytime
+        //the gps sensor returns new gps data
         locationCallBack = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -151,6 +155,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
         Switch sw_gps = findViewById(R.id.sw_gps);
 
+        //This switch turns on high/low accuracy
+        //by changing the location request
         sw_gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,6 +168,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
             }
         });
 
+        //Used to display/hide spotify fragment
         spotifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,7 +194,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         });
 
         Switch sw_locationUpdates = findViewById(R.id.sw_locationUpdates);
-
+        //Switches on/off requesting data from the gps
         sw_locationUpdates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -224,6 +231,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
+            //Requested for gps permissions
             case PERMISSIONS_FINE_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateGPS();
@@ -301,8 +309,9 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                     double pace = totalDistance/hours;
                     tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
-
-            }else{
+            }//This happens when the page first launches and
+             // there is only one save location IE the current location
+            else{
                 mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
             }
         }
