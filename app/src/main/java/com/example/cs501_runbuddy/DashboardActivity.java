@@ -107,6 +107,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
         spotifyApp = new SpotifyFragment();
 
+
+
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .replace(R.id.spotifyUi, spotifyApp)
@@ -376,14 +378,14 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
 
 
-
+    //This gets the profile and retrieves the data
     @NonNull
     @Override
     public Loader<ResourceLoaderResult<UserContainer>> onCreateLoader(int id, @Nullable Bundle args) {
         return UserService.getLoggedInUserLoader(DashboardActivity.this);
     }
 
-    //Makes the profile data usable
+    //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui
     @Override
     public void onLoadFinished(Loader<ResourceLoaderResult<UserContainer>> loader, ResourceLoaderResult<UserContainer> data) {
         if (data.isSuccessful()) {
@@ -401,7 +403,6 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     //Uses info obtained from fitBit and sets the appropriate
     //Views to display them
     public void bindProfileInfo(User user) {
-        StringBuilder stringBuilder = new StringBuilder();
         String age = "Age: "+user.getAge().toString();
         String avatar = user.getAvatar(); //Profile picture
         String gender = "Sex: "+ user.getGender(); //Gender

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -19,7 +18,6 @@ import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Subscription;
-import com.spotify.protocol.types.PlayerContext;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -36,22 +34,17 @@ public class SpotifyFragment extends Fragment {
     private static final String CLIENT_ID = "9bd3a819fa964513bf26880dd8db490c";
     private static final String REDIRECT_URI = "http://localhost/";
     private SpotifyAppRemote mSpotifyAppRemote;
-    private PlayerState playerState;
-    private PlayerContext playerContext;
 
 
     TextView threadStopper;
     TextView threadStopperOriginal;
     Button pausePlay;
-    Button play;
     Button nextButton;
     Button previousButton;
     Button repeatButton;
     Button shuffleButton;
-    Button resume;
     Bundle bundle;
     ImageView songImage;
-    ListView playListListView;
     TextView songDisplay;
 
     int shuffleColor = Color.BLACK;
@@ -63,9 +56,9 @@ public class SpotifyFragment extends Fragment {
     SeekBar seeker;
     int seekBarFinalPos = 0;
 
-    int check = 0;
 
-
+    //Used in order to make sure there is one active thread
+    //For the seekbar updater
     int threadCount = 0;
 
     boolean playing = true;
@@ -141,8 +134,9 @@ public class SpotifyFragment extends Fragment {
 
         bundle = savedInstanceState;
         
-        threadStopper = (TextView) v.findViewById(R.id.threadStopTv);
-        threadStopperOriginal = (TextView) v.findViewById(R.id.threadStopTv);
+        threadStopper = (TextView) v.findViewById(R.id.threadStopTv);//TextView used to stop thread
+
+        threadStopperOriginal = (TextView) v.findViewById(R.id.threadStopTv);//Used to reset threadStopper
 
 
         pausePlay = (Button) v.findViewById(R.id.pause);
@@ -162,12 +156,14 @@ public class SpotifyFragment extends Fragment {
 
         songDisplay = (TextView) v.findViewById(R.id.songNameTextView);
 
+        //Thread used to keep progress bar progressing in play mode
         t = new Thread(() -> {
             while(playing){
                 try {
-                    threadStopper.setText("");
+                    threadStopper.setText("");//Purpose is so this while loop breaks when
+                                              //threadStopper is set to null
                     seeker.setProgress(seeker.getProgress()+1);
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.SECONDS.sleep(1);//Every second we progress the seek bar 1 unit or 1 second
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -207,7 +203,9 @@ public class SpotifyFragment extends Fragment {
         seeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                seekBarFinalPos = i * 1000;
+                //Used to know how many ms in the song
+                //We want to travel to
+                seekBarFinalPos = i * 1000;//1 postion = 1000ms
 
             }
 
@@ -218,7 +216,8 @@ public class SpotifyFragment extends Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                String s = Integer.toString(seekBarFinalPos);
+                //Accesses the media player and sets the postion to be where the
+                //Seek bar is
                 mSpotifyAppRemote.getPlayerApi().seekTo(seekBarFinalPos);
             }
         });
@@ -312,8 +311,15 @@ public class SpotifyFragment extends Fragment {
         }
     }
 
+
+    //Function called once a connection is made with
+    //the spotify app on the device
     private void connected() {
 
+
+        //Event listener for spotify app
+        //Will update when a significant event happens
+        //Such as the song position changing or a play mode is changed
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(new Subscription.EventCallback<PlayerState>() {
             @Override
             public void onEvent(PlayerState playerState) {
@@ -336,11 +342,11 @@ public class SpotifyFragment extends Fragment {
                     pausePlay.setText("Play");
                     pausePlay.setBackgroundColor(Color.BLACK);
                     playPauseColor = Color.BLACK;
-                    threadStopper = null;
-                    threadCount = 0;
+                    threadStopper = null; //In order to stop the thread by creating an error
+                    threadCount = 0;//Since the thread crashes but is caught we reset thread count
                 }else{
                     threadCount += 1;
-                    if(threadCount == 1) {
+                    if(threadCount == 1) { //Called when playerState is play and no threads are executed
                         threadStopper = threadStopperOriginal;
                         t.start();
                     }
@@ -349,7 +355,7 @@ public class SpotifyFragment extends Fragment {
                     playPauseColor = Color.GREEN;
                 }
 
-
+                //Deals with setting shuffle and repeat buttons states
                 if(playerState.playbackOptions.isShuffling){
                     shuffleButton.setBackgroundColor(Color.GREEN);
                     shuffleColor = Color.GREEN;
@@ -357,6 +363,11 @@ public class SpotifyFragment extends Fragment {
                     shuffleButton.setBackgroundColor(Color.BLACK);
                     shuffleColor = Color.BLACK;
                 }
+
+
+                // 0 is off
+                // 1 is repeat song
+                // 2 is repeat playlist
                 if(playerState.playbackOptions.repeatMode == 0){
                     repeatButton.setBackgroundColor(Color.BLACK);
                     repeatColor = Color.BLACK;
