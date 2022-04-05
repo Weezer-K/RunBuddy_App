@@ -51,7 +51,7 @@
         android:layout_marginTop="36dp"
         android:text="High Accuracy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.193"
+        app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
@@ -62,7 +62,7 @@
         android:layout_marginTop="36dp"
         android:text="LocUpdate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.814"
+        app:layout_constraintHorizontal_bias="0.946"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
@@ -115,5 +115,26 @@
         app:layout_constraintTop_toBottomOf="@+id/sw_locationUpdates"
         app:layout_constraintVertical_bias="0.0"
         tools:src="@tools:sample/avatars" />
+
+    <FrameLayout
+        android:id="@+id/spotifyUi"
+        android:layout_width="414dp"
+        android:layout_height="326dp"
+        app:layout_constraintBottom_toBottomOf="@+id/mapAPI"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/mapAPI"
+        app:layout_constraintTop_toTopOf="@+id/mapAPI"
+        tools:layout_margin="@layout/fragment_spotify">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/spotify"
+        android:layout_width="91dp"
+        android:layout_height="40dp"
+        android:text="spotify"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/mapAPI"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

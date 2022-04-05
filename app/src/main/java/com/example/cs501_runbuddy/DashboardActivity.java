@@ -6,13 +6,16 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
-public class DashboardActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
+public class DashboardActivity extends FragmentActivity implements SpotifyFragment.spotifyInterface, OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
 
     private LocationRequest locationRequest;
 
@@ -74,6 +77,10 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
     private TextView tv_weight;
     private TextView tv_age;
     private ImageView profilePic;
+    private Button spotifyButton;
+    private boolean isSpotifyOnScreen = false;
+
+    private SpotifyFragment spotifyApp;
 
     // Variable necessary for calculating running data
     private Instant startTime;
@@ -94,6 +101,23 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         tv_gender = (TextView) findViewById(R.id.tv_gender);
         profilePic = (ImageView) findViewById(R.id.profilePicImageView);
         tv_age = (TextView) findViewById(R.id.tv_age);
+        spotifyButton = (Button) findViewById(R.id.spotify);
+
+        spotifyButton.setBackgroundColor(Color.GREEN);
+
+        spotifyApp = new SpotifyFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .replace(R.id.spotifyUi, spotifyApp)
+                .commit();
+
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .hide(spotifyApp)
+                .commit();
+
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -103,10 +127,8 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
 
         totalDistance = 0.0;
 
-
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
-
 
 
 
@@ -135,6 +157,30 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
                 } else {
                     locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
                 }
+            }
+        });
+
+        spotifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    if (!isSpotifyOnScreen) {
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                                .show(spotifyApp)
+                                .commit();
+                        isSpotifyOnScreen = true;
+                    }else{
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                                .hide(spotifyApp)
+                                .commit();
+                        isSpotifyOnScreen = false;
+                    }
+                }catch (Exception e){
+                    Toast.makeText(DashboardActivity.this, "Please make sure spotify is on in the background", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -366,12 +412,10 @@ public class DashboardActivity extends FragmentActivity implements OnMapReadyCal
         new DownloadImageTask((ImageView) findViewById(R.id.profilePicImageView)).execute(avatar);
     }
 
-    //Work in progress function not part of demonstration
-    //Don't look classified
-    public void forLater(){
-        getLoaderManager().getLoader(1).forceLoad();
+
+
+    @Override
+    public void spotifyNotOpen() {
+        Toast.makeText(DashboardActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
     }
-
-
-
 }
