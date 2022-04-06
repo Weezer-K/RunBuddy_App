@@ -91,6 +91,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     private boolean timerOn = true;
 
 
+    //1 used to set up the UI elements and overall logic of the google map
+    //And spotify
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -216,22 +218,38 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     }
 
 
-    private void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    //initializes the gps sensor manager
+    private void updateGPS() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
+                DashboardActivity.this);
+        //If permission is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            //Instantiate gps sensor manager
+            //Get last known location if successfully instantiated
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
+                    new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            updateUIWithLocation(location);
+                        }
+                    });
+        }
+        //Request permission via helper function below
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_FINE_LOCATION);
+            }
+        }
     }
 
-    @SuppressLint("MissingPermission")
-    private void startLocationUpdates() {
-        updateGPS();
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
-    }
-
+    //Requested for gps permissions
+    //If permission is granted or has been granted carry on
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         switch (requestCode) {
-            //Requested for gps permissions
             case PERMISSIONS_FINE_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateGPS();
@@ -243,50 +261,50 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         }
     }
 
+    //These are used in the location request switch to start and stop
+    //Listening for gps updates
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        updateGPS();
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+    }
 
-    //Used to update the latitude and longitude of the GPS based off the phone's gps
-    private void updateGPS() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
-                DashboardActivity.this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            //fusedLocationProviderClient.setMockMode(false);
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
-                    new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-
-                            updateUIWithLocation(location);
-                        }
-                    });
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSIONS_FINE_LOCATION);
-            }
-        }
+    private void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     }
 
     //Helper function for updateGPS()
     //Helps with updating the location, path drawn, and overall pace
+    //Every time a new location is retrieved from the gps sensor
     private void updateUIWithLocation(Location location) {
-
+        //if retrieved location is valid
         if(location!=null){
-
-            //Draws marker and polyline and clears old marker
+            //Set the current location variable
             currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+            //add current location to saved location list
+            //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
+
+            //Clear all markers and polylines from google map
             mapAPI.clear();
+
+            //Create polyline and draw on map
             poly = mapAPI.addPolyline(new PolylineOptions().add(savedLocations.get(0)));
             poly.setPoints(savedLocations);
             poly.setVisible(true);
+
+            //Add marker for current location to map
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
 
-            //Moves camera and updates distance
+            //If there is a path to be drawn and distance to be calculated
             if(savedLocations.size()>1) {
-                //Used to move runner location
+
+                //Moves camera and updates distance used to move runner location
                 mapAPI.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+
+                //Calculate distance using 2nd to last location
+                //and current location
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -309,15 +327,16 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                     double pace = totalDistance/hours;
                     tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
-            }//This happens when the page first launches and
-             // there is only one save location IE the current location
+            }
+            //This happens when the page first launches and
+            //there is only one save location i.e. the current location
             else{
                 mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
             }
         }
     }
 
-
+    //Instantiate google map
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mapAPI = googleMap;
@@ -343,8 +362,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                         secondString = "0" + secondString;
                     }
                     String timeElapsed = minutes + ":" + secondString;
-                    //tv_time.setText("Time: " + timeElapsed);
 
+                    //tv_time.setText("Time: " + timeElapsed);
                     setTime(timeElapsed);
                 }
             }
@@ -362,7 +381,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         });
     }
 
-    // given two coordinates, calculate the distance in miles
+    //given two coordinates, calculate the distance in miles
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1))
