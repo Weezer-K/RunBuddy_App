@@ -1,6 +1,7 @@
 # Built application files
 *.apk
 *.aar
+!spotify-app-remote-release-0.7.2.arr
 *.ap_
 *.aab
 
