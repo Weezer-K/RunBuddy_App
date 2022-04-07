@@ -87,10 +87,15 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                //If access token for fitbit valid
+                                //Go straight to dashboard
                                 if(AuthenticationManager.isLoggedIn()){
                                     Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
                                     startActivity(intent);
-                                }else{
+                                }
+                                //Request user to sign into fitbit
+                                //and store access token
+                                else{
                                     AuthenticationManager.login(SignInActivity.this);
                                 }
 
@@ -120,7 +125,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         }
     }
 
-
+    //Authentication handler functions
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

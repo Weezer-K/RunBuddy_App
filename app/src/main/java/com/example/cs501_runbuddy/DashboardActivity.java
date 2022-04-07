@@ -405,6 +405,16 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
 
 
+    //Used to make toast to indicate
+    //Spotify isn't connected
+    @Override
+    public void spotifyNotOpen() {
+        Toast.makeText(DashboardActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
+    }
+
+
+    //The next 4 functions are used to interact
+    //with the fitbit api library
 
     //This gets the profile and retrieves the data
     @NonNull
@@ -443,8 +453,5 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
 
 
-    @Override
-    public void spotifyNotOpen() {
-        Toast.makeText(DashboardActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
-    }
+
 }
