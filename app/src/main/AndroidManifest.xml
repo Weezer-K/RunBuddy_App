@@ -14,10 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CS501RunBuddy">
+        <activity
+            android:name=".IntroActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/map_key"></meta-data>
+            android:value="@string/map_key" />
 
         <activity
             android:name=".DashboardActivity"
@@ -29,7 +32,7 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".IntroActivity"
+            android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LobbyFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LobbyFragment" >
+
+    <TextView
+        android:id="@+id/LIDtv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game Lobby: XXX"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.118"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.154" />
+
+    <TextView
+        android:id="@+id/player1tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="Player One: XXX"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/LIDtv"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/LIDtv"
+        app:layout_constraintTop_toBottomOf="@+id/LIDtv" />
+
+    <TextView
+        android:id="@+id/player2tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player Two: XXX"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/player1tv"
+        app:layout_constraintStart_toStartOf="@+id/player1tv"
+        app:layout_constraintTop_toBottomOf="@+id/player1tv" />
+
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.562" />
+</androidx.constraintlayout.widget.ConstraintLayout>

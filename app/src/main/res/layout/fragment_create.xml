@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/createFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateFragment">
+
+
+    <CheckBox
+        android:id="@+id/mile1BoxCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 mile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.082"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.134" />
+
+    <CheckBox
+        android:id="@+id/mile5BoxCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="5 miles"
+        app:layout_constraintEnd_toEndOf="@+id/mile1BoxCreate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/mile1BoxCreate"
+        app:layout_constraintTop_toBottomOf="@+id/mile1BoxCreate" />
+
+    <CheckBox
+        android:id="@+id/mile10BoxCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10 miles"
+        app:layout_constraintEnd_toEndOf="@+id/mile5BoxCreate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/mile5BoxCreate"
+        app:layout_constraintTop_toBottomOf="@+id/mile5BoxCreate" />
+
+    <Button
+        android:id="@+id/Createbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Game"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.088"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.465" />
+
+    <CheckBox
+        android:id="@+id/privateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="private"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.124"
+        app:layout_constraintStart_toEndOf="@+id/Createbtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.467" />
+
+    <TextView
+        android:id="@+id/ExplainRoomType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="click private to make room private"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.516" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
