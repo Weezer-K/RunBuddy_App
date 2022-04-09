@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".DashboardActivity">
 
+    <com.example.cs501_runbuddy.CircularSeekBar
+        android:id="@+id/player1Track"
+        android:layout_width="match_parent"
+        android:layout_height="316dp"
+        android:thumbTint="@color/white"
+        app:circle_x_radius="600dp"
+        app:circle_y_radius="100dp"
+        app:end_angle="360"
+        app:layout_constraintBottom_toBottomOf="@+id/mapAPI"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maintain_equal_circle="false"
+        app:max="100"
+        app:pointer_alpha_ontouch="100"
+        app:pointer_color="#0174DF"
+        app:pointer_halo_color="#880174DF"
+        app:progress="25"
+        app:start_angle="0"
+        app:use_custom_radii="true" />
+
     <TextView
         android:id="@+id/tv_gender"
         android:layout_width="wrap_content"
@@ -42,16 +63,18 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.005"></fragment>
+        app:layout_constraintVertical_bias="0.005">
+
+    </fragment>
 
     <Switch
         android:id="@+id/sw_gps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="72dp"
         android:text="High Accuracy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.058"
+        app:layout_constraintHorizontal_bias="0.047"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
@@ -59,10 +82,10 @@
         android:id="@+id/sw_locationUpdates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="72dp"
         android:text="LocUpdate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.946"
+        app:layout_constraintHorizontal_bias="0.905"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
 
@@ -108,12 +131,13 @@
         android:id="@+id/profilePicImageView"
         android:layout_width="64dp"
         android:layout_height="71dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_distance"
+        android:layout_marginTop="36dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_gender"
         app:layout_constraintEnd_toEndOf="@+id/tv_gender"
-        app:layout_constraintHorizontal_bias="0.718"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_gender"
         app:layout_constraintTop_toBottomOf="@+id/sw_locationUpdates"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="1.0"
         tools:src="@tools:sample/avatars" />
 
     <FrameLayout
@@ -132,9 +156,25 @@
         android:id="@+id/spotify"
         android:layout_width="91dp"
         android:layout_height="40dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="328dp"
         android:text="spotify"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/mapAPI"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/googleMapsButton"
+        android:layout_width="103dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="28dp"
+        android:text="Map"
+        app:layout_constraintBottom_toBottomOf="@+id/spotify"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintStart_toEndOf="@+id/spotify"
+        app:layout_constraintTop_toTopOf="@+id/spotify"
+        app:layout_constraintVertical_bias="1.0" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

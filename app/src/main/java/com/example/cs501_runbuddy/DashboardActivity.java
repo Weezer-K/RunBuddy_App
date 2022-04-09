@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -80,6 +81,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     private ImageView profilePic;
     private Button spotifyButton;
     private boolean isSpotifyOnScreen = false;
+    private Button mapButton;
+    private CircularSeekBar player1Track;
 
     private SpotifyFragment spotifyApp;
 
@@ -89,6 +92,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
     // Used to indicate if timer is on or off
     private boolean timerOn = true;
+
+    private int maxDistance = 100; //divide by 100 to get distance in miles
 
 
     //1 used to set up the UI elements and overall logic of the google map
@@ -105,6 +110,11 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         profilePic = (ImageView) findViewById(R.id.profilePicImageView);
         tv_age = (TextView) findViewById(R.id.tv_age);
         spotifyButton = (Button) findViewById(R.id.spotify);
+        mapButton = (Button) findViewById(R.id.googleMapsButton);
+        player1Track = (CircularSeekBar) findViewById(R.id.player1Track);
+
+
+
 
         spotifyButton.setBackgroundColor(Color.GREEN);
 
@@ -134,6 +144,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
+        mapFragment.getView().setVisibility(View.INVISIBLE);
 
 
         //This defines how often and precise we will request
@@ -207,6 +218,30 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                 }
             }
         });
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mapFragment.getView().getVisibility() == View.INVISIBLE){
+                    mapFragment.getView().setVisibility(View.VISIBLE);
+                }else{
+                    mapFragment.getView().setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        //Initalize player1Track
+        player1Track.setClickable(false);
+        makeTrack(player1Track, Color.RED);
+
+        player1Track.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
+
         //Used to update movement data based of a specific interval
         updateGPS();
         //Creates a thread to make the timer change every second
@@ -215,6 +250,28 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         getLoaderManager().initLoader(1, null, this).forceLoad();
 
 
+    }
+
+    public void makeTrack(CircularSeekBar circ, int color){
+        circ.initPaints(Color.RED);
+        circ.setProgress(0);
+        //Sets entire track color
+        circ.setCircleColor(Color.BLACK);
+        //This is for inside circle so useless
+        //circ.setCircleFillColor(Color.TRANSPARENT);
+        //Set behind color
+        circ.setCircleProgressColor(Color.RED);
+        circ.setPointerHaloColor(Color.TRANSPARENT);
+        circ.setPointerAlpha(0);
+        circ.setPointerAlphaOnTouch(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            circ.setOutlineAmbientShadowColor(Color.TRANSPARENT);
+            circ.setOutlineSpotShadowColor(Color.TRANSPARENT);
+            circ.setBackgroundColor(Color.TRANSPARENT);
+        }
+        circ.setMax(maxDistance);
+        circ.setProgress(0);
+        circ.setClickable(false);
     }
 
 
@@ -307,6 +364,8 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                 //and current location
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
+                player1Track.setProgress((int)(totalDistance * 100));
+
                 DecimalFormat df = new DecimalFormat("0.00");
                 tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
