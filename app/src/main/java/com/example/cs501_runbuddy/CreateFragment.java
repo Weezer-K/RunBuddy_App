@@ -28,7 +28,7 @@ public class CreateFragment extends Fragment {
     private CreateGame listener;
 
     public interface CreateGame{
-        void startGame(int id);
+        void startGame(String ID, String type, int totalDistance);
 
     }
 
@@ -54,8 +54,9 @@ public class CreateFragment extends Fragment {
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int id = 3939;
-                listener.startGame(id);
+                int input1 = getRandomNumber();
+                String input2 = "private";
+                listener.startGame(input1,input2);
 
             }
         });
@@ -78,5 +79,9 @@ public class CreateFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }
