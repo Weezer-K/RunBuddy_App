@@ -54,9 +54,10 @@ public class CreateFragment extends Fragment {
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int input1 = getRandomNumber();
+                String input1 = String.valueOf(getRandomNumber(0,50000));
                 String input2 = "private";
-                listener.startGame(input1,input2);
+                int input3 = 5;
+                listener.startGame(input1,input2,input3);
 
             }
         });

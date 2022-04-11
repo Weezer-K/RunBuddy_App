@@ -19,6 +19,8 @@ public class LobbyFragment extends Fragment {
     private TextView player2tv;
     private Button startBtn;
 
+    private Game game;
+
     public LobbyFragment() {
         // Required empty public constructor
     }
@@ -38,7 +40,8 @@ public class LobbyFragment extends Fragment {
         return v;
     }
 
-    public void updateID(int id){
-        LIDtv.setText("Game Lobby: " + id);
+    public void createGame(String ID, String type, int totalDistance){
+        LIDtv.setText("Game Lobby: " + ID);
+        game = new Game(ID, type, totalDistance);
     }
 }
