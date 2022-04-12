@@ -10,6 +10,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cs501_runbuddy.models.Game;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class LobbyFragment extends Fragment {
 
@@ -40,8 +50,20 @@ public class LobbyFragment extends Fragment {
         return v;
     }
 
-    public void createGame(String ID, String type, int totalDistance){
+    public void createGame(String ID, boolean type, double totalDistance){
+        FirebaseDatabase db = RunBuddyApplication.getDatabase();
+        DatabaseReference gameRef = db.getReference("games");
+
+        List<Double> locs = Arrays.asList(1.0, 2.0);
+
+        game = new Game(ID, type, totalDistance, false, locs);
+        Map<String, Object> gameValues = game.toMap();
+
+        // Write a message to the database
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/" + ID, gameValues);
+        gameRef.updateChildren(childUpdates);
+
         LIDtv.setText("Game Lobby: " + ID);
-        game = new Game(ID, type, totalDistance);
     }
 }

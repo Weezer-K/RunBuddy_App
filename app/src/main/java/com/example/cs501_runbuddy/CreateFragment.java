@@ -28,8 +28,7 @@ public class CreateFragment extends Fragment {
     private CreateGame listener;
 
     public interface CreateGame{
-        void startGame(String ID, String type, int totalDistance);
-
+        void startGame(String ID, boolean type, int totalDistance);
     }
 
 
@@ -54,11 +53,10 @@ public class CreateFragment extends Fragment {
         Createbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input1 = String.valueOf(getRandomNumber(0,50000));
-                String input2 = "private";
+                String input1 = String.valueOf(getRandomNumber(100000,999999));
+                boolean input2 = privateBtn.isChecked();
                 int input3 = 5;
                 listener.startGame(input1,input2,input3);
-
             }
         });
 

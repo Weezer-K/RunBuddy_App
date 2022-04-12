@@ -7,12 +7,15 @@ import com.fitbit.authentication.AuthenticationConfigurationBuilder;
 import com.fitbit.authentication.AuthenticationManager;
 import com.fitbit.authentication.ClientCredentials;
 import com.fitbit.authentication.Scope;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by jboggess on 9/28/16.
  */
 
 public class RunBuddyApplication extends Application {
+
+    private static FirebaseDatabase database;
 
     /**
      * These client credentials come from creating an app on https://dev.fitbit.com.
@@ -54,5 +57,11 @@ public class RunBuddyApplication extends Application {
                 .addRequiredScopes(Scope.profile, Scope.settings, Scope.heartrate, Scope.activity)
                 .build();
         AuthenticationManager.configure(this, config);
+    }
+
+    public static FirebaseDatabase getDatabase() {
+        if (database == null)
+            database = FirebaseDatabase.getInstance();
+        return database;
     }
 }

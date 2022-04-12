@@ -28,6 +28,7 @@
         <entry key="app/src/main/res/layout/activity_dashboard.xml" value="0.1793478260869565" />
         <entry key="app/src/main/res/layout/activity_data.xml" value="0.10885416666666667" />
         <entry key="app/src/main/res/layout/activity_fitbit.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.24114583333333334" />
       </map>
     </option>
   </component>
