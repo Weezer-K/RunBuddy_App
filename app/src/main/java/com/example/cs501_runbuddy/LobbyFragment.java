@@ -54,9 +54,19 @@ public class LobbyFragment extends Fragment {
         FirebaseDatabase db = RunBuddyApplication.getDatabase();
         DatabaseReference gameRef = db.getReference("games");
 
-        List<Double> locs = Arrays.asList(1.0, 2.0);
+        List<Double> locs1 = Arrays.asList(1.0, 2.0);
+        List<Double> locs2 = Arrays.asList(3.0, 4.0);
 
-        game = new Game(ID, type, totalDistance, false, locs);
+        //Initialize the gaming object
+        game = new Game(ID,
+                type,
+                totalDistance,
+                false,
+                "Tanky",
+                "Squishy",
+                locs1,
+                locs2);
+
         Map<String, Object> gameValues = game.toMap();
 
         // Write a message to the database

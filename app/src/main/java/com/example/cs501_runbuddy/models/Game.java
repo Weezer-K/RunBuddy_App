@@ -11,9 +11,15 @@ public class Game {
 
     public String ID;//Game Lobby ID
     public Boolean type;//private or public
-    public Boolean joinable;//Is the game ready to be searchable
+    public Boolean joinAble;//Is the game ready to be searchable
     public Double totalDistance;//mile for this game
-    public List<Double> playerLocation;//distance that has been completed during the time
+
+
+    public String playerOne; // Player one name
+    public List<Double> playerOneLocation;//distance that player One has been completed during the time
+    public String playerTwo; // PLayer two name
+    public List<Double> playerTwoLocation;//distance that player Two has been completed during the time
+
 
 
     //default initiate, which should never be called
@@ -25,19 +31,25 @@ public class Game {
     public Game(String ID,
                 Boolean type,
                 Double totalDistance,
-                Boolean joinable,
-                List<Double> playerLocation){
+                Boolean joinAble,
+                String playerOne,
+                String playerTwo,
+                List<Double> playerOneLocation,
+                List<Double> playerTwoLocation){
 
         this.type = type;
         this.ID = ID;
-        this.joinable = joinable;
+        this.joinAble = joinAble;
         this.totalDistance = totalDistance;
-        this.playerLocation = playerLocation;
+        this.playerOne = playerOne;
+        this.playerTwo = playerTwo;
+        this.playerOneLocation = playerOneLocation;
+        this.playerTwoLocation = playerTwoLocation;
 
     }
 
     public void setJoinable(boolean x){
-        this.joinable = x;
+        this.joinAble = x;
     }
 
     @Exclude
@@ -46,9 +58,12 @@ public class Game {
         HashMap<String, Object> result = new HashMap<>();
         result.put("ID", ID);
         result.put("type", type);
-        result.put("joinable", joinable);
+        result.put("joinAble", joinAble);
         result.put("totalDistance", totalDistance);
-        result.put("playerLocation", playerLocation);
+        result.put("playerOne", playerOne);
+        result.put("playerOne", playerTwo);
+        result.put("playerOneLocation", playerOneLocation);
+        result.put("playerTwoLocation", playerTwoLocation);
 
         return result;
     }
