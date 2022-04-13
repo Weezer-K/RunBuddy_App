@@ -53,6 +53,33 @@ public class SearchFragment extends Fragment {
         SBIbtn = v.findViewById(R.id.SBIbtn);
         edtRoomID = v.findViewById(R.id.edtRoomID);
 
+        //make user only choose one certain mile game
+        mile1Box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mile1Box.setChecked(true);
+                mile5Box.setChecked(false);
+                mile10Box.setChecked(false);
+
+            }
+        });
+        mile5Box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mile1Box.setChecked(false);
+                mile5Box.setChecked(true);
+                mile10Box.setChecked(false);
+
+            }
+        });
+        mile10Box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mile1Box.setChecked(false);
+                mile5Box.setChecked(false);
+                mile10Box.setChecked(true);
+            }
+        });
         SBIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

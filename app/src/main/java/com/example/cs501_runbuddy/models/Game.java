@@ -9,20 +9,11 @@ import java.util.Map;
 
 public class Game {
 
-    //Game Lobby ID
-    public String ID;
-
-    //private or public
-    public Boolean type;
-
-    //Is the game ready to be searchable
-    public Boolean joinable;
-
-    //mile for this game
-    public Double totalDistance;
-
-    //distance that has been completed during the time
-    public List<Double> playerLocation;
+    public String ID;//Game Lobby ID
+    public Boolean type;//private or public
+    public Boolean joinable;//Is the game ready to be searchable
+    public Double totalDistance;//mile for this game
+    public List<Double> playerLocation;//distance that has been completed during the time
 
 
     //default initiate, which should never be called
@@ -31,7 +22,11 @@ public class Game {
     }
 
     //Starting Game with id and type
-    public Game(String ID, Boolean type, Double totalDistance, Boolean joinable, List<Double> playerLocation){
+    public Game(String ID,
+                Boolean type,
+                Double totalDistance,
+                Boolean joinable,
+                List<Double> playerLocation){
 
         this.type = type;
         this.ID = ID;
