@@ -1,5 +1,6 @@
 package com.example.cs501_runbuddy;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -75,5 +76,14 @@ public class LobbyFragment extends Fragment {
         gameRef.updateChildren(childUpdates);
 
         LIDtv.setText("Game Lobby: " + ID);
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(),DashboardActivity.class);
+                intent.putExtra("Game Object", game);
+                startActivity(intent);
+            }
+        });
     }
 }

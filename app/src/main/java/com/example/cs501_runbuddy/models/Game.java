@@ -2,12 +2,13 @@ package com.example.cs501_runbuddy.models;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Game {
+public class Game implements Serializable {
 
     public String ID;//Game Lobby ID
     public Boolean type;//private or public
@@ -46,6 +47,10 @@ public class Game {
         this.playerOneLocation = playerOneLocation;
         this.playerTwoLocation = playerTwoLocation;
 
+    }
+
+    private String getID(){
+        return this.ID;
     }
 
     public void setJoinable(boolean x){
