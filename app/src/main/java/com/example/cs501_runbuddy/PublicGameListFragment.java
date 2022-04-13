@@ -1,9 +1,12 @@
 package com.example.cs501_runbuddy;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.example.cs501_runbuddy.models.Game;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,12 +47,34 @@ public class PublicGameListFragment extends Fragment {
 
         games = new ArrayList<String>(){};
 
-        games.add("Game: 000000, Host: Tanky, Distance: 1 mile");
-        games.add("Game: 000000, Host: Squishy, Distance: 10 miles");
+        ValueEventListener gameListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Game object and use the values to update the UI
+                if (dataSnapshot.exists()) {
+                    games = new ArrayList<String>(){};
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    for (DataSnapshot game : dataSnapshot.getChildren()) {
+                        Game g = game.getValue(Game.class);
+                        String summary = "Game: " + g.ID + ", Host: " + g.playerOneId + ", Distance: " + g.totalDistance;
+                        games.add(summary);
+                    }
 
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,games);
+                    GameList.setAdapter(arrayAdapter);
+                }
+            }
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,games);
-        GameList.setAdapter(arrayAdapter);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+
+        DatabaseReference gamesRef = RunBuddyApplication.getDatabase().getReference("games");
+        gamesRef.addValueEventListener(gameListener);
+
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

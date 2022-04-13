@@ -28,7 +28,7 @@ public class CreateFragment extends Fragment {
     private CreateGame listener;
 
     public interface CreateGame{
-        void startGame(String ID, boolean type, int totalDistance);
+        void startGame(String ID, boolean isPrivate, int totalDistance);
     }
 
 

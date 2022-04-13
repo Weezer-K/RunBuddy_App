@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CS501RunBuddy">
         <activity
-            android:name=".IntroActivity"
+            android:name=".HomeActivity"
             android:exported="false" />
 
         <meta-data
@@ -23,16 +23,10 @@
             android:value="@string/map_key" />
 
         <activity
-            android:name=".DashboardActivity"
+            android:name=".RaceActivity"
             android:exported="false" />
         <activity
             android:name=".SignInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

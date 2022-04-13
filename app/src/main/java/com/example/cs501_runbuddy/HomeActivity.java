@@ -3,9 +3,14 @@ package com.example.cs501_runbuddy;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.cs501_runbuddy.models.Game;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame{
 
@@ -32,6 +37,15 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
 
         fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
 
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+        }
     }
 
     @Override
@@ -64,14 +78,20 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     }
 
     @Override
-    public void startGame(String ID, boolean type, int totalDistance) {
+    public void startGame(String ID, boolean isPrivate, int totalDistance) {
         fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
-        LobbyFragment.createGame(ID,type,totalDistance);
+        LobbyFragment.createGame(ID,isPrivate,totalDistance);
     }
 
 
     @Override
     public void searchGame() {
         fm.beginTransaction().replace(R.id.homeFragment, PublicGameListFragment).commitNow();
+    }
+
+    @Override
+    public void joinGame(Game game) {
+        fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
+        LobbyFragment.joinGame(game);
     }
 }

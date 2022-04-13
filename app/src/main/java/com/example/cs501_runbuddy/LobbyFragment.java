@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -41,6 +44,7 @@ public class LobbyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_lobby, container, false);
         LIDtv = (TextView) v.findViewById(R.id.LIDtv);
@@ -51,39 +55,50 @@ public class LobbyFragment extends Fragment {
         return v;
     }
 
-    public void createGame(String ID, boolean type, double totalDistance){
-        FirebaseDatabase db = RunBuddyApplication.getDatabase();
-        DatabaseReference gameRef = db.getReference("games");
+    public void createGame(String ID, boolean isPrivate, double totalDistance){
 
-        List<Double> locs1 = Arrays.asList(1.0, 2.0);
-        List<Double> locs2 = Arrays.asList(3.0, 4.0);
+        List<LatLng> locs1 = Arrays.asList();
+        List<LatLng> locs2 = Arrays.asList();
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        String player1Id = acct.getId();
 
         //Initialize the gaming object
         game = new Game(ID,
-                type,
+                isPrivate,
                 totalDistance,
-                false,
-                "Tanky",
-                "Squishy",
+                true,
+                player1Id,
+                "",
                 locs1,
                 locs2);
 
-        Map<String, Object> gameValues = game.toMap();
-
-        // Write a message to the database
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/" + ID, gameValues);
-        gameRef.updateChildren(childUpdates);
+        game.writeToDatabase("");
 
         LIDtv.setText("Game Lobby: " + ID);
+        player1tv.setText(acct.getGivenName());
+        player2tv.setText("Not Yet Joined");
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(),DashboardActivity.class);
-                intent.putExtra("Game Object", game);
+                Intent intent = new Intent(getActivity(),RaceActivity.class);
+                intent.putExtra("game", game);
                 startActivity(intent);
             }
         });
+    }
+
+    public void joinGame(Game game) {
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+
+        game.playerTwoId = acct.getId();
+        game.joinAble = false;
+
+        game.writeToDatabase("");
+
+        LIDtv.setText("Game Lobby: " + game.ID);
+        player1tv.setText(game.playerOneId);
+        player2tv.setText(acct.getGivenName());
     }
 }

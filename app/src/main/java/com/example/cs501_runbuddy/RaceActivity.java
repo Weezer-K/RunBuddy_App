@@ -8,6 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -23,10 +24,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.cs501_runbuddy.models.Game;
 import com.fitbit.api.loaders.ResourceLoaderResult;
 import com.fitbit.api.models.User;
 import com.fitbit.api.models.UserContainer;
 import com.fitbit.api.services.UserService;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -41,6 +44,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -52,7 +57,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
-public class DashboardActivity extends FragmentActivity implements SpotifyFragment.spotifyInterface, OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
+public class RaceActivity extends FragmentActivity implements SpotifyFragment.spotifyInterface, OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
 
     private LocationRequest locationRequest;
 
@@ -70,6 +75,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     private SupportMapFragment mapFragment;
     private LatLng currentLocation;
     private ArrayList<LatLng> savedLocations = new ArrayList<LatLng>();
+    private Game game;
 
     private Polyline poly;
     private TextView tv_pace;
@@ -93,7 +99,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     // Used to indicate if timer is on or off
     private boolean timerOn = true;
 
-    private int maxDistance = 100; //divide by 100 to get distance in miles
+    private int maxDistance; //divide by 100 to get distance in miles
 
 
     //1 used to set up the UI elements and overall logic of the google map
@@ -101,7 +107,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_race);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         tv_pace = findViewById(R.id.tv_pace);
         tv_distance = findViewById(R.id.tv_distance);
@@ -113,8 +119,9 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         mapButton = (Button) findViewById(R.id.googleMapsButton);
         player1Track = (CircularSeekBar) findViewById(R.id.player1Track);
 
-
-
+        // To retrieve object in second Activity
+        game = (Game) getIntent().getSerializableExtra("game");
+        maxDistance = (int) (game.totalDistance * 100);
 
         spotifyButton.setBackgroundColor(Color.GREEN);
 
@@ -200,7 +207,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
                         isSpotifyOnScreen = false;
                     }
                 }catch (Exception e){
-                    Toast.makeText(DashboardActivity.this, "Please make sure spotify is on in the background", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RaceActivity.this, "Please make sure spotify is on in the background", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -249,7 +256,6 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
         updateTime();
         getLoaderManager().initLoader(1, null, this).forceLoad();
 
-
     }
 
     public void makeTrack(CircularSeekBar circ, int color){
@@ -278,7 +284,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     //initializes the gps sensor manager
     private void updateGPS() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
-                DashboardActivity.this);
+                RaceActivity.this);
         //If permission is granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -342,6 +348,9 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
             //add current location to saved location list
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
+
+            game.addLocData(game.playerOneId == GoogleSignIn.getLastSignedInAccount(this).getId(),
+                    currentLocation);
 
             //Clear all markers and polylines from google map
             mapAPI.clear();
@@ -468,7 +477,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     //Spotify isn't connected
     @Override
     public void spotifyNotOpen() {
-        Toast.makeText(DashboardActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
+        Toast.makeText(RaceActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -479,7 +488,7 @@ public class DashboardActivity extends FragmentActivity implements SpotifyFragme
     @NonNull
     @Override
     public Loader<ResourceLoaderResult<UserContainer>> onCreateLoader(int id, @Nullable Bundle args) {
-        return UserService.getLoggedInUserLoader(DashboardActivity.this);
+        return UserService.getLoggedInUserLoader(RaceActivity.this);
     }
 
     //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui

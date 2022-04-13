@@ -1,6 +1,21 @@
 package com.example.cs501_runbuddy.models;
 
+import android.os.AsyncTask;
+import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
+
+import com.example.cs501_runbuddy.HomeActivity;
+import com.example.cs501_runbuddy.RunBuddyApplication;
+import com.example.cs501_runbuddy.SearchFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,15 +26,15 @@ import java.util.Map;
 public class Game implements Serializable {
 
     public String ID;//Game Lobby ID
-    public Boolean type;//private or public
+    public Boolean isPrivate;//private or public
     public Boolean joinAble;//Is the game ready to be searchable
     public Double totalDistance;//mile for this game
 
 
-    public String playerOne; // Player one name
-    public List<Double> playerOneLocation;//distance that player One has been completed during the time
-    public String playerTwo; // PLayer two name
-    public List<Double> playerTwoLocation;//distance that player Two has been completed during the time
+    public String playerOneId; // Player one name
+    public List<LatLng> playerOneLocation;//distance that player One has been completed during the time
+    public String playerTwoId; // PLayer two name
+    public List<LatLng> playerTwoLocation;//distance that player Two has been completed during the time
 
 
 
@@ -30,20 +45,20 @@ public class Game implements Serializable {
 
     //Starting Game with id and type
     public Game(String ID,
-                Boolean type,
+                Boolean isPrivate,
                 Double totalDistance,
                 Boolean joinAble,
-                String playerOne,
-                String playerTwo,
-                List<Double> playerOneLocation,
-                List<Double> playerTwoLocation){
+                String playerOneId,
+                String playerTwoId,
+                List<LatLng> playerOneLocation,
+                List<LatLng> playerTwoLocation){
 
-        this.type = type;
+        this.isPrivate = isPrivate;
         this.ID = ID;
         this.joinAble = joinAble;
         this.totalDistance = totalDistance;
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
+        this.playerOneId = playerOneId;
+        this.playerTwoId = playerTwoId;
         this.playerOneLocation = playerOneLocation;
         this.playerTwoLocation = playerTwoLocation;
 
@@ -53,8 +68,19 @@ public class Game implements Serializable {
         return this.ID;
     }
 
-    public void setJoinable(boolean x){
+    public void setJoinAble(boolean x){
         this.joinAble = x;
+    }
+
+    public void addLocData(Boolean isPlayer1, LatLng loc) {
+        if (isPlayer1) {
+            playerOneLocation.add(loc);
+            writeToDatabase("playerOneLocation");
+        }
+        else {
+            playerTwoLocation.add(loc);
+            writeToDatabase("playerTwoLocation");
+        }
     }
 
     @Exclude
@@ -62,14 +88,54 @@ public class Game implements Serializable {
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("ID", ID);
-        result.put("type", type);
+        result.put("isPrivate", isPrivate);
         result.put("joinAble", joinAble);
         result.put("totalDistance", totalDistance);
-        result.put("playerOne", playerOne);
-        result.put("playerOne", playerTwo);
+        result.put("playerOneId", playerOneId);
+        result.put("playerTwoId", playerTwoId);
         result.put("playerOneLocation", playerOneLocation);
         result.put("playerTwoLocation", playerTwoLocation);
 
         return result;
+    }
+
+    public void writeToDatabase(String field) {
+        FirebaseDatabase db = RunBuddyApplication.getDatabase();
+        DatabaseReference gameRef = db.getReference("games");
+
+        Map<String, Object> gameValues = this.toMap();
+
+        if (field != "")
+            field = "/" + field;
+
+        // Write a message to the database
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/" + ID + field, gameValues);
+        gameRef.updateChildren(childUpdates);
+    }
+
+    public static void joinGameFromDB(String gameId, SearchFragment.SearchGame listener, FragmentActivity context) {
+        DatabaseReference gamesRef = RunBuddyApplication.getDatabase().getReference("games");
+
+        Query query = gamesRef.orderByChild("ID").equalTo(gameId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    for (DataSnapshot game : dataSnapshot.getChildren()) {
+                        Game g = game.getValue(Game.class);
+                        // do something with the individual "game"
+                        if (g.joinAble == true)
+                            listener.joinGame(g);
+                        else
+                            Toast.makeText(context, "Couldn't join game, already full", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }

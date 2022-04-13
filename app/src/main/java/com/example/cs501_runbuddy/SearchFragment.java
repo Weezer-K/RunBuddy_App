@@ -41,6 +41,7 @@ public class SearchFragment extends Fragment {
 
     public interface SearchGame{
         void searchGame();
+        void joinGame(Game game);
     }
 
     @Override
@@ -56,6 +57,8 @@ public class SearchFragment extends Fragment {
         RSbtn = v.findViewById(R.id.RSbtn);
         SBIbtn = v.findViewById(R.id.SBIbtn);
         edtRoomID = v.findViewById(R.id.edtRoomID);
+
+        mile1Box.setChecked(true);
 
         //make user only choose one certain mile game
         mile1Box.setOnClickListener(new View.OnClickListener() {
@@ -100,26 +103,7 @@ public class SearchFragment extends Fragment {
             public void onClick(View view) {
                 String joinId = edtRoomID.getText().toString();
 
-                DatabaseReference gamesRef = RunBuddyApplication.getDatabase().getReference("games");
-
-                Query query = gamesRef.orderByChild("ID").equalTo(joinId);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "game" node with all children with id equal to joinId
-                            for (DataSnapshot game : dataSnapshot.getChildren()) {
-                                // do something with the individual "game"
-                                Game i = game.getValue(Game.class);
-                                int j = 0;
-                            }
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                Game.joinGameFromDB(joinId, listener, getActivity());
             }
         });
 

@@ -12,36 +12,38 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cs501_runbuddy.models.User;
 import com.fitbit.authentication.AuthenticationHandler;
 import com.fitbit.authentication.AuthenticationManager;
 import com.fitbit.authentication.AuthenticationResult;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements AuthenticationHandler {
 
-    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
     private EditText email;
     private EditText password;
     private Button signInAccount;
+    private int RC_SIGN_IN = 9999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        email = (EditText) findViewById(R.id.emailAddress);
-        password = (EditText) findViewById(R.id.password);
         signInAccount = (Button) findViewById(R.id.signInAccount);
 
-        mAuth = FirebaseAuth.getInstance();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, RunBuddyApplication.getGoogleSignInClient());
 
         signInAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,73 +57,20 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getIdToken() instead.
-            String uid = user.getUid();
-        }
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
     }
     //Used to sign in existing users
     private void signInUser() {
-        if (email.getText().toString().equals("") || !isEmailValid(email.getText().toString())) {
-            // If sign in fails, display a message to the user.
-            Toast.makeText(SignInActivity.this, "Email is invalid, please try again.",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                //If access token for fitbit valid
-                                //Go straight to dashboard
-                                if(AuthenticationManager.isLoggedIn()){
-                                    Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
-                                    startActivity(intent);
-                                }
-                                //Request user to sign into fitbit
-                                //and store access token
-                                else{
-                                    AuthenticationManager.login(SignInActivity.this);
-                                }
-
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }
-    }
-
-    private boolean isEmailValid(CharSequence email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     //Will check if fitbit sign up is finished and go to main activity
     @Override
     public void onAuthFinished(AuthenticationResult result) {
         if(result.isSuccessful()){
-            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(intent);
-        }else{
-
         }
     }
 
@@ -129,6 +78,43 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        AuthenticationManager.onActivityResult(requestCode, resultCode, data, (AuthenticationHandler)this);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        } else {
+            AuthenticationManager.onActivityResult(requestCode, resultCode, data, (AuthenticationHandler) this);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount acct = completedTask.getResult(ApiException.class);
+
+            User user = new User(acct.getId(), acct.getGivenName(), acct.getFamilyName(), acct.getEmail());
+
+            user.writeToDatabase();
+
+            //If access token for fitbit valid
+            //Go straight to dashboard
+            if(AuthenticationManager.isLoggedIn()){
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+            }
+            //Request user to sign into fitbit
+            //and store access token
+            else{
+                AuthenticationManager.login(SignInActivity.this);
+            }
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Toast.makeText(SignInActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+        }
     }
 }

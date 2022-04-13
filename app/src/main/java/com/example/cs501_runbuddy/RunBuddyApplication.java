@@ -7,6 +7,7 @@ import com.fitbit.authentication.AuthenticationConfigurationBuilder;
 import com.fitbit.authentication.AuthenticationManager;
 import com.fitbit.authentication.ClientCredentials;
 import com.fitbit.authentication.Scope;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
@@ -16,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RunBuddyApplication extends Application {
 
     private static FirebaseDatabase database;
+    private static GoogleSignInOptions gso;
 
     /**
      * These client credentials come from creating an app on https://dev.fitbit.com.
@@ -63,5 +65,16 @@ public class RunBuddyApplication extends Application {
         if (database == null)
             database = FirebaseDatabase.getInstance();
         return database;
+    }
+
+    public static GoogleSignInOptions getGoogleSignInClient() {
+        if (gso == null)
+            // Configure sign-in to request the user's ID, email address, and basic
+            // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+
+        return gso;
     }
 }
