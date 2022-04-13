@@ -1,7 +1,9 @@
 package com.example.cs501_runbuddy;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -31,13 +33,15 @@ public class SearchFragment extends Fragment {
     private Button SBIbtn;
     private EditText edtRoomID;
 
-
+    private SearchGame listener;
     public SearchFragment() {
         // Required empty public constructor
     }
 
 
-
+    public interface SearchGame{
+        void searchGame();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +84,17 @@ public class SearchFragment extends Fragment {
                 mile10Box.setChecked(true);
             }
         });
+
+        // Public Search Button and its corresponding reaction
+        RSbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.searchGame();
+            }
+        });
+
+
+        // Search By ID button and its corresponding reaction
         SBIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,5 +124,22 @@ public class SearchFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof SearchFragment.SearchGame){
+            listener = (SearchFragment.SearchGame) context;
+        }else{
+            throw new RuntimeException(context.toString() + "must implement SearchGame");
+        }
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 }

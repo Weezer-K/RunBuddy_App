@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame {
+public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame{
 
     private SearchFragment SearchFragment;
     private CreateFragment CreateFragment;
     private LobbyFragment LobbyFragment;
+    private HistoryFragment HistoryFragment;
+    private PublicGameListFragment PublicGameListFragment;
     private FragmentManager fm;
 
 
@@ -23,6 +25,8 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         SearchFragment = new SearchFragment();
         CreateFragment = new CreateFragment();
         LobbyFragment = new LobbyFragment();
+        HistoryFragment = new HistoryFragment();
+        PublicGameListFragment = new PublicGameListFragment();
 
         fm = getSupportFragmentManager();
 
@@ -52,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         }
 
         if (id == R.id.menu_history) {
-
+            fm.beginTransaction().replace(R.id.homeFragment, HistoryFragment).commitNow();
             return true;
         }
 
@@ -66,5 +70,8 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     }
 
 
-
+    @Override
+    public void searchGame() {
+        fm.beginTransaction().replace(R.id.homeFragment, PublicGameListFragment).commitNow();
+    }
 }
