@@ -3,19 +3,18 @@ package com.example.cs501_runbuddy;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +43,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -89,6 +86,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private boolean isSpotifyOnScreen = false;
     private Button mapButton;
     private CircularSeekBar player1Track;
+    private Button quitButton;
 
     private SpotifyFragment spotifyApp;
 
@@ -118,6 +116,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         spotifyButton = (Button) findViewById(R.id.spotify);
         mapButton = (Button) findViewById(R.id.googleMapsButton);
         player1Track = (CircularSeekBar) findViewById(R.id.player1Track);
+        quitButton = (Button) findViewById(R.id.quitButton);
 
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
@@ -159,7 +158,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         locationRequest = LocationRequest.create()
                 .setInterval(1000 * DEFAULT_UPDATE_INTERVAL)
                 .setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL)
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(1000 * DEFAULT_UPDATE_INTERVAL);
 
         //This is the callback function that is called everytime
@@ -173,20 +172,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         };
 
-        Switch sw_gps = findViewById(R.id.sw_gps);
-
-        //This switch turns on high/low accuracy
-        //by changing the location request
-        sw_gps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (sw_gps.isChecked()) {
-                    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                } else {
-                    locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-                }
-            }
-        });
 
         //Used to display/hide spotify fragment
         spotifyButton.setOnClickListener(new View.OnClickListener() {
@@ -213,18 +198,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
-        Switch sw_locationUpdates = findViewById(R.id.sw_locationUpdates);
-        //Switches on/off requesting data from the gps
-        sw_locationUpdates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (sw_locationUpdates.isChecked()) {
-                    startLocationUpdates();
-                } else {
-                    stopLocationUpdates();
-                }
-            }
-        });
+
+        //stopLocationUpdates();
+
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,9 +224,18 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopLocationUpdates();
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         //Used to update movement data based of a specific interval
-        updateGPS();
+        startLocationUpdates();
         //Creates a thread to make the timer change every second
         //Hence why it was not included in the last function
         updateTime();
@@ -349,8 +334,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
 
-            game.addLocData(game.playerOneId == GoogleSignIn.getLastSignedInAccount(this).getId(),
-                    currentLocation);
+            boolean isPlayer1 = (game.playerOneId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+            game.addLocData(isPlayer1, currentLocation);
 
             //Clear all markers and polylines from google map
             mapAPI.clear();

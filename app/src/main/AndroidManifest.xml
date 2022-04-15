@@ -15,9 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CS501RunBuddy">
         <activity
-            android:name=".ResultActivity"
-            android:exported="false" />
-        <activity
             android:name=".HomeActivity"
             android:exported="false" />
 

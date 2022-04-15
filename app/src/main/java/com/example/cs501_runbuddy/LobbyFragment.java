@@ -2,27 +2,20 @@ package com.example.cs501_runbuddy;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class LobbyFragment extends Fragment {
@@ -57,8 +50,8 @@ public class LobbyFragment extends Fragment {
 
     public void createGame(String ID, boolean isPrivate, double totalDistance){
 
-        List<LatLng> locs1 = Arrays.asList();
-        List<LatLng> locs2 = Arrays.asList();
+        ArrayList<LatLng> locs1 = new ArrayList<>();
+        ArrayList<LatLng> locs2 = new ArrayList<>();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();

@@ -1,11 +1,9 @@
 package com.example.cs501_runbuddy.models;
 
-import android.os.AsyncTask;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.cs501_runbuddy.HomeActivity;
 import com.example.cs501_runbuddy.RunBuddyApplication;
 import com.example.cs501_runbuddy.SearchFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -20,7 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Game implements Serializable {
@@ -32,9 +29,9 @@ public class Game implements Serializable {
 
 
     public String playerOneId; // Player one name
-    public List<LatLng> playerOneLocation;//distance that player One has been completed during the time
+    public ArrayList<LatLng> playerOneLocation;//distance that player One has been completed during the time
     public String playerTwoId; // PLayer two name
-    public List<LatLng> playerTwoLocation;//distance that player Two has been completed during the time
+    public ArrayList<LatLng> playerTwoLocation;//distance that player Two has been completed during the time
 
 
 
@@ -50,8 +47,8 @@ public class Game implements Serializable {
                 Boolean joinAble,
                 String playerOneId,
                 String playerTwoId,
-                List<LatLng> playerOneLocation,
-                List<LatLng> playerTwoLocation){
+                ArrayList<LatLng> playerOneLocation,
+                ArrayList<LatLng> playerTwoLocation){
 
         this.isPrivate = isPrivate;
         this.ID = ID;
@@ -104,14 +101,14 @@ public class Game implements Serializable {
         DatabaseReference gameRef = db.getReference("games");
 
         Map<String, Object> gameValues = this.toMap();
-
-        if (field != "")
-            field = "/" + field;
-
-        // Write a message to the database
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/" + ID + field, gameValues);
-        gameRef.updateChildren(childUpdates);
+        //Update database to have proper player locations
+        if (field != "") {
+            gameRef.child(ID).child(field).setValue(gameValues.get(field));
+        }else{
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("/" + ID, gameValues);
+            gameRef.updateChildren(childUpdates);
+        }
     }
 
     public static void joinGameFromDB(String gameId, SearchFragment.SearchGame listener, FragmentActivity context) {

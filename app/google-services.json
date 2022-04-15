@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "639009828535-gh0566j9n47b0tcem2qvh7eclukqstr2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cs501_runbuddy",
+            "certificate_hash": "ea9a3cf89acb83b86975fc8a356073b80ab541c2"
+          }
+        },
+        {
           "client_id": "639009828535-vbjc25c636rkuu9mllpbcrpjbmrickui.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

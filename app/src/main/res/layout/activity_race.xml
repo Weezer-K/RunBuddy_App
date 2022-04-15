@@ -67,28 +67,6 @@
 
     </fragment>
 
-    <Switch
-        android:id="@+id/sw_gps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="High Accuracy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.047"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
-
-    <Switch
-        android:id="@+id/sw_locationUpdates"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="LocUpdate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.905"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
-
     <TextView
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
@@ -131,13 +109,12 @@
         android:id="@+id/profilePicImageView"
         android:layout_width="64dp"
         android:layout_height="71dp"
-        android:layout_marginTop="36dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_gender"
         app:layout_constraintEnd_toEndOf="@+id/tv_gender"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_gender"
-        app:layout_constraintTop_toBottomOf="@+id/sw_locationUpdates"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/googleMapsButton"
+        app:layout_constraintVertical_bias="0.846"
         tools:src="@tools:sample/avatars" />
 
     <FrameLayout
@@ -175,6 +152,17 @@
         app:layout_constraintStart_toEndOf="@+id/spotify"
         app:layout_constraintTop_toTopOf="@+id/spotify"
         app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/quitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_age"
+        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time"
+        app:layout_constraintVertical_bias="0.118" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
