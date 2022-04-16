@@ -100,6 +100,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private int maxDistance; //divide by 100 to get distance in miles
 
 
+
     //1 used to set up the UI elements and overall logic of the google map
     //And spotify
     @Override
@@ -167,7 +168,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-
                 updateUIWithLocation(locationResult.getLastLocation());
             }
         };
@@ -207,6 +207,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             public void onClick(View view) {
                 if(mapFragment.getView().getVisibility() == View.INVISIBLE){
                     mapFragment.getView().setVisibility(View.VISIBLE);
+                    mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
                 }else{
                     mapFragment.getView().setVisibility(View.INVISIBLE);
                 }
@@ -277,6 +278,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //Get last known location if successfully instantiated
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
                     new OnSuccessListener<Location>() {
+                        @SuppressLint("MissingPermission")
                         @Override
                         public void onSuccess(Location location) {
                             updateUIWithLocation(location);
@@ -309,12 +311,19 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+    }
+
     //These are used in the location request switch to start and stop
     //Listening for gps updates
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
         updateGPS();
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+        updateGPS();
     }
 
     private void stopLocationUpdates() {
@@ -335,7 +344,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             savedLocations.add(currentLocation);
 
             boolean isPlayer1 = (game.playerOneId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
-            game.addLocData(isPlayer1, currentLocation);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                double curTime = Instant.now().toEpochMilli();
+                game.addLocData(isPlayer1, currentLocation, curTime);
+            }
 
             //Clear all markers and polylines from google map
             mapAPI.clear();
@@ -358,7 +371,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 //and current location
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
-                player1Track.setProgress((int)(totalDistance * 100));
+                if(totalDistance >= maxDistance/100){
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(intent);
+                    totalDistance = 0;
+                    stopLocationUpdates();
+                }else {
+                    player1Track.setProgress((int) (totalDistance * 100));
+                }
 
                 DecimalFormat df = new DecimalFormat("0.00");
                 tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");

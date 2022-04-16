@@ -29,9 +29,9 @@ public class Game implements Serializable {
 
 
     public String playerOneId; // Player one name
-    public ArrayList<LatLng> playerOneLocation;//distance that player One has been completed during the time
+    public ArrayList<RaceLocation> playerOneLocation;//distance that player One has been completed during the time
     public String playerTwoId; // PLayer two name
-    public ArrayList<LatLng> playerTwoLocation;//distance that player Two has been completed during the time
+    public ArrayList<RaceLocation> playerTwoLocation;//distance that player Two has been completed and system time
 
 
 
@@ -47,8 +47,8 @@ public class Game implements Serializable {
                 Boolean joinAble,
                 String playerOneId,
                 String playerTwoId,
-                ArrayList<LatLng> playerOneLocation,
-                ArrayList<LatLng> playerTwoLocation){
+                ArrayList<RaceLocation> playerOneLocation,
+                ArrayList<RaceLocation> playerTwoLocation){
 
         this.isPrivate = isPrivate;
         this.ID = ID;
@@ -69,13 +69,15 @@ public class Game implements Serializable {
         this.joinAble = x;
     }
 
-    public void addLocData(Boolean isPlayer1, LatLng loc) {
+    public void addLocData(Boolean isPlayer1, LatLng loc, double time) {
         if (isPlayer1) {
-            playerOneLocation.add(loc);
+            RaceLocation curRaceLoc = new RaceLocation(loc, time);
+            playerOneLocation.add(curRaceLoc);
             writeToDatabase("playerOneLocation");
         }
         else {
-            playerTwoLocation.add(loc);
+            RaceLocation curRaceLoc = new RaceLocation(loc, time);
+            playerTwoLocation.add(curRaceLoc);
             writeToDatabase("playerTwoLocation");
         }
     }
