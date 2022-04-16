@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.cs501_runbuddy.RunBuddyApplication;
 import com.example.cs501_runbuddy.SearchFragment;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,7 +55,7 @@ public class Game implements Serializable {
     }
 
 
-    public void addLocData(Boolean isPlayer1, LatLng loc, double time) {
+    public void addLocData(Boolean isPlayer1, LatLngDB loc, double time) {
         if (isPlayer1) {
             if(player1.playerLocation == null){
                 player1.playerLocation = new ArrayList<RaceLocation>();
@@ -121,10 +121,16 @@ public class Game implements Serializable {
                     for (DataSnapshot game : dataSnapshot.getChildren()) {
                         Game g = game.getValue(Game.class);
                         // do something with the individual "game"
-                        if (g.joinAble == true)
+                        if (g.joinAble == true && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(context).getId())) {
                             listener.joinGame(g);
-                        else
-                            Toast.makeText(context, "Couldn't join game, already full", Toast.LENGTH_SHORT).show();
+                        }else if(!g.joinAble){
+                            Toast.makeText(context, "Game Not Joinable", Toast.LENGTH_SHORT).show();
+                        }else if(g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(context).getId())){
+                            Toast.makeText(context, "You can't join your own game", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(context, "Couldn't join game", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }

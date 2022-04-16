@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +34,9 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
     private ArrayList<String> gameSummaries; //Arraylist that have the games info
     private ArrayList<String> gameIds;
     private SearchFragment.SearchGame listener;
+    private DatabaseReference gamesRef;
+    private ValueEventListener gameListener;
+    private ArrayList<Double> distFilters;
 
     public PublicGameListFragment() {
         // Required empty public constructor
@@ -50,7 +54,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         gameSummaries = new ArrayList<String>(){};
         gameIds = new ArrayList<String>(){};
 
-
+        gamesRef = RunBuddyApplication.getDatabase().getReference("games");
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -59,12 +63,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
             }
 
         });
-        return v;
-    }
 
-    @Override
-    public void searchGame(ArrayList<Double> d) {
-        ValueEventListener gameListener = new ValueEventListener() {
+        gameListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Game object and use the values to update the UI
@@ -73,7 +73,10 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                     // dataSnapshot is the "game" node with all children with id equal to joinId
                     for (DataSnapshot game : dataSnapshot.getChildren()) {
                         Game g = game.getValue(Game.class);
-                        if(!g.isPrivate && g.joinAble && d.contains(g.totalDistance)) {
+                        if(!g.isPrivate
+                                && g.joinAble
+                                && distFilters.contains(g.totalDistance)
+                                && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
                             String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
                             gameSummaries.add(summary);
                             gameIds.add(g.ID);
@@ -98,7 +101,12 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
             }
         };
 
-        DatabaseReference gamesRef = RunBuddyApplication.getDatabase().getReference("games");
+        return v;
+    }
+
+    @Override
+    public void searchGame(ArrayList<Double> d) {
+        distFilters = d;
         gamesRef.addValueEventListener(gameListener);
 
 
@@ -123,6 +131,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
     @Override
     public void onDetach() {
         super.onDetach();
+        gamesRef.removeEventListener(gameListener);
         listener = null;
     }
 

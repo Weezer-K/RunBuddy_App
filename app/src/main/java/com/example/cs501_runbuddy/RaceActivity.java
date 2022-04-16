@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.example.cs501_runbuddy.models.LatLngDB;
 import com.fitbit.api.loaders.ResourceLoaderResult;
 import com.fitbit.api.models.User;
 import com.fitbit.api.models.UserContainer;
@@ -48,7 +49,6 @@ import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 //import androidx.loader.app.LoaderManager;
 //import androidx.loader.content.Loader;
 
@@ -347,7 +347,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 double curTime = Instant.now().toEpochMilli();
-                game.addLocData(isPlayer1, currentLocation, curTime);
+                LatLngDB latLngDB = new LatLngDB(currentLocation.latitude, currentLocation.longitude);
+                game.addLocData(isPlayer1, latLngDB, curTime);
             }
 
             //Clear all markers and polylines from google map
