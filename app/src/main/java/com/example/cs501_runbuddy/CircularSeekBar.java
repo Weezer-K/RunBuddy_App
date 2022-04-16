@@ -78,6 +78,8 @@ public class CircularSeekBar extends View {
 	protected static final boolean DEFAULT_MOVE_OUTSIDE_CIRCLE = false;
 	protected static final boolean DEFAULT_LOCK_ENABLED = true;
 
+	public int mainColor;
+
 	/**
 	 * {@code Paint} instance used to draw the inactive circle.
 	 */
@@ -1071,6 +1073,11 @@ public class CircularSeekBar extends View {
 	 */
 	public boolean getIsTouchEnabled() {
 		return isTouchEnabled;
+	}
+
+	public void setMainColor(int color){
+		mainColor = color;
+
 	}
 
 }

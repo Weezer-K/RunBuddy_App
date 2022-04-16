@@ -94,6 +94,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private CircularSeekBar otherPlayerTrack;
     private Button quitButton;
 
+    private TextView gap;
+
     private SpotifyFragment spotifyApp;
 
     // Variable necessary for calculating running data
@@ -131,6 +133,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         localPlayerTrack = (CircularSeekBar) findViewById(R.id.localPlayerTrack);
         otherPlayerTrack = (CircularSeekBar) findViewById(R.id.otherPlayerTrack);
         quitButton = (Button) findViewById(R.id.quitButton);
+        gap = (TextView) findViewById(R.id.distancebetween);
 
         totalDistance = 0;
         totalDistanceOtherPlayer = 0;
@@ -232,6 +235,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         //Initalize player1Track
         localPlayerTrack.setClickable(false);
         otherPlayerTrack.setClickable(false);
+        localPlayerTrack.setMainColor(Color.RED);
+        otherPlayerTrack.setMainColor(Color.BLUE);
         makeTrack(localPlayerTrack, Color.RED);
         makeTrack(otherPlayerTrack, Color.BLUE);
 
@@ -274,12 +279,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         totalDistanceOtherPlayer = 0;
                         stopLocationUpdates();
                     }else {
-                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         if(totalDistanceOtherPlayer > totalDistance){
-                            playerAhead(otherPlayerTrack, localPlayerTrack);
+                            playerAhead(localPlayerTrack, otherPlayerTrack );
                         }else{
-                            playerAhead(localPlayerTrack, otherPlayerTrack);
+                            playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
+                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                     }
                     currentLocationOtherPlayer = r.latLng;
                 }
@@ -333,7 +338,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         circ.setPointerAlphaOnTouch(0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             circ.setOutlineAmbientShadowColor(Color.TRANSPARENT);
-            circ.setOutlineSpotShadowColor(Color.TRANSPARENT);
+            circ.setOutlineSpotShadowColor(color);
             circ.setBackgroundColor(Color.TRANSPARENT);
         }
         circ.setMax(maxDistance);
@@ -459,6 +464,24 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     totalDistance = 0;
                     stopLocationUpdates();
                 }else {
+                    double between = Math.abs(totalDistance - totalDistanceOtherPlayer);
+                    String milesGap = new DecimalFormat("#.##").format(between);
+                    String metersGap = new DecimalFormat("#.##").format(between*1609.34);
+                    if(totalDistance >= totalDistanceOtherPlayer){
+                        if(Math.abs(between) < 0.5){
+                            gap.setText(metersGap + " meters ahead");
+                        }else{
+                            gap.setText(milesGap + " miles ahead");
+                        }
+
+                    }else{
+                        if(Math.abs(between) < 0.5){
+                            gap.setText(metersGap + " meters behind");
+                        }else{
+                            gap.setText(milesGap + " miles behind");
+                        }
+
+                    }
                     localPlayerTrack.setProgress((int) (totalDistance * 100));
                 }
 
@@ -608,11 +631,15 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
 
     public void playerAhead(CircularSeekBar behind, CircularSeekBar ahead){
-        ahead.bringToFront();
+        behind.bringToFront();
+        behind.setCircleColor(Color.TRANSPARENT);
         //Track Black
-        ahead.setCircleColor(Color.TRANSPARENT);
-        ahead.setCircleProgressColor(behind.getPointerColor());
-        behind.setCircleColor(Color.BLACK);
+        ahead.setCircleColor(Color.BLACK);
+        ahead.setCircleProgressColor(ahead.mainColor);
+        behind.setClickable(false);
+        behind.setIsTouchEnabled(false);
+        ahead.setClickable(false);
+
     }
 
 
