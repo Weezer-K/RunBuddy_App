@@ -1,9 +1,16 @@
 package com.example.cs501_runbuddy.models;
 
+import android.widget.Toast;
+
 import com.example.cs501_runbuddy.RunBuddyApplication;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -48,5 +55,27 @@ public class User implements Serializable {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/" + userID, userValues);
         userRef.updateChildren(childUpdates);
+    }
+
+    public static String getUserNameFromID(String id) {
+
+        DatabaseReference usersRef = RunBuddyApplication.getDatabase().getReference("users");
+
+        Query query = usersRef.orderByChild("userID").equalTo(id);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    for (DataSnapshot user : dataSnapshot.getChildren()) {
+                        User u = user.getValue(User.class);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        return "";
     }
 }

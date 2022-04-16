@@ -1,6 +1,7 @@
 package com.example.cs501_runbuddy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -32,7 +33,7 @@ public class HistoryFragment extends Fragment {
     private TextView tvHistoryList;//A hint for how to get in this game
 
     private ArrayList<String> gameSummaries; //Arraylist that have the games info
-    private ArrayList<String> gameIds;
+    private ArrayList<Game> games;
 
     private DatabaseReference gamesRef;
     private ChildEventListener gameListener;
@@ -57,21 +58,29 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getActivity(), gameSummaries.get(i), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(),ResultActivity.class);
+                intent.putExtra("game", games.get(i));
+                startActivity(intent);
             }
 
         });
 
+        gameSummaries = new ArrayList<String>(){};
+        games = new ArrayList<Game>(){};
+
         String userID = GoogleSignIn.getLastSignedInAccount(getActivity()).getId();
         gamesRef = RunBuddyApplication.getDatabase().getReference("games");
+
+//        ||  (g.player2.playerId != null && userID.equals(g.player2.playerId)
 
         gameListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
-                if( userID.equals(g.player1.playerId)  ||  userID.equals(g.player2.playerId) ) {
+                if( userID.equals(g.player1.playerId) || (g.player2 != null && userID.equals(g.player2.playerId) )) {
                     String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
                     gameSummaries.add(summary);
-                    gameIds.add(g.ID);
+                    games.add(g);
                     ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
                     HistoryList.setAdapter(arrayAdapter);
                 }
@@ -98,6 +107,7 @@ public class HistoryFragment extends Fragment {
             }
         };
 
+        gamesRef.addChildEventListener(gameListener);
 
         return v;
     }
@@ -105,7 +115,6 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        gamesRef.addChildEventListener(gameListener);
     }
 
     @Override
