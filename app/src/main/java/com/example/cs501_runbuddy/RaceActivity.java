@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.LatLngDB;
+import com.example.cs501_runbuddy.models.RaceLocation;
 import com.fitbit.api.loaders.ResourceLoaderResult;
 import com.fitbit.api.models.User;
 import com.fitbit.api.models.UserContainer;
@@ -44,6 +45,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -85,7 +90,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private Button spotifyButton;
     private boolean isSpotifyOnScreen = false;
     private Button mapButton;
-    private CircularSeekBar player1Track;
+    private CircularSeekBar localPlayerTrack;
+    private CircularSeekBar otherPlayerTrack;
     private Button quitButton;
 
     private SpotifyFragment spotifyApp;
@@ -94,12 +100,18 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private Instant startTime;
     private double totalDistance;
 
+    private LatLngDB currentLocationOtherPlayer;
+
+    private double totalDistanceOtherPlayer;
+
+
     // Used to indicate if timer is on or off
     private boolean timerOn = true;
 
     private int maxDistance; //divide by 100 to get distance in miles
 
-
+    private DatabaseReference otherPlayerRef;
+    private ChildEventListener otherPlayerListener;
 
     //1 used to set up the UI elements and overall logic of the google map
     //And spotify
@@ -116,13 +128,16 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         tv_age = (TextView) findViewById(R.id.tv_age);
         spotifyButton = (Button) findViewById(R.id.spotify);
         mapButton = (Button) findViewById(R.id.googleMapsButton);
-        player1Track = (CircularSeekBar) findViewById(R.id.player1Track);
+        localPlayerTrack = (CircularSeekBar) findViewById(R.id.localPlayerTrack);
+        otherPlayerTrack = (CircularSeekBar) findViewById(R.id.otherPlayerTrack);
         quitButton = (Button) findViewById(R.id.quitButton);
+
+        totalDistance = 0;
+        totalDistanceOtherPlayer = 0;
 
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
         maxDistance = (int) (game.totalDistance * 100);
-
         spotifyButton.setBackgroundColor(Color.GREEN);
 
         spotifyApp = new SpotifyFragment();
@@ -215,10 +230,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         });
 
         //Initalize player1Track
-        player1Track.setClickable(false);
-        makeTrack(player1Track, Color.RED);
+        localPlayerTrack.setClickable(false);
+        otherPlayerTrack.setClickable(false);
+        makeTrack(localPlayerTrack, Color.RED);
+        makeTrack(otherPlayerTrack, Color.BLUE);
 
-        player1Track.setOnTouchListener(new View.OnTouchListener() {
+        localPlayerTrack.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return true;
@@ -228,13 +245,71 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                otherPlayerRef.removeEventListener(otherPlayerListener);
                 stopLocationUpdates();
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
             }
         });
+        boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+        if(isPlayer1){
+            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerLocation");
+        }else{
+            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerLocation");
+        }
+        otherPlayerListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                RaceLocation r = snapshot.getValue(RaceLocation.class);
+
+                if(currentLocationOtherPlayer == null){
+                    currentLocationOtherPlayer = r.latLng;
+                }else{
+                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.lat, currentLocationOtherPlayer.lng, r.latLng.lat, r.latLng.lng);
+                    if(totalDistanceOtherPlayer >= maxDistance/100){
+                        otherPlayerRef.removeEventListener(otherPlayerListener);
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                        totalDistance = 0;
+                        totalDistanceOtherPlayer = 0;
+                        stopLocationUpdates();
+                    }else {
+                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                        if(totalDistanceOtherPlayer > totalDistance){
+                            playerAhead(otherPlayerTrack, localPlayerTrack);
+                        }else{
+                            playerAhead(localPlayerTrack, otherPlayerTrack);
+                        }
+                    }
+                    currentLocationOtherPlayer = r.latLng;
+                }
 
 
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        otherPlayerRef.addChildEventListener(otherPlayerListener);
         //Used to update movement data based of a specific interval
         startLocationUpdates();
         //Creates a thread to make the timer change every second
@@ -245,15 +320,15 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
     public void makeTrack(CircularSeekBar circ, int color){
-        circ.initPaints(Color.RED);
+        circ.initPaints(color);
         circ.setProgress(0);
         //Sets entire track color
         circ.setCircleColor(Color.BLACK);
         //This is for inside circle so useless
         //circ.setCircleFillColor(Color.TRANSPARENT);
         //Set behind color
-        circ.setCircleProgressColor(Color.RED);
-        circ.setPointerHaloColor(Color.TRANSPARENT);
+        circ.setCircleProgressColor(color);
+        circ.setPointerHaloColor(color);
         circ.setPointerAlpha(0);
         circ.setPointerAlphaOnTouch(0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -372,13 +447,19 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 //and current location
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 totalDistance += distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude);
+                if(totalDistance >= totalDistanceOtherPlayer){
+                    playerAhead(otherPlayerTrack, localPlayerTrack);
+                }else{
+                    playerAhead(localPlayerTrack, otherPlayerTrack);
+                }
                 if(totalDistance >= maxDistance/100){
+                    otherPlayerRef.removeEventListener(otherPlayerListener);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     startActivity(intent);
                     totalDistance = 0;
                     stopLocationUpdates();
                 }else {
-                    player1Track.setProgress((int) (totalDistance * 100));
+                    localPlayerTrack.setProgress((int) (totalDistance * 100));
                 }
 
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -523,6 +604,15 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         tv_age.setText(age);
         //Avatar returns a url to an image so I made a helper class to set the imageView to it
         new DownloadImageTask((ImageView) findViewById(R.id.profilePicImageView)).execute(avatar);
+    }
+
+
+    public void playerAhead(CircularSeekBar behind, CircularSeekBar ahead){
+        ahead.bringToFront();
+        //Track Black
+        ahead.setCircleColor(Color.TRANSPARENT);
+        ahead.setCircleProgressColor(behind.getPointerColor());
+        behind.setCircleColor(Color.BLACK);
     }
 
 

@@ -1,10 +1,7 @@
 package com.example.cs501_runbuddy;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -35,8 +33,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
     private ArrayList<String> gameIds;
     private SearchFragment.SearchGame listener;
     private DatabaseReference gamesRef;
-    private ValueEventListener gameListener;
     private ArrayList<Double> distFilters;
+    private ChildEventListener gameListener;
 
     public PublicGameListFragment() {
         // Required empty public constructor
@@ -63,7 +61,78 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
             }
 
         });
+        gameListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Game g = snapshot.getValue(Game.class);
+                if(!g.isPrivate
+                        && g.joinAble
+                        && distFilters.contains(g.totalDistance)
+                        && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
+                    String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
+                    gameSummaries.add(summary);
+                    gameIds.add(g.ID);
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
+                    GameList.setAdapter(arrayAdapter);
+                }
+            }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Game g = snapshot.getValue(Game.class);
+                String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
+                gameSummaries.remove(summary);
+                gameIds.remove(g.ID);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
+                GameList.setAdapter(arrayAdapter);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+
+        /*
+        gamesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    for (DataSnapshot game : dataSnapshot.getChildren()) {
+                        Game g = game.getValue(Game.class);
+                        if(!g.isPrivate
+                                && g.joinAble
+                                && distFilters.contains(g.totalDistance)
+                                && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
+                            String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
+                            gameSummaries.add(summary);
+                            gameIds.add(g.ID);
+                        }
+
+                    }
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
+                    GameList.setAdapter(arrayAdapter);
+                    gamesRef.addChildEventListener(gameListener2);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+*/
+        /*
         gameListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,14 +169,14 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         };
-
+*/
         return v;
     }
 
     @Override
     public void searchGame(ArrayList<Double> d) {
         distFilters = d;
-        gamesRef.addValueEventListener(gameListener);
+        gamesRef.addChildEventListener(gameListener);
 
 
     }

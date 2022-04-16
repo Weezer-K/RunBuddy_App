@@ -7,7 +7,28 @@
     tools:context=".RaceActivity">
 
     <com.example.cs501_runbuddy.CircularSeekBar
-        android:id="@+id/player1Track"
+        android:id="@+id/localPlayerTrack"
+        android:layout_width="match_parent"
+        android:layout_height="316dp"
+        android:thumbTint="@color/white"
+        app:circle_x_radius="600dp"
+        app:circle_y_radius="100dp"
+        app:end_angle="360"
+        app:layout_constraintBottom_toBottomOf="@+id/mapAPI"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maintain_equal_circle="false"
+        app:max="100"
+        app:pointer_alpha_ontouch="100"
+        app:pointer_color="#0174DF"
+        app:pointer_halo_color="#880174DF"
+        app:progress="25"
+        app:start_angle="0"
+        app:use_custom_radii="true" />
+
+    <com.example.cs501_runbuddy.CircularSeekBar
+        android:id="@+id/otherPlayerTrack"
         android:layout_width="match_parent"
         android:layout_height="316dp"
         android:thumbTint="@color/white"
