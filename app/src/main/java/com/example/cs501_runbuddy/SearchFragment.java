@@ -8,11 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
+
+import java.util.ArrayList;
 
 
 public class SearchFragment extends Fragment {
@@ -25,6 +28,8 @@ public class SearchFragment extends Fragment {
     private Button SBIbtn;
     private EditText edtRoomID;
 
+    private ArrayList<Double> distFilters;
+
     private SearchGame listener;
     public SearchFragment() {
         // Required empty public constructor
@@ -32,7 +37,7 @@ public class SearchFragment extends Fragment {
 
 
     public interface SearchGame{
-        void searchGame();
+        void searchGame(ArrayList<Double> distFilter);
         void joinGame(Game game);
     }
 
@@ -51,39 +56,32 @@ public class SearchFragment extends Fragment {
 
         mile1Box.setChecked(true);
 
-        //make user only choose one certain mile game
-        mile1Box.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mile1Box.setChecked(true);
-                mile5Box.setChecked(false);
-                mile10Box.setChecked(false);
+        distFilters = new ArrayList<Double>();
 
-            }
-        });
-        mile5Box.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mile1Box.setChecked(false);
-                mile5Box.setChecked(true);
-                mile10Box.setChecked(false);
-
-            }
-        });
-        mile10Box.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mile1Box.setChecked(false);
-                mile5Box.setChecked(false);
-                mile10Box.setChecked(true);
-            }
-        });
 
         // Public Search Button and its corresponding reaction
         RSbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.searchGame();
+                if(mile1Box.isChecked()){
+                    distFilters.add(1.0);
+                }
+
+                if(mile5Box.isChecked()){
+                    distFilters.add(5.0);
+                }
+
+                if(mile10Box.isChecked()){
+                    distFilters.add(10.0);
+                }
+
+                if(distFilters.size() == 0){
+                    Toast.makeText(getActivity(), "Please select a race distance", Toast.LENGTH_SHORT).show();
+                }else{
+                    listener.searchGame(distFilters);
+                }
+
+
             }
         });
 
@@ -117,4 +115,5 @@ public class SearchFragment extends Fragment {
         super.onDetach();
         listener = null;
     }
+
 }

@@ -26,12 +26,9 @@ public class Game implements Serializable {
     public Boolean isPrivate;//private or public
     public Boolean joinAble;//Is the game ready to be searchable
     public Double totalDistance;//mile for this game
+    public RacePlayer player1;
+    public RacePlayer player2;
 
-
-    public String playerOneId; // Player one name
-    public ArrayList<RaceLocation> playerOneLocation;//distance that player One has been completed during the time
-    public String playerTwoId; // PLayer two name
-    public ArrayList<RaceLocation> playerTwoLocation;//distance that player Two has been completed and system time
 
 
 
@@ -45,56 +42,48 @@ public class Game implements Serializable {
                 Boolean isPrivate,
                 Double totalDistance,
                 Boolean joinAble,
-                String playerOneId,
-                String playerTwoId,
-                ArrayList<RaceLocation> playerOneLocation,
-                ArrayList<RaceLocation> playerTwoLocation){
+                RacePlayer player1,
+                RacePlayer player2){
 
         this.isPrivate = isPrivate;
         this.ID = ID;
         this.joinAble = joinAble;
         this.totalDistance = totalDistance;
-        this.playerOneId = playerOneId;
-        this.playerTwoId = playerTwoId;
-        this.playerOneLocation = playerOneLocation;
-        this.playerTwoLocation = playerTwoLocation;
+        this.player1 = player1;
+        this.player2 = player2;
 
     }
 
-    private String getID(){
-        return this.ID;
-    }
-
-    public void setJoinAble(boolean x){
-        this.joinAble = x;
-    }
 
     public void addLocData(Boolean isPlayer1, LatLng loc, double time) {
         if (isPlayer1) {
+            if(player1.playerLocation == null){
+                player1.playerLocation = new ArrayList<RaceLocation>();
+            }
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
-            playerOneLocation.add(curRaceLoc);
-            writeToDatabase("playerOneLocation");
+            player1.playerLocation.add(curRaceLoc);
+            writeToDatabase("player1/playerLocation");
         }
         else {
+            if(player2.playerLocation == null){
+                player2.playerLocation = new ArrayList<RaceLocation>();
+            }
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
-            playerTwoLocation.add(curRaceLoc);
-            writeToDatabase("playerTwoLocation");
+            player2.playerLocation.add(curRaceLoc);
+            writeToDatabase("player2/playerLocation");
+
         }
     }
 
     @Exclude
     public Map<String, Object> toMap() {
-
         HashMap<String, Object> result = new HashMap<>();
         result.put("ID", ID);
         result.put("isPrivate", isPrivate);
         result.put("joinAble", joinAble);
         result.put("totalDistance", totalDistance);
-        result.put("playerOneId", playerOneId);
-        result.put("playerTwoId", playerTwoId);
-        result.put("playerOneLocation", playerOneLocation);
-        result.put("playerTwoLocation", playerTwoLocation);
-
+        result.put("player1", player1);
+        result.put("player2", player2);
         return result;
     }
 
@@ -104,8 +93,15 @@ public class Game implements Serializable {
 
         Map<String, Object> gameValues = this.toMap();
         //Update database to have proper player locations
-        if (field != "") {
-            gameRef.child(ID).child(field).setValue(gameValues.get(field));
+        if (field != "" && field.contains("playerLocation")) {
+            if(field.contains("player1")){
+                Map<String, Object> player1Values = player1.toMap();
+                gameRef.child(ID).child(field).setValue(player1Values.get("playerLocation"));
+            }else{
+                Map<String, Object> player2Values = player2.toMap();
+                gameRef.child(ID).child(field).setValue(player2Values.get("playerLocation"));
+            }
+
         }else{
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("/" + ID, gameValues);

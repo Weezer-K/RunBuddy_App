@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.RaceLocation;
+import com.example.cs501_runbuddy.models.RacePlayer;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -51,11 +52,13 @@ public class LobbyFragment extends Fragment {
 
     public void createGame(String ID, boolean isPrivate, double totalDistance){
 
-        ArrayList<RaceLocation> locs1 = new ArrayList<>();
-        ArrayList<RaceLocation> locs2 = new ArrayList<>();
+
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();
+
+        RacePlayer player1 = new RacePlayer(player1Id, new ArrayList<RaceLocation>(), false);
+        RacePlayer player2 = new RacePlayer();
 
 
 
@@ -65,10 +68,8 @@ public class LobbyFragment extends Fragment {
                 isPrivate,
                 totalDistance,
                 true,
-                player1Id,
-                "",
-                locs1,
-                locs2);
+                player1,
+                player2);
 
         game.writeToDatabase("");
 
@@ -92,14 +93,13 @@ public class LobbyFragment extends Fragment {
     public void joinGame(Game game) {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
 
-        game.playerTwoId = acct.getId();
+        game.player2 = new RacePlayer(acct.getId(), new ArrayList<RaceLocation>(), false);
         game.joinAble = false;
-        game.playerTwoLocation = new ArrayList<>();
 
         game.writeToDatabase("");
 
         LIDtv.setText("Game Lobby: " + game.ID);
-        player1tv.setText(game.playerOneId);
+        player1tv.setText(game.player1.playerId);
         player2tv.setText(acct.getGivenName());
 
         startBtn.setOnClickListener(new View.OnClickListener() {

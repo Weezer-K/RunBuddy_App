@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -12,6 +14,8 @@ import androidx.fragment.app.FragmentManager;
 import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame{
 
@@ -21,6 +25,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     private HistoryFragment HistoryFragment;
     private PublicGameListFragment PublicGameListFragment;
     private FragmentManager fm;
+    public ArrayList<Double> distFilters;
 
 
     @Override
@@ -35,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         HistoryFragment = new HistoryFragment();
         PublicGameListFragment = new PublicGameListFragment();
 
+        distFilters = new ArrayList<Double>();
         fm = getSupportFragmentManager();
 
         fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
@@ -87,13 +93,40 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
 
 
     @Override
-    public void searchGame() {
+    public void searchGame(ArrayList<Double> d) {
         fm.beginTransaction().replace(R.id.homeFragment, PublicGameListFragment).commitNow();
+        PublicGameListFragment.searchGame(d);
     }
+
 
     @Override
     public void joinGame(Game game) {
         fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
         LobbyFragment.joinGame(game);
+    }
+
+    public void onClick(View view){
+        CheckBox c = (CheckBox) view;
+        c.isChecked();
+        String temp = c.getText().toString();
+        if(!c.isChecked()) {
+            if (temp.equals("1 mile")) {
+                distFilters.add(1.0);
+            } else if (temp.equals("5 miles")) {
+                distFilters.add(5.0);
+            } else if (temp.equals("10 miles")) {
+                distFilters.add(10.0);
+            }
+        }else{
+            if (temp.equals("1 mile")) {
+                distFilters.remove(1.0);
+            } else if (temp.equals("5 miles")) {
+                distFilters.remove(5.0);
+            } else if (temp.equals("10 miles")) {
+                distFilters.remove(10.0);
+            }
+        }
+
+
     }
 }

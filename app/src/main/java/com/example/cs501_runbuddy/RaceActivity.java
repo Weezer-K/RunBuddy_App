@@ -343,7 +343,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
 
-            boolean isPlayer1 = (game.playerOneId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+            boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 double curTime = Instant.now().toEpochMilli();
