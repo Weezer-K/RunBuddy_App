@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -91,10 +92,15 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Todo: don't let him start unless player 2 join in
-                Intent intent = new Intent(getActivity(),RaceActivity.class);
-                game.player1.playerStarted = true;
-                intent.putExtra("game", game);
-                startActivity(intent);
+                if (game.joinAble) {
+                    Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getActivity(),RaceActivity.class);
+                    game.player1.playerStarted = true;
+                    game.writeToDatabase("player1");
+                    intent.putExtra("game", game);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -124,30 +130,31 @@ public class LobbyFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(),RaceActivity.class);
                 game.player2.playerStarted = true;
+                game.writeToDatabase("player2");
                 intent.putExtra("game", game);
                 startActivity(intent);
             }
         });
     }
 
-    public void rejoinGame(Game game){
-
+    public void rejoinGame(Game g){
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String pId = acct.getId();
 
-
+        game = g;
 
         LIDtv.setText("Game Lobby: " + game.ID);
 
         if(!game.joinAble && pId.equals(game.player1.playerId)){
+            player1tv.setText(acct.getGivenName());
             User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
                 public void onCallback(String value) {
                     player2tv.setText(value);
                 }
             });
-        }else if(pId.equals(game.player1.playerId)){
+        } else if (pId.equals(game.player1.playerId)){
                 player1tv.setText(acct.getGivenName());
                 player2tv.setText("Not Yet Joined");
                 initializePlayer2Ref();
@@ -168,9 +175,19 @@ public class LobbyFragment extends Fragment {
             public void onClick(View view) {
                 //Todo: don't let him start unless player 2 join in
                 Intent intent = new Intent(getActivity(),RaceActivity.class);
-                game.player1.playerStarted = true;
-                intent.putExtra("game", game);
-                startActivity(intent);
+                if(game.joinAble){
+                    Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (pId.equals(game.player1.playerId)) {
+                        game.player1.playerStarted = true;
+                        game.writeToDatabase("player1");
+                    } else {
+                        game.player2.playerStarted = true;
+                        game.writeToDatabase("player2");
+                    }
+                    intent.putExtra("game", game);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -187,6 +204,7 @@ public class LobbyFragment extends Fragment {
                         @Override
                         public void onCallback(String value) {
                             player2tv.setText(value);
+                            game.joinAble = false;
                         }
                     });
                 }

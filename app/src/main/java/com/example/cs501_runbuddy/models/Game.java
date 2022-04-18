@@ -95,16 +95,22 @@ public class Game implements Serializable {
 
         Map<String, Object> gameValues = this.toMap();
         //Update database to have proper player locations
-        if (field != "" && field.contains("playerLocation")) {
+        if (field != "" && field.contains("player")) {
             if(field.contains("player1")){
                 Map<String, Object> player1Values = player1.toMap();
-                gameRef.child(ID).child(field).setValue(player1Values.get("playerLocation"));
+                if (field.contains("playerLocation"))
+                    gameRef.child(ID).child(field).setValue(player1Values.get("playerLocation"));
+                else
+                    gameRef.child(ID).child(field).setValue(player1Values);
             }else{
                 Map<String, Object> player2Values = player2.toMap();
-                gameRef.child(ID).child(field).setValue(player2Values.get("playerLocation"));
+                if (field.contains("playerLocation"))
+                    gameRef.child(ID).child(field).setValue(player2Values.get("playerLocation"));
+                else
+                    gameRef.child(ID).child(field).setValue(player2Values);
             }
 
-        }else{
+        } else {
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("/" + ID, gameValues);
             gameRef.updateChildren(childUpdates);
