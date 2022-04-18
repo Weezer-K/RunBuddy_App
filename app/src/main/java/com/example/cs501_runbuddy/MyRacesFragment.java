@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -129,28 +130,29 @@ public class MyRacesFragment extends Fragment {
         String userID = GoogleSignIn.getLastSignedInAccount(getActivity()).getId();
         gamesRef = RunBuddyApplication.getDatabase().getReference("games");
 
-//        ||  (g.player2.playerId != null && userID.equals(g.player2.playerId)
-
         gameListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
                 if( userID.equals(g.player1.playerId) || (g.player2 != null && userID.equals(g.player2.playerId) )) {
-                    String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
+                    User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
+                        @Override
+                        public void onCallback(String value) {
+                            String summary = "Game: " + g.ID + ", Host: " + value + ", Distance: " + g.totalDistance;
 
-
-
-                    if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
-                        activeSummaries.add(summary);
-                        activeRaces.add(g);
-                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, activeSummaries);
-                        ActiveRaceList.setAdapter(arrayAdapter);
-                    }else{
-                        pastSummaries.add(summary);
-                        pastRaces.add(g);
-                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 , pastSummaries);
-                        HistoryList.setAdapter(arrayAdapter);
-                    }
+                            if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
+                                activeSummaries.add(summary);
+                                activeRaces.add(g);
+                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, activeSummaries);
+                                ActiveRaceList.setAdapter(arrayAdapter);
+                            }else{
+                                pastSummaries.add(summary);
+                                pastRaces.add(g);
+                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 , pastSummaries);
+                                HistoryList.setAdapter(arrayAdapter);
+                            }
+                        }
+                    });
                 }
 
             }
