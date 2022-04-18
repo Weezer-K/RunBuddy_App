@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.example.cs501_runbuddy.models.User;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -33,9 +35,23 @@ public class ResultActivity extends AppCompatActivity {
         btnDetail = findViewById(R.id.btnDetail);
         btnBackHome = findViewById(R.id.btnBackHome);
 
-        tvResult.setText(game.ID);
-        tvPlayer1.setText(game.player1.playerId);
-        tvPlayer2.setText(game.player2.playerId);
+        tvResult.setText("Game ID: " + game.ID);
+        tvPlayer1.setText("Player 1: " + game.player1.playerId);
+        tvPlayer2.setText("Player 2: " + game.player2.playerId);
+
+        User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                tvPlayer1.setText("Player 1: " + value);
+            }
+        });
+
+        User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                tvPlayer2.setText("Player 2: " + value);
+            }
+        });
 
 
 
