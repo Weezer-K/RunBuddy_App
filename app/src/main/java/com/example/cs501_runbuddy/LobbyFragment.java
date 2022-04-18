@@ -80,11 +80,12 @@ public class LobbyFragment extends Fragment {
                 player2);
 
         game.writeToDatabase("");
-        initializePlayer2Ref();
 
         LIDtv.setText("Game Lobby: " + ID);
         player1tv.setText(acct.getGivenName());
         player2tv.setText("Not Yet Joined");
+
+        initializePlayer2Ref();
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +124,51 @@ public class LobbyFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(),RaceActivity.class);
                 game.player2.playerStarted = true;
+                intent.putExtra("game", game);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void rejoinGame(Game game){
+
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        String pId = acct.getId();
+
+
+
+        LIDtv.setText("Game Lobby: " + game.ID);
+
+        if(!game.joinAble && pId.equals(game.player1.playerId)){
+            User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
+                @Override
+                public void onCallback(String value) {
+                    player2tv.setText(value);
+                }
+            });
+        }else if(pId.equals(game.player1.playerId)){
+                player1tv.setText(acct.getGivenName());
+                player2tv.setText("Not Yet Joined");
+                initializePlayer2Ref();
+        }
+        else{
+            player2tv.setText(acct.getGivenName());
+            User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
+                @Override
+                public void onCallback(String value) {
+                    player1tv.setText(value);
+                }
+            });
+        }
+
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Todo: don't let him start unless player 2 join in
+                Intent intent = new Intent(getActivity(),RaceActivity.class);
+                game.player1.playerStarted = true;
                 intent.putExtra("game", game);
                 startActivity(intent);
             }

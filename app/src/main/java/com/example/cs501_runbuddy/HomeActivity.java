@@ -17,7 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame{
+public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame, MyRacesFragment.BackToLobby{
 
     private SearchFragment SearchFragment;
     private CreateFragment CreateFragment;
@@ -128,5 +128,11 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         }
 
 
+    }
+
+    @Override
+    public void backGame(Game game) {
+        fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
+        LobbyFragment.rejoinGame(game);
     }
 }

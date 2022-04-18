@@ -45,10 +45,15 @@ public class MyRacesFragment extends Fragment {
     private DatabaseReference gamesRef;
     private ChildEventListener gameListener;
 
+    private BackToLobby listener;
+
     public MyRacesFragment() {
         // Required empty public constructor
     }
 
+    public interface BackToLobby{
+        void backGame(Game game);
+    }
 
 
     @Override
@@ -93,15 +98,17 @@ public class MyRacesFragment extends Fragment {
             }
         });
 
+
+
         ActiveRaceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), activeSummaries.get(i), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(),LobbyFragment.class);
-                intent.putExtra("game", activeRaces.get(i));
-                startActivity(intent);
+                listener.backGame(activeRaces.get(i));
             }
         });
+
+
+
         HistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -177,11 +184,17 @@ public class MyRacesFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        if(context instanceof MyRacesFragment.BackToLobby){
+            listener = (MyRacesFragment.BackToLobby) context;
+        }else{
+            throw new RuntimeException(context.toString() + "must implement BackToLobby");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
         gamesRef.removeEventListener(gameListener);
     }
 }
