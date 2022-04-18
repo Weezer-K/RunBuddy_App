@@ -16,6 +16,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +35,7 @@ public class Game implements Serializable {
     public RacePlayer player2;
 
     public String winner; // Determine who wins
-    public String date; // The date where the game happened, 4/18/2022
-
-
+    public Long date; // The date where the game happened, 4/18/2022
 
     //default initiate, which should never be called
     public Game(){
@@ -45,7 +48,9 @@ public class Game implements Serializable {
                 Double totalDistance,
                 Boolean joinAble,
                 RacePlayer player1,
-                RacePlayer player2){
+                RacePlayer player2,
+                String winner,
+                Long date){
 
         this.isPrivate = isPrivate;
         this.ID = ID;
@@ -53,7 +58,8 @@ public class Game implements Serializable {
         this.totalDistance = totalDistance;
         this.player1 = player1;
         this.player2 = player2;
-
+        this.winner = winner;
+        this.date = date;
     }
 
 
@@ -86,6 +92,8 @@ public class Game implements Serializable {
         result.put("totalDistance", totalDistance);
         result.put("player1", player1);
         result.put("player2", player2);
+        result.put("winner", winner);
+        result.put("date", date);
         return result;
     }
 
@@ -132,7 +140,7 @@ public class Game implements Serializable {
                         if (g.joinAble == true && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(context).getId())) {
                             listener.joinGame(g);
                         }else if(!g.joinAble){
-                            Toast.makeText(context, "Game Not Joinable", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "You cannot join a full game", Toast.LENGTH_SHORT).show();
                         }else if(g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(context).getId())){
                             Toast.makeText(context, "You can't join your own game", Toast.LENGTH_SHORT).show();
                         }
@@ -146,5 +154,19 @@ public class Game implements Serializable {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    public String getStringDate() {
+        LocalDateTime date = null;
+        DateTimeFormatter formatter = null;
+        String formatDate = "";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            date = Instant.ofEpochSecond(this.date).atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+            formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            formatDate = date.format(formatter);
+        }
+
+        return formatDate;
     }
 }

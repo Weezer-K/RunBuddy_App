@@ -138,7 +138,7 @@ public class MyRacesFragment extends Fragment {
                     User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
                         @Override
                         public void onCallback(String value) {
-                            String summary = "Game: " + g.ID + ", Host: " + value + ", Distance: " + g.totalDistance;
+                            String summary = "Game: " + g.ID + ", Date: " + g.getStringDate() + ", Host: " + value + ", Distance: " + g.totalDistance;
 
                             if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
                                 activeSummaries.add(summary);

@@ -1,6 +1,7 @@
 package com.example.cs501_runbuddy;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 
@@ -72,13 +77,20 @@ public class LobbyFragment extends Fragment {
         RacePlayer player1 = new RacePlayer(player1Id, new ArrayList<RaceLocation>(), false, false);
         RacePlayer player2 = new RacePlayer();
 
+        Long date = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            date = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        }
+
         //Initialize the gaming object
         game = new Game(ID,
                 isPrivate,
                 totalDistance,
                 true,
                 player1,
-                player2);
+                player2,
+                null,
+                date);
 
         game.writeToDatabase("");
 
@@ -91,7 +103,6 @@ public class LobbyFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Todo: don't let him start unless player 2 join in
                 if (game.joinAble) {
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
                 } else {
