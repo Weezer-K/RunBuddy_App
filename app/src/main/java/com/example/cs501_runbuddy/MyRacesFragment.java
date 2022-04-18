@@ -2,20 +2,21 @@ package com.example.cs501_runbuddy;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -30,10 +31,16 @@ import java.util.ArrayList;
 public class MyRacesFragment extends Fragment {
 
     private ListView HistoryList;//The ListView for public games
+    private ListView ActiveRaceList;
     private TextView tvHistoryList;//A hint for how to get in this game
+    private Button activeRaceButton;
+    private Button pastRaceButton;
 
-    private ArrayList<String> gameSummaries; //Arraylist that have the games info
-    private ArrayList<Game> games;
+    private ArrayList<String> activeSummaries; //Arraylist that have the games info
+    private ArrayList<Game> activeRaces;
+
+    private ArrayList<String> pastSummaries; //Arraylist that have the games info
+    private ArrayList<Game> pastRaces;
 
     private DatabaseReference gamesRef;
     private ChildEventListener gameListener;
@@ -52,21 +59,62 @@ public class MyRacesFragment extends Fragment {
 
         HistoryList = v.findViewById(R.id.HistoryList);
         tvHistoryList = v.findViewById(R.id.tvHistoryList);
+        ActiveRaceList = v.findViewById(R.id.ActiveRacesList);
+
+        activeRaceButton = (Button) v.findViewById(R.id.myActiveRaceButton);
+        pastRaceButton = (Button) v.findViewById(R.id.pastRacesButton);
+
+        activeRaceButton.setBackgroundColor(Color.TRANSPARENT);
+        pastRaceButton.setBackgroundColor(Color.TRANSPARENT);
+
+        ActiveRaceList.setVisibility(View.INVISIBLE);
+
+        pastRaceButton.setTextColor(Color.GREEN);
+        activeRaceButton.setTextColor(Color.GRAY);
 
 
+        pastRaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pastRaceButton.setTextColor(Color.GREEN);
+                activeRaceButton.setTextColor(Color.GRAY);
+                ActiveRaceList.setVisibility(View.INVISIBLE);
+                HistoryList.setVisibility(View.VISIBLE);
+            }
+        });
+
+        activeRaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pastRaceButton.setTextColor(Color.GRAY);
+                activeRaceButton.setTextColor(Color.GREEN);
+                ActiveRaceList.setVisibility(View.VISIBLE);
+                HistoryList.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        ActiveRaceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity(), activeSummaries.get(i), Toast.LENGTH_SHORT).show();
+            }
+        });
         HistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), gameSummaries.get(i), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), pastSummaries.get(i), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(),ResultActivity.class);
-                intent.putExtra("game", games.get(i));
+                intent.putExtra("game", pastRaces.get(i));
                 startActivity(intent);
             }
 
         });
 
-        gameSummaries = new ArrayList<String>(){};
-        games = new ArrayList<Game>(){};
+        pastSummaries = new ArrayList<String>(){};
+        pastRaces = new ArrayList<Game>(){};
+
+        activeSummaries = new ArrayList<String>(){};
+        activeRaces = new ArrayList<Game>(){};
 
         String userID = GoogleSignIn.getLastSignedInAccount(getActivity()).getId();
         gamesRef = RunBuddyApplication.getDatabase().getReference("games");
@@ -79,11 +127,22 @@ public class MyRacesFragment extends Fragment {
                 Game g = snapshot.getValue(Game.class);
                 if( userID.equals(g.player1.playerId) || (g.player2 != null && userID.equals(g.player2.playerId) )) {
                     String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
-                    gameSummaries.add(summary);
-                    games.add(g);
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
-                    HistoryList.setAdapter(arrayAdapter);
+
+
+
+                    if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
+                        activeSummaries.add(summary);
+                        activeRaces.add(g);
+                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, activeSummaries);
+                        ActiveRaceList.setAdapter(arrayAdapter);
+                    }else{
+                        pastSummaries.add(summary);
+                        pastRaces.add(g);
+                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 , pastSummaries);
+                        HistoryList.setAdapter(arrayAdapter);
+                    }
                 }
+
             }
 
             @Override
