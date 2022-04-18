@@ -4,7 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".RaceActivity">
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#174FC1"
+        android:textColorHighlight="#330707"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.cs501_runbuddy.CircularSeekBar
         android:id="@+id/localPlayerTrack"
@@ -53,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Gender:0"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,6 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pace: 0 mi/h"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_distance"
@@ -74,26 +88,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_distance"
         app:layout_constraintVertical_bias="0.157" />
 
-    <fragment
-        android:id="@+id/mapAPI"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="318dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.005">
-
-    </fragment>
-
     <TextView
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:text="Distance: 0 mi"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.061"
@@ -105,6 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Age:0"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_time"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +119,9 @@
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:shadowColor="#FFFFFF"
         android:text="Time: 00:00"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_pace"
@@ -138,41 +142,28 @@
         app:layout_constraintVertical_bias="0.846"
         tools:src="@tools:sample/avatars" />
 
-    <FrameLayout
-        android:id="@+id/spotifyUi"
-        android:layout_width="414dp"
-        android:layout_height="326dp"
-        app:layout_constraintBottom_toBottomOf="@+id/mapAPI"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/mapAPI"
-        app:layout_constraintTop_toTopOf="@+id/mapAPI"
-        tools:layout_margin="@layout/fragment_spotify">
-
-    </FrameLayout>
-
     <Button
         android:id="@+id/spotify"
-        android:layout_width="91dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="328dp"
+        android:layout_width="103dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="24dp"
         android:text="spotify"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/mapAPI"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/localPlayerTrack" />
 
     <Button
         android:id="@+id/googleMapsButton"
         android:layout_width="103dp"
         android:layout_height="42dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="80dp"
         android:text="Map"
-        app:layout_constraintBottom_toBottomOf="@+id/spotify"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.443"
-        app:layout_constraintStart_toEndOf="@+id/spotify"
-        app:layout_constraintTop_toTopOf="@+id/spotify"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.741"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spotify" />
 
     <Button
         android:id="@+id/quitButton"
@@ -194,6 +185,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/localPlayerTrack"
         app:layout_constraintTop_toTopOf="@+id/localPlayerTrack" />
+
+    <FrameLayout
+        android:id="@+id/spotifyUi"
+        android:layout_width="414dp"
+        android:layout_height="326dp"
+        app:layout_constraintBottom_toBottomOf="@+id/mapAPI"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/mapAPI"
+        app:layout_constraintTop_toTopOf="@+id/mapAPI"
+        tools:layout_margin="@layout/fragment_spotify">
+
+    </FrameLayout>
+
+    <fragment
+        android:id="@+id/mapAPI"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="318dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.005">
+
+    </fragment>
+
+    <TextView
+        android:id="@+id/localColorIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Local Player"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/onlineColorIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Online Player"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

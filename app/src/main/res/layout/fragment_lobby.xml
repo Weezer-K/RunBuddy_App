@@ -5,7 +5,7 @@
     android:id="@+id/LobbyFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LobbyFragment" >
+    tools:context=".LobbyFragment">
 
     <TextView
         android:id="@+id/LIDtv"
@@ -15,20 +15,18 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.118"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.154" />
 
     <TextView
         android:id="@+id/player1tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_width="176dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="60dp"
         android:text="Player One: XXX"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/LIDtv"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/LIDtv"
         app:layout_constraintTop_toBottomOf="@+id/LIDtv" />
 
@@ -36,11 +34,9 @@
         android:id="@+id/player2tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="80dp"
         android:text="Player Two: XXX"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/player1tv"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/player1tv"
         app:layout_constraintTop_toBottomOf="@+id/player1tv" />
 
@@ -51,8 +47,48 @@
         android:text="Start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintHorizontal_bias="0.869"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.562" />
+        app:layout_constraintTop_toBottomOf="@+id/player2Spinner"
+        app:layout_constraintVertical_bias="0.184" />
+
+    <Spinner
+        android:id="@+id/player1Spinner"
+        android:layout_width="128dp"
+        android:layout_height="33dp"
+        app:layout_constraintBottom_toBottomOf="@+id/player1tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.238"
+        app:layout_constraintStart_toEndOf="@+id/player1tv"
+        app:layout_constraintTop_toTopOf="@+id/player1tv"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/player2Spinner"
+        android:layout_width="128dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="@+id/player1Spinner"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/player1Spinner"
+        app:layout_constraintTop_toBottomOf="@+id/player1Spinner" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player One Color"
+        app:layout_constraintBottom_toTopOf="@+id/player1Spinner"
+        app:layout_constraintEnd_toEndOf="@+id/player1Spinner"
+        app:layout_constraintStart_toStartOf="@+id/player1Spinner" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player Two Color"
+        app:layout_constraintBottom_toTopOf="@+id/player2Spinner"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

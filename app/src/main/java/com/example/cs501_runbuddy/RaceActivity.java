@@ -88,11 +88,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_age;
     private ImageView profilePic;
     private Button spotifyButton;
-    private boolean isSpotifyOnScreen = false;
+    private boolean isSpotifyOnScreen;
     private Button mapButton;
     private CircularSeekBar localPlayerTrack;
     private CircularSeekBar otherPlayerTrack;
     private Button quitButton;
+
+    private TextView localColorIndicator;
+    private TextView onlineColorIndicator;
+    private String localPlayerName;
+    private String onlinePlayerName;
+
 
     private TextView gap;
 
@@ -115,6 +121,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private DatabaseReference otherPlayerRef;
     private ChildEventListener otherPlayerListener;
 
+    private int localColor;
+    private int onlineColor;
+
+    private boolean isPlayer1;
+
+
     //1 used to set up the UI elements and overall logic of the google map
     //And spotify
     @Override
@@ -129,19 +141,33 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         profilePic = (ImageView) findViewById(R.id.profilePicImageView);
         tv_age = (TextView) findViewById(R.id.tv_age);
         spotifyButton = (Button) findViewById(R.id.spotify);
+        spotifyButton.setBackgroundColor(Color.LTGRAY);
         mapButton = (Button) findViewById(R.id.googleMapsButton);
+        mapButton.setBackgroundColor(Color.LTGRAY);
         localPlayerTrack = (CircularSeekBar) findViewById(R.id.localPlayerTrack);
         otherPlayerTrack = (CircularSeekBar) findViewById(R.id.otherPlayerTrack);
         quitButton = (Button) findViewById(R.id.quitButton);
         gap = (TextView) findViewById(R.id.distancebetween);
+        localColorIndicator = (TextView) findViewById(R.id.localColorIndicator);
+        onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
 
+
+        isSpotifyOnScreen = false;
         totalDistance = 0;
         totalDistanceOtherPlayer = 0;
 
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
+        isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+        localColor = (Integer) getIntent().getExtras().get("localPlayerColor");
+        onlineColor = (Integer) getIntent().getExtras().get("onlinePlayerColor");
         maxDistance = (int) (game.totalDistance * 100);
-        spotifyButton.setBackgroundColor(Color.GREEN);
+
+        localColorIndicator.setTextColor(localColor);
+
+        onlineColorIndicator.setTextColor(onlineColor);
+
+
 
         spotifyApp = new SpotifyFragment();
 
@@ -196,18 +222,33 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             @Override
             public void onClick(View view) {
                 try{
-                    if (!isSpotifyOnScreen) {
+                    if(mapFragment.getView().getVisibility() == View.VISIBLE){
+                        mapFragment.getView().setVisibility(View.INVISIBLE);
+                        mapButton.setBackgroundColor(Color.LTGRAY);
+                    }
+                    if (!spotifyApp.isVisible()) {
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                                 .show(spotifyApp)
                                 .commit();
-                        isSpotifyOnScreen = true;
+                        spotifyButton.setBackgroundColor(Color.GREEN);
+                        gap.setVisibility(View.INVISIBLE);
+                        localPlayerTrack.setVisibility(View.INVISIBLE);
+                        otherPlayerTrack.setVisibility(View.INVISIBLE);
+                        localColorIndicator.setVisibility(View.INVISIBLE);
+                        onlineColorIndicator.setVisibility(View.INVISIBLE);
+
                     }else{
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                                 .hide(spotifyApp)
                                 .commit();
-                        isSpotifyOnScreen = false;
+                        spotifyButton.setBackgroundColor(Color.LTGRAY);
+                        gap.setVisibility(View.VISIBLE);
+                        localPlayerTrack.setVisibility(View.VISIBLE);
+                        otherPlayerTrack.setVisibility(View.VISIBLE);
+                        localColorIndicator.setVisibility(View.VISIBLE);
+                        onlineColorIndicator.setVisibility(View.VISIBLE);
                     }
                 }catch (Exception e){
                     Toast.makeText(RaceActivity.this, "Please make sure spotify is on in the background", Toast.LENGTH_SHORT).show();
@@ -223,11 +264,30 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(spotifyApp.isVisible()){
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                            .hide(spotifyApp)
+                            .commit();
+                    spotifyButton.setBackgroundColor(Color.LTGRAY);
+                }
                 if(mapFragment.getView().getVisibility() == View.INVISIBLE){
                     mapFragment.getView().setVisibility(View.VISIBLE);
                     mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
+                    mapButton.setBackgroundColor(Color.GREEN);
+                    gap.setVisibility(View.INVISIBLE);
+                    localPlayerTrack.setVisibility(View.INVISIBLE);
+                    otherPlayerTrack.setVisibility(View.INVISIBLE);
+                    localColorIndicator.setVisibility(View.INVISIBLE);
+                    onlineColorIndicator.setVisibility(View.INVISIBLE);
                 }else{
                     mapFragment.getView().setVisibility(View.INVISIBLE);
+                    mapButton.setBackgroundColor(Color.LTGRAY);
+                    gap.setVisibility(View.VISIBLE);
+                    localPlayerTrack.setVisibility(View.VISIBLE);
+                    otherPlayerTrack.setVisibility(View.VISIBLE);
+                    localColorIndicator.setVisibility(View.VISIBLE);
+                    onlineColorIndicator.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -235,10 +295,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         //Initalize player1Track
         localPlayerTrack.setClickable(false);
         otherPlayerTrack.setClickable(false);
-        localPlayerTrack.setMainColor(Color.RED);
-        otherPlayerTrack.setMainColor(Color.BLUE);
-        makeTrack(localPlayerTrack, Color.RED);
-        makeTrack(otherPlayerTrack, Color.BLUE);
+        localPlayerTrack.setMainColor(localColor);
+        otherPlayerTrack.setMainColor(onlineColor);
+        makeTrack(localPlayerTrack, localColor);
+        makeTrack(otherPlayerTrack, onlineColor);
 
         localPlayerTrack.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -256,7 +316,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 startActivity(intent);
             }
         });
-        boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
         if(isPlayer1){
             otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerLocation");
         }else{
@@ -313,6 +372,29 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
             }
         };
+
+        com.example.cs501_runbuddy.models.User.getUserNameFromID(game.player1.playerId, new com.example.cs501_runbuddy.models.User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                if(isPlayer1){
+                    localColorIndicator.setText(value);
+                }else{
+                    onlineColorIndicator.setText(value);
+                }
+            }
+        });
+
+        com.example.cs501_runbuddy.models.User.getUserNameFromID(game.player2.playerId, new com.example.cs501_runbuddy.models.User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                if(isPlayer1){
+                    onlineColorIndicator.setText(value);
+                }else{
+                    localColorIndicator.setText(value);
+                }
+            }
+        });
+
 
         otherPlayerRef.addChildEventListener(otherPlayerListener);
         //Used to update movement data based of a specific interval

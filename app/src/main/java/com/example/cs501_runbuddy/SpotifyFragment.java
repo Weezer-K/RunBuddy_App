@@ -1,12 +1,18 @@
 package com.example.cs501_runbuddy;
 
+import static com.example.cs501_runbuddy.R.drawable.repeat_off;
+import static com.example.cs501_runbuddy.R.drawable.repeat_playlist;
+import static com.example.cs501_runbuddy.R.drawable.repeat_song;
+import static com.example.cs501_runbuddy.R.drawable.shuffle_activated;
+import static com.example.cs501_runbuddy.R.drawable.shuffle_off;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,21 +41,22 @@ public class SpotifyFragment extends Fragment {
     private static final String REDIRECT_URI = "http://localhost/";
     private SpotifyAppRemote mSpotifyAppRemote;
 
-
     TextView threadStopper;
     TextView threadStopperOriginal;
-    Button pausePlay;
-    Button nextButton;
-    Button previousButton;
-    Button repeatButton;
-    Button shuffleButton;
+    ImageButton pausePlay;
+    ImageButton nextButton;
+    ImageButton previousButton;
+    ImageButton repeatButton;
+    ImageButton shuffleButton;
     Bundle bundle;
     ImageView songImage;
     TextView songDisplay;
+    TextView backgroundColor;
 
-    int shuffleColor = Color.BLACK;
-    int repeatColor = Color.BLACK;
-    int playPauseColor = Color.BLACK;
+    int spotifyBackgroundColor = Color.rgb(24, 24, 24);
+
+    private boolean isPlaying;
+
 
     int mode2Color = Color.rgb(0, 150, 0);
 
@@ -139,22 +146,29 @@ public class SpotifyFragment extends Fragment {
         threadStopperOriginal = (TextView) v.findViewById(R.id.threadStopTv);//Used to reset threadStopper
 
 
-        pausePlay = (Button) v.findViewById(R.id.pause);
+        pausePlay = (ImageButton) v.findViewById(R.id.playImageButton);
         seeker = (SeekBar) v.findViewById(R.id.seekBar);
 
         songImage = (ImageView) v.findViewById(R.id.imageView);
 
-        shuffleButton = (Button) v.findViewById(R.id.shuffle);
+        shuffleButton = (ImageButton) v.findViewById(R.id.shuffleImageButton);
+        shuffleButton.setBackgroundColor(spotifyBackgroundColor);
 
-        repeatButton = (Button) v.findViewById(R.id.repeat);
+        repeatButton = (ImageButton) v.findViewById(R.id.repeatImageButton);
+        repeatButton.setBackgroundColor(spotifyBackgroundColor);
 
-        nextButton = (Button) v.findViewById(R.id.next);
-        nextButton.setBackgroundColor(Color.GREEN);
+        nextButton = (ImageButton) v.findViewById(R.id.skipImageButton);
+        nextButton.setBackgroundColor(spotifyBackgroundColor);
 
-        previousButton = (Button) v.findViewById(R.id.previous);
-        previousButton.setBackgroundColor(Color.GREEN);
+        previousButton = (ImageButton) v.findViewById(R.id.previousImageButton);
+        previousButton.setBackgroundColor(spotifyBackgroundColor);
 
         songDisplay = (TextView) v.findViewById(R.id.songNameTextView);
+
+        backgroundColor = (TextView) v.findViewById(R.id.backgroundOfSpotify);
+        backgroundColor.setBackgroundColor(spotifyBackgroundColor);
+
+        isPlaying = false;
 
         //Thread used to keep progress bar progressing in play mode
         t = new Thread(() -> {
@@ -240,19 +254,22 @@ public class SpotifyFragment extends Fragment {
 
     public void playPause(){
         try {
-            if (pausePlay.getText().toString().equals("Pause")) {
+            if (isPlaying) {
                 mSpotifyAppRemote.getPlayerApi().pause();
-                pausePlay.setText("Play");
-                pausePlay.setBackgroundColor(Color.BLACK);
+                pausePlay.setImageResource(R.drawable.play);
+                pausePlay.setBackgroundColor(spotifyBackgroundColor);
                 threadStopper = null;
+                isPlaying = false;
             } else {
                 if(!t.isAlive()){
                     threadStopper = threadStopperOriginal;
                     t.start();
                 }
                 mSpotifyAppRemote.getPlayerApi().resume();
-                pausePlay.setText("Pause");
-                pausePlay.setBackgroundColor(Color.GREEN);
+                pausePlay.setImageResource(R.drawable.playing);
+                pausePlay.setBackgroundColor(spotifyBackgroundColor);
+                isPlaying = true;
+
             }
         }catch(Exception e){
 
@@ -261,12 +278,10 @@ public class SpotifyFragment extends Fragment {
 
     public void shuffle(){
         try {
-            if (shuffleColor == Color.GREEN) {
-                shuffleColor = Color.BLACK;
-                shuffleButton.setBackgroundColor(Color.BLACK);
+            if (shuffleButton.getImageMatrix().equals(shuffle_activated)) {
+                shuffleButton.setImageResource(shuffle_off);
             } else {
-                shuffleColor = Color.GREEN;
-                shuffleButton.setBackgroundColor(Color.GREEN);
+                shuffleButton.setImageResource(shuffle_activated);
             }
             mSpotifyAppRemote.getPlayerApi().toggleShuffle();
         }catch(Exception e){
@@ -276,15 +291,12 @@ public class SpotifyFragment extends Fragment {
 
     public void repeat() {
         try {
-            if (repeatColor == mode2Color) {
-                repeatColor = mode2Color;
-                repeatButton.setBackgroundColor(Color.GREEN);
-            } else if (repeatColor == Color.BLACK) {
-                repeatColor = mode2Color;
-                repeatButton.setBackgroundColor(mode2Color);
+            if (repeatButton.getImageMatrix().equals(repeat_off)) {
+                repeatButton.setImageResource(repeat_playlist);
+            } else if (repeatButton.getImageMatrix().equals(repeat_playlist)) {
+                repeatButton.setImageResource(repeat_song);
             } else {
-                repeatColor = Color.BLACK;
-                repeatButton.setBackgroundColor(Color.BLACK);
+                repeatButton.setImageResource(repeat_off);
             }
             mSpotifyAppRemote.getPlayerApi().toggleRepeat();
         }catch (Exception e){
@@ -296,8 +308,7 @@ public class SpotifyFragment extends Fragment {
         try {
             mSpotifyAppRemote.getPlayerApi().skipNext();
             mSpotifyAppRemote.getPlayerApi().resume();
-            pausePlay.setText("Pause");
-            pausePlay.setBackgroundColor(Color.GREEN);
+            pausePlay.setImageResource(R.drawable.playing);
         }catch (Exception e){
 
         }
@@ -339,9 +350,9 @@ public class SpotifyFragment extends Fragment {
 
                 }
                 if(playerState.isPaused){
-                    pausePlay.setText("Play");
-                    pausePlay.setBackgroundColor(Color.BLACK);
-                    playPauseColor = Color.BLACK;
+                    pausePlay.setImageResource(R.drawable.play);
+                    pausePlay.setBackgroundColor(spotifyBackgroundColor);
+                    isPlaying = false;
                     threadStopper = null; //In order to stop the thread by creating an error
                     threadCount = 0;//Since the thread crashes but is caught we reset thread count
                 }else{
@@ -350,18 +361,16 @@ public class SpotifyFragment extends Fragment {
                         threadStopper = threadStopperOriginal;
                         t.start();
                     }
-                    pausePlay.setText("Pause");
-                    pausePlay.setBackgroundColor(Color.GREEN);
-                    playPauseColor = Color.GREEN;
+                    isPlaying = true;
+                    pausePlay.setImageResource(R.drawable.playing);
+                    pausePlay.setBackgroundColor(spotifyBackgroundColor);
                 }
 
                 //Deals with setting shuffle and repeat buttons states
                 if(playerState.playbackOptions.isShuffling){
-                    shuffleButton.setBackgroundColor(Color.GREEN);
-                    shuffleColor = Color.GREEN;
+                    shuffleButton.setImageResource(shuffle_activated);
                 }else{
-                    shuffleButton.setBackgroundColor(Color.BLACK);
-                    shuffleColor = Color.BLACK;
+                    shuffleButton.setImageResource(shuffle_off);
                 }
 
 
@@ -369,14 +378,11 @@ public class SpotifyFragment extends Fragment {
                 // 1 is repeat song
                 // 2 is repeat playlist
                 if(playerState.playbackOptions.repeatMode == 0){
-                    repeatButton.setBackgroundColor(Color.BLACK);
-                    repeatColor = Color.BLACK;
+                    repeatButton.setImageResource(repeat_off);
                 }else if(playerState.playbackOptions.repeatMode == 2){
-                    repeatButton.setBackgroundColor(mode2Color);
-                    repeatColor = mode2Color;
+                    repeatButton.setImageResource(repeat_playlist);
                 }else if(playerState.playbackOptions.repeatMode == 1) {
-                    repeatButton.setBackgroundColor(Color.GREEN);
-                    repeatColor = Color.GREEN;
+                    repeatButton.setImageResource(repeat_song);
                 }
 
             }

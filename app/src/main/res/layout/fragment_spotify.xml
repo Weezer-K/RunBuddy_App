@@ -12,87 +12,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/pause"
-            android:layout_width="73dp"
-            android:layout_height="37dp"
-            android:text="pause"
-            android:textColor="#FFFFFF"
-            android:textSize="10sp"
+        <TextView
+            android:id="@+id/backgroundOfSpotify"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="TextView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.976" />
-
-        <Button
-            android:id="@+id/shuffle"
-            android:layout_width="70dp"
-            android:layout_height="39dp"
-            android:text="shuffle"
-            android:textColor="#FFFFFF"
-            android:textSize="7sp"
-            app:layout_constraintBottom_toBottomOf="@+id/next"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/next"
-            app:layout_constraintTop_toTopOf="@+id/next"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <Button
-            android:id="@+id/previous"
-            android:layout_width="89dp"
-            android:layout_height="38dp"
-            android:text="previous"
-            android:textColor="#FFFFFF"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/pause"
-            app:layout_constraintEnd_toStartOf="@+id/pause"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/pause"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/repeat"
-            android:layout_width="70dp"
-            android:layout_height="37dp"
-            android:text="repeat"
-            android:textColor="#FFFFFF"
-            android:textSize="8sp"
-            app:layout_constraintBottom_toBottomOf="@+id/previous"
-            app:layout_constraintEnd_toStartOf="@+id/previous"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/previous"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <Button
-            android:id="@+id/next"
-            android:layout_width="70dp"
-            android:layout_height="39dp"
-            android:text="next"
-            android:textColor="#FFFFFF"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/pause"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/pause"
-            app:layout_constraintTop_toTopOf="@+id/pause"
             app:layout_constraintVertical_bias="0.0" />
 
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="285dp"
             android:layout_height="24dp"
+            android:layout_marginTop="4dp"
             android:max='349'
             android:min='0'
-            app:layout_constraintBottom_toTopOf="@+id/pause"
-            app:layout_constraintEnd_toEndOf="@+id/next"
-            app:layout_constraintHorizontal_bias="0.32"
-            app:layout_constraintStart_toStartOf="@+id/previous"
-            app:layout_constraintTop_toBottomOf="@+id/songNameTextView"
-            app:layout_constraintVertical_bias="0.584" />
+            app:layout_constraintEnd_toEndOf="@+id/backgroundOfSpotify"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/songNameTextView" />
 
         <TextView
             android:id="@+id/songNameTextView"
@@ -120,6 +61,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.096" />
 
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -131,6 +73,77 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.227"
             tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageButton
+            android:id="@+id/shuffleImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:src="@drawable/shuffle_off"
+            app:layout_constraintEnd_toStartOf="@+id/previousImageButton"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+
+        <ImageButton
+            android:id="@+id/previousImageButton"
+            android:layout_width="69dp"
+            android:layout_height="44dp"
+            android:src="@drawable/skip_back"
+            app:layout_constraintBottom_toBottomOf="@+id/shuffleImageButton"
+            app:layout_constraintEnd_toStartOf="@+id/playImageButton"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/playImageButton"
+            android:layout_width="46dp"
+            android:layout_height="41dp"
+            android:src="@drawable/play"
+            app:layout_constraintBottom_toBottomOf="@+id/previousImageButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar"
+            app:layout_constraintVertical_bias="0.714" />
+
+        <ImageButton
+            android:id="@+id/repeatImageButton"
+            android:layout_width="52dp"
+            android:layout_height="44dp"
+            android:src="@drawable/repeat_off"
+            app:layout_constraintBottom_toBottomOf="@+id/skipImageButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/skipImageButton"
+            app:layout_constraintTop_toTopOf="@+id/skipImageButton"
+            app:layout_constraintVertical_bias="0.2" />
+
+        <ImageButton
+            android:id="@+id/skipImageButton"
+            android:layout_width="69dp"
+            android:layout_height="44dp"
+            android:src="@drawable/skip"
+            app:layout_constraintBottom_toBottomOf="@+id/playImageButton"
+            app:layout_constraintStart_toEndOf="@+id/playImageButton"
+            app:layout_constraintTop_toTopOf="@+id/playImageButton"
+            app:layout_constraintVertical_bias="0.333" />
+
+        <TextView
+            android:id="@+id/timeLeftInSong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintStart_toEndOf="@+id/seekBar"
+            app:layout_constraintTop_toTopOf="@+id/seekBar" />
+
+        <TextView
+            android:id="@+id/currentTimeInSong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintEnd_toStartOf="@+id/seekBar"
+            app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
