@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -22,7 +23,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     private SearchFragment SearchFragment;
     private CreateFragment CreateFragment;
     private LobbyFragment LobbyFragment;
-    private MyRacesFragment HistoryFragment;
+    private MyRacesFragment MyRacesFragment;
     private PublicGameListFragment PublicGameListFragment;
     private FragmentManager fm;
     public ArrayList<Double> distFilters;
@@ -37,13 +38,13 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         SearchFragment = new SearchFragment();
         CreateFragment = new CreateFragment();
         LobbyFragment = new LobbyFragment();
-        HistoryFragment = new MyRacesFragment();
+        MyRacesFragment = new MyRacesFragment();
         PublicGameListFragment = new PublicGameListFragment();
 
         distFilters = new ArrayList<Double>();
         fm = getSupportFragmentManager();
 
-        fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
+        fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
@@ -53,6 +54,20 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String frag = savedInstanceState.getString("fragment");
+        switch (frag) {
+            case "Create":
+                fm.beginTransaction().replace(R.id.homeFragment, CreateFragment).commitNow();
+            case "Search":
+                fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
+            default:
+                fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
         }
     }
 
@@ -78,7 +93,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         }
 
         if (id == R.id.menu_history) {
-            fm.beginTransaction().replace(R.id.homeFragment, HistoryFragment).commitNow();
+            fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
             return true;
         }
 

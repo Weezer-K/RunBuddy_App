@@ -65,7 +65,8 @@ public class ResultActivity extends AppCompatActivity {
         btnBackHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ResultActivity.this ,HomeActivity.class);
+                Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
+                intent.putExtra("fragment", "History");
                 startActivity(intent);
             }
         });

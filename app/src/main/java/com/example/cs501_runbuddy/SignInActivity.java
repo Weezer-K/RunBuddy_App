@@ -42,6 +42,8 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         signInAccount = (Button) findViewById(R.id.signInAccount);
 
+        signInAccount.setVisibility(View.INVISIBLE);
+
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, RunBuddyApplication.getGoogleSignInClient());
 
@@ -58,6 +60,12 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+
+        if (acct != null) {
+            signInUser();
+        } else {
+            signInAccount.setVisibility(View.VISIBLE);
+        }
     }
     //Used to sign in existing users
     private void signInUser() {
