@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -52,7 +53,6 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         gameSummaries = new ArrayList<String>(){};
         gameIds = new ArrayList<String>(){};
 
-        gamesRef = RunBuddyApplication.getDatabase().getReference("games");
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -61,6 +61,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
             }
 
         });
+
+        gamesRef = RunBuddyApplication.getDatabase().getReference("games");
         gameListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -69,22 +71,32 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                         && g.joinAble
                         && distFilters.contains(g.totalDistance)
                         && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
-                    String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
-                    gameSummaries.add(summary);
-                    gameIds.add(g.ID);
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
-                    GameList.setAdapter(arrayAdapter);
+                    User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
+                        @Override
+                        public void onCallback(String value) {
+                            String summary = "Game: " + g.ID + ", Host: " + value + ", Distance: " + g.totalDistance;
+                            gameSummaries.add(summary);
+                            gameIds.add(g.ID);
+                            ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, gameSummaries);
+                            GameList.setAdapter(arrayAdapter);
+                        }
+                    });
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
-                String summary = "Game: " + g.ID + ", Host: " + g.player1.playerId + ", Distance: " + g.totalDistance;
-                gameSummaries.remove(summary);
-                gameIds.remove(g.ID);
-                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
-                GameList.setAdapter(arrayAdapter);
+                User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
+                    @Override
+                    public void onCallback(String value) {
+                        String summary = "Game: " + g.ID + ", Host: " + value + ", Distance: " + g.totalDistance;
+                        gameSummaries.remove(summary);
+                        gameIds.remove(g.ID);
+                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
+                        GameList.setAdapter(arrayAdapter);
+                    }
+                });
             }
 
             @Override

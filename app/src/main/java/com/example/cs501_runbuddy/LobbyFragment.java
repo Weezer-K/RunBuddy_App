@@ -8,13 +8,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.RaceLocation;
 import com.example.cs501_runbuddy.models.RacePlayer;
+import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,6 +35,8 @@ public class LobbyFragment extends Fragment {
     private Button startBtn;
 
     private Game game;
+    private DatabaseReference player2Ref;
+    private ValueEventListener player2Listener;
 
     public LobbyFragment() {
         // Required empty public constructor
@@ -46,22 +55,21 @@ public class LobbyFragment extends Fragment {
         player2tv = v.findViewById(R.id.player2tv);
         startBtn = v.findViewById(R.id.startBtn);
 
+        if (savedInstanceState != null) {
+            game = (Game) savedInstanceState.getSerializable("game");
+            initializePlayer2Ref();
+        }
 
         return v;
     }
 
     public void createGame(String ID, boolean isPrivate, double totalDistance){
 
-
-
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();
 
         RacePlayer player1 = new RacePlayer(player1Id, new ArrayList<RaceLocation>(), false, false);
         RacePlayer player2 = new RacePlayer();
-
-
-
 
         //Initialize the gaming object
         game = new Game(ID,
@@ -72,12 +80,11 @@ public class LobbyFragment extends Fragment {
                 player2);
 
         game.writeToDatabase("");
+        initializePlayer2Ref();
 
         LIDtv.setText("Game Lobby: " + ID);
         player1tv.setText(acct.getGivenName());
         player2tv.setText("Not Yet Joined");
-
-
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +111,13 @@ public class LobbyFragment extends Fragment {
         player1tv.setText(game.player1.playerId);
         player2tv.setText(acct.getGivenName());
 
+        User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                player1tv.setText(value);
+            }
+        });
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,5 +127,37 @@ public class LobbyFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    public void initializePlayer2Ref() {
+        player2Ref = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2");
+        player2Listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    RacePlayer p2 = snapshot.getValue(RacePlayer.class);
+                    User.getUserNameFromID(p2.playerId, new User.MyCallback() {
+                        @Override
+                        public void onCallback(String value) {
+                            player2tv.setText(value);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        player2Ref.addValueEventListener(player2Listener);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (player2Ref != null)
+            player2Ref.removeEventListener(player2Listener);
     }
 }

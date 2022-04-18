@@ -57,7 +57,11 @@ public class User implements Serializable {
         userRef.updateChildren(childUpdates);
     }
 
-    public static String getUserNameFromID(String id) {
+    public interface MyCallback {
+        void onCallback(String value);
+    }
+
+    public static String getUserNameFromID(String id, MyCallback myCallback) {
 
         DatabaseReference usersRef = RunBuddyApplication.getDatabase().getReference("users");
 
@@ -69,6 +73,8 @@ public class User implements Serializable {
                     // dataSnapshot is the "game" node with all children with id equal to joinId
                     for (DataSnapshot user : dataSnapshot.getChildren()) {
                         User u = user.getValue(User.class);
+                        myCallback.onCallback(u.userFirstName);
+
                     }
                 }
             }
@@ -76,6 +82,7 @@ public class User implements Serializable {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
         return "";
     }
 }

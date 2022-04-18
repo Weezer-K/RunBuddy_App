@@ -97,6 +97,9 @@ public class MyRacesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getActivity(), activeSummaries.get(i), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(),LobbyFragment.class);
+                intent.putExtra("game", activeRaces.get(i));
+                startActivity(intent);
             }
         });
         HistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
