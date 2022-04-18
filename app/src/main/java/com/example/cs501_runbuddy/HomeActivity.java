@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     private SearchFragment SearchFragment;
     private CreateFragment CreateFragment;
     private LobbyFragment LobbyFragment;
-    private HistoryFragment HistoryFragment;
+    private MyRacesFragment HistoryFragment;
     private PublicGameListFragment PublicGameListFragment;
     private FragmentManager fm;
     public ArrayList<Double> distFilters;
@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         SearchFragment = new SearchFragment();
         CreateFragment = new CreateFragment();
         LobbyFragment = new LobbyFragment();
-        HistoryFragment = new HistoryFragment();
+        HistoryFragment = new MyRacesFragment();
         PublicGameListFragment = new PublicGameListFragment();
 
         distFilters = new ArrayList<Double>();

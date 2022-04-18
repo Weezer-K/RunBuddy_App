@@ -27,7 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.ArrayList;
 
 
-public class HistoryFragment extends Fragment {
+public class MyRacesFragment extends Fragment {
 
     private ListView HistoryList;//The ListView for public games
     private TextView tvHistoryList;//A hint for how to get in this game
@@ -38,7 +38,7 @@ public class HistoryFragment extends Fragment {
     private DatabaseReference gamesRef;
     private ChildEventListener gameListener;
 
-    public HistoryFragment() {
+    public MyRacesFragment() {
         // Required empty public constructor
     }
 
@@ -48,7 +48,7 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_history, container, false);
+        View v = inflater.inflate(R.layout.fragment_my_races, container, false);
 
         HistoryList = v.findViewById(R.id.HistoryList);
         tvHistoryList = v.findViewById(R.id.tvHistoryList);

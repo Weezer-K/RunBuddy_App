@@ -29,6 +29,8 @@ public class Game implements Serializable {
     public RacePlayer player1;
     public RacePlayer player2;
 
+    public String winner; // Determine who wins
+    public String date; // The date where the game happened, 4/18/2022
 
 
 
