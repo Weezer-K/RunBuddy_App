@@ -23,9 +23,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
@@ -93,7 +90,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                 User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
                     @Override
                     public void onCallback(String value) {
-                        String summary = "Game: " + g.ID + ", Host: " + value + ", Distance: " + g.totalDistance;
+                        String summary = "Game: " + g.ID + ", Date: " + g.getStringDate() + ", Host: " + value + ", Distance: " + g.totalDistance;
                         gameSummaries.remove(summary);
                         gameIds.remove(g.ID);
                         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
