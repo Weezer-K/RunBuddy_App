@@ -306,6 +306,8 @@ public class LobbyFragment extends Fragment {
                             public void onCallback(String value) {
                                 player2tv.setText(value);
                                 game.joinAble = false;
+                                game.player2 = p2;
+                                game.writeToDatabase("player2");
                             }
                         });
                     }
