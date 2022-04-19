@@ -71,7 +71,7 @@ public class Game implements Serializable {
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
             DatabaseReference key = gameRef.child(ID).child("player1/playerLocation").push();
             player1.playerLocation.put(key.toString(), curRaceLoc);
-            key.setValue(player1.playerLocation.get(player1.playerLocation.size() - 1));
+            key.setValue(player1.playerLocation.get(key.toString()));
         }
         else {
             if(player2.playerLocation == null){
@@ -80,7 +80,7 @@ public class Game implements Serializable {
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
             DatabaseReference key = gameRef.child(ID).child("player2/playerLocation").push();
             player2.playerLocation.put(key.toString(), curRaceLoc);
-            key.setValue(player2.playerLocation.get(player2.playerLocation.size() - 1));
+            key.setValue(player2.playerLocation.get(key.toString()));
         }
     }
 

@@ -108,7 +108,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private Instant startTime;
     private double totalDistance;
 
-    private LatLngDB currentLocationOtherPlayer;
+    private RaceLocation currentLocationOtherPlayer;
 
     private double totalDistanceOtherPlayer;
 
@@ -125,6 +125,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private int onlineColor;
 
     private boolean isPlayer1;
+
+    private double otherPlayerStartTime;
+
+    private double raceStartTime;
+
+    private int otherPlayerLocationIndex;
+
+    private ArrayList<RaceLocation> otherRaceLocations;
 
 
     //1 used to set up the UI elements and overall logic of the google map
@@ -151,6 +159,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         localColorIndicator = (TextView) findViewById(R.id.localColorIndicator);
         onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
 
+        otherRaceLocations = new ArrayList<RaceLocation>();
 
         isSpotifyOnScreen = false;
         totalDistance = 0;
@@ -325,32 +334,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 RaceLocation r = snapshot.getValue(RaceLocation.class);
-
-                if(currentLocationOtherPlayer == null){
-                    currentLocationOtherPlayer = r.latLng;
-                }else{
-                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.lat, currentLocationOtherPlayer.lng, r.latLng.lat, r.latLng.lng);
-                    if(totalDistanceOtherPlayer >= maxDistance/100){
-                        otherPlayerRef.removeEventListener(otherPlayerListener);
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        startActivity(intent);
-                        totalDistance = 0;
-                        totalDistanceOtherPlayer = 0;
-                        stopLocationUpdates();
-                    }else {
-                        if(totalDistanceOtherPlayer > totalDistance){
-                            playerAhead(localPlayerTrack, otherPlayerTrack );
-                        }else{
-                            playerAhead(otherPlayerTrack, localPlayerTrack);
-                        }
-                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
-                    }
-                    currentLocationOtherPlayer = r.latLng;
-                }
-
-
-
+                otherRaceLocations.add(r);
             }
+
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -401,6 +387,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         startLocationUpdates();
         //Creates a thread to make the timer change every second
         //Hence why it was not included in the last function
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            raceStartTime = Instant.now().toEpochMilli();
+        }
         updateTime();
         getLoaderManager().initLoader(1, null, this).forceLoad();
 
@@ -501,6 +490,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //add current location to saved location list
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
+            updateOtherPlayerUI();
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 double curTime = Instant.now().toEpochMilli();
@@ -587,6 +577,43 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //there is only one save location i.e. the current location
             else{
                 mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
+            }
+        }
+    }
+
+    public void updateOtherPlayerUI(){
+        double localElapsedTime = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            localElapsedTime = Instant.now().toEpochMilli() - raceStartTime;
+        }
+        //                    other time elapsed = r.time - start time
+        //                    while (other time elapsed > local time elapsed) {
+        //                    }
+        if(currentLocationOtherPlayer == null && otherRaceLocations.size()>0){
+            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+            otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
+            otherPlayerLocationIndex++;
+        }else{
+            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+            RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+            if(currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
+                totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
+                if (totalDistanceOtherPlayer >= maxDistance / 100) {
+                    otherPlayerRef.removeEventListener(otherPlayerListener);
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(intent);
+                    totalDistance = 0;
+                    totalDistanceOtherPlayer = 0;
+                    stopLocationUpdates();
+                } else {
+                    if (totalDistanceOtherPlayer > totalDistance) {
+                        playerAhead(localPlayerTrack, otherPlayerTrack);
+                    } else {
+                        playerAhead(otherPlayerTrack, localPlayerTrack);
+                    }
+                    otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                }
+                otherPlayerLocationIndex++;
             }
         }
     }
