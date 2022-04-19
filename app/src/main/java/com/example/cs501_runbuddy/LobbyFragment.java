@@ -156,8 +156,8 @@ public class LobbyFragment extends Fragment {
         game.writeToDatabase("");
 
         LIDtv.setText("Game Lobby ID: " + ID);
-        player1tv.setText("Player One: " + acct.getGivenName());
-        player2tv.setText("Player Two: ");
+        player1tv.setText("Player 1: " + acct.getGivenName());
+        player2tv.setText("Player 2: ");
 
         initializePlayer2Ref();
 
@@ -191,8 +191,8 @@ public class LobbyFragment extends Fragment {
         game.writeToDatabase("");
 
         LIDtv.setText("Game Lobby: " + game.ID);
-        player1tv.setText(game.player1.playerId);
-        player2tv.setText(acct.getGivenName());
+        player1tv.setText("Player 1: " + game.player1.playerId);
+        player2tv.setText("Player 2: " + acct.getGivenName());
 
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
             @Override
