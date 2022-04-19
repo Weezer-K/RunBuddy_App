@@ -473,11 +473,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startLocationUpdates();
-    }
+
+
 
     //These are used in the location request switch to start and stop
     //Listening for gps updates
@@ -504,8 +501,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //add current location to saved location list
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
-
-            boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 double curTime = Instant.now().toEpochMilli();

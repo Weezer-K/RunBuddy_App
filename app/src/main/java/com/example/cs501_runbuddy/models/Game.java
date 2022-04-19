@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,17 +102,23 @@ public class Game implements Serializable {
 
         Map<String, Object> gameValues = this.toMap();
         //Update database to have proper player locations
-        if (field != "" && field.contains("player")) {
+        if (!field.equals("") && field.contains("player")) {
             if(field.contains("player1")){
                 Map<String, Object> player1Values = player1.toMap();
-                if (field.contains("playerLocation"))
-                    gameRef.child(ID).child(field).setValue(player1Values.get("playerLocation"));
-                else
+
+                if (field.contains("playerLocation")) {
+                    DatabaseReference key = gameRef.child(ID).child(field).push();
+                    key.setValue(player1.playerLocation.get(player1.playerLocation.size() - 1));
+                }
+                else {
                     gameRef.child(ID).child(field).setValue(player1Values);
+                }
             }else{
                 Map<String, Object> player2Values = player2.toMap();
-                if (field.contains("playerLocation"))
-                    gameRef.child(ID).child(field).setValue(player2Values.get("playerLocation"));
+                if (field.contains("playerLocation")) {
+                    DatabaseReference key = gameRef.child(ID).child(field).push();
+                    key.setValue(player2.playerLocation.get(player2.playerLocation.size() - 1));
+                }
                 else
                     gameRef.child(ID).child(field).setValue(player2Values);
             }
