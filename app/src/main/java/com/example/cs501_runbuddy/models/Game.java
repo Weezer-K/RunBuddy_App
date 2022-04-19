@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,22 +62,25 @@ public class Game implements Serializable {
 
 
     public void addLocData(Boolean isPlayer1, LatLngDB loc, double time) {
+        FirebaseDatabase db = RunBuddyApplication.getDatabase();
+        DatabaseReference gameRef = db.getReference("games");
         if (isPlayer1) {
             if(player1.playerLocation == null){
-                player1.playerLocation = new ArrayList<RaceLocation>();
+                player1.playerLocation = new HashMap<String, RaceLocation>();
             }
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
-            player1.playerLocation.add(curRaceLoc);
-            writeToDatabase("player1/playerLocation");
+            DatabaseReference key = gameRef.child(ID).child("player1/playerLocation").push();
+            player1.playerLocation.put(key.toString(), curRaceLoc);
+            key.setValue(player1.playerLocation.get(player1.playerLocation.size() - 1));
         }
         else {
             if(player2.playerLocation == null){
-                player2.playerLocation = new ArrayList<RaceLocation>();
+                player2.playerLocation = new HashMap<String, RaceLocation>();
             }
             RaceLocation curRaceLoc = new RaceLocation(loc, time);
-            player2.playerLocation.add(curRaceLoc);
-            writeToDatabase("player2/playerLocation");
-
+            DatabaseReference key = gameRef.child(ID).child("player2/playerLocation").push();
+            player2.playerLocation.put(key.toString(), curRaceLoc);
+            key.setValue(player2.playerLocation.get(player2.playerLocation.size() - 1));
         }
     }
 
@@ -105,25 +107,13 @@ public class Game implements Serializable {
         if (!field.equals("") && field.contains("player")) {
             if(field.contains("player1")){
                 Map<String, Object> player1Values = player1.toMap();
-
-                if (field.contains("playerLocation")) {
-                    DatabaseReference key = gameRef.child(ID).child(field).push();
-                    key.setValue(player1.playerLocation.get(player1.playerLocation.size() - 1));
-                }
-                else {
-                    gameRef.child(ID).child(field).setValue(player1Values);
-                }
+                gameRef.child(ID).child(field).setValue(player1Values);
             }else{
                 Map<String, Object> player2Values = player2.toMap();
-                if (field.contains("playerLocation")) {
-                    DatabaseReference key = gameRef.child(ID).child(field).push();
-                    key.setValue(player2.playerLocation.get(player2.playerLocation.size() - 1));
-                }
-                else
-                    gameRef.child(ID).child(field).setValue(player2Values);
+                gameRef.child(ID).child(field).setValue(player2Values);
             }
 
-        } else {
+        }else {
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("/" + ID, gameValues);
             gameRef.updateChildren(childUpdates);

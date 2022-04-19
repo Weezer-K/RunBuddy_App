@@ -31,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -134,7 +135,7 @@ public class LobbyFragment extends Fragment {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();
 
-        RacePlayer player1 = new RacePlayer(player1Id, new ArrayList<RaceLocation>(), false, false);
+        RacePlayer player1 = new RacePlayer(player1Id, new HashMap<String, RaceLocation>(), false, false);
         RacePlayer player2 = new RacePlayer();
 
         Long date = null;
@@ -184,7 +185,7 @@ public class LobbyFragment extends Fragment {
     public void joinGame(Game game) {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
 
-        game.player2 = new RacePlayer(acct.getId(), new ArrayList<RaceLocation>(), false, false);
+        game.player2 = new RacePlayer(acct.getId(), new HashMap<String, RaceLocation>(), false, false);
         game.joinAble = false;
 
         game.writeToDatabase("");
@@ -308,6 +309,7 @@ public class LobbyFragment extends Fragment {
                                 game.joinAble = false;
                                 game.player2 = p2;
                                 game.writeToDatabase("player2");
+                                player2Ref.removeEventListener(player2Listener);
                             }
                         });
                     }
