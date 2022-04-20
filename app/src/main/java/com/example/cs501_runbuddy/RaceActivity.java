@@ -384,15 +384,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
         otherPlayerRef.addChildEventListener(otherPlayerListener);
         //Used to update movement data based of a specific interval
-        startLocationUpdates();
-        //Creates a thread to make the timer change every second
-        //Hence why it was not included in the last function
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            raceStartTime = Instant.now().toEpochMilli();
-        }
-        updateTime();
-        getLoaderManager().initLoader(1, null, this).forceLoad();
-
+        updateGPS();
     }
 
     public void makeTrack(CircularSeekBar circ, int color){
@@ -432,6 +424,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         @SuppressLint("MissingPermission")
                         @Override
                         public void onSuccess(Location location) {
+                            startLocationUpdates();
                             updateUIWithLocation(location);
                         }
                     });
@@ -469,9 +462,15 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     //Listening for gps updates
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
-        updateGPS();
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
         updateGPS();
+        //Creates a thread to make the timer change every second
+        //Hence why it was not included in the last function
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            raceStartTime = Instant.now().toEpochMilli();
+        }
+        updateTime();
+        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     private void stopLocationUpdates() {
