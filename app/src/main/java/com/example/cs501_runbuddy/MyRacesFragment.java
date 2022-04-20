@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class MyRacesFragment extends Fragment {
@@ -37,10 +37,8 @@ public class MyRacesFragment extends Fragment {
     private Button activeRaceButton;
     private Button pastRaceButton;
 
-    private ArrayList<String> activeSummaries; //Arraylist that have the games info
     private ArrayList<Game> activeRaces;
 
-    private ArrayList<String> pastSummaries; //Arraylist that have the games info
     private ArrayList<Game> pastRaces;
 
     private DatabaseReference gamesRef;
@@ -113,7 +111,6 @@ public class MyRacesFragment extends Fragment {
         HistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), pastSummaries.get(i), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(),ResultActivity.class);
                 intent.putExtra("game", pastRaces.get(i));
                 startActivity(intent);
@@ -121,14 +118,14 @@ public class MyRacesFragment extends Fragment {
 
         });
 
-        pastSummaries = new ArrayList<String>(){};
         pastRaces = new ArrayList<Game>(){};
 
-        activeSummaries = new ArrayList<String>(){};
         activeRaces = new ArrayList<Game>(){};
 
         String userID = GoogleSignIn.getLastSignedInAccount(getActivity()).getId();
         gamesRef = RunBuddyApplication.getDatabase().getReference("games");
+
+
 
         gameListener = new ChildEventListener() {
             @Override
@@ -138,18 +135,19 @@ public class MyRacesFragment extends Fragment {
                     User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
                         @Override
                         public void onCallback(String value) {
-                            String summary = "Game: " + g.ID + ", Date: " + g.getStringDate() + ", Host: " + value + ", Distance: " + g.totalDistance;
 
                             if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
-                                activeSummaries.add(summary);
                                 activeRaces.add(g);
-                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, activeSummaries);
-                                ActiveRaceList.setAdapter(arrayAdapter);
+                                Collections.sort(activeRaces);
+                                AdapterGame current = new AdapterGame(getContext(), activeRaces);
+                                //current.setName(value);
+                                ActiveRaceList.setAdapter(current);
                             }else{
-                                pastSummaries.add(summary);
                                 pastRaces.add(g);
-                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 , pastSummaries);
-                                HistoryList.setAdapter(arrayAdapter);
+                                Collections.sort(pastRaces);
+                                AdapterGame current = new AdapterGame(getContext(), pastRaces);
+                                HistoryList.setAdapter(current);
+
                             }
                         }
                     });
@@ -183,6 +181,8 @@ public class MyRacesFragment extends Fragment {
         return v;
     }
 
+
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -199,4 +199,56 @@ public class MyRacesFragment extends Fragment {
         listener = null;
         gamesRef.removeEventListener(gameListener);
     }
+}
+
+class AdapterGame extends ArrayAdapter<Game>{
+
+
+    private TextView testText;
+    private Game testGame;
+
+    public AdapterGame(@NonNull Context context, ArrayList<Game> arrayList) {
+        super(context, 0, arrayList );
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View currentItemView = convertView;
+
+        // of the recyclable view is null then inflate the custom layout for the same
+        if (currentItemView == null) {
+            currentItemView = LayoutInflater.from(getContext()).inflate(R.layout.custom_list_view, parent, false);
+        }
+
+        // get the position of the view from the ArrayAdapter
+        Game currentNumberPosition = getItem(position);
+        this.testGame = currentNumberPosition;
+
+
+        // then according to the position of the view assign the desired TextView 1 for the same
+
+        TextView textView1 = currentItemView.findViewById(R.id.tvGameInfo);
+        this.testText = textView1;
+        textView1.setText("Game: " + currentNumberPosition.ID
+                + ", Host: " + currentNumberPosition.player1.playerId
+                + ", Date: " + currentNumberPosition.getStringDate()
+                + ", Distance: " + currentNumberPosition.totalDistance
+        );
+
+
+
+        return currentItemView;
+    }
+
+    public void setName(String name){
+        this.testText.setText("Game: " + this.testGame.ID
+                + ", Host: " + this.testGame.player1.playerId
+                + ", Date: " + this.testGame.getStringDate()
+                + ", Distance: " + this.testGame.totalDistance
+
+        );
+    }
+
+
 }

@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Game implements Serializable {
+public class Game implements Serializable, Comparable<Game>{
 
     public String ID;//Game Lobby ID
     public Boolean isPrivate;//private or public
@@ -205,4 +205,8 @@ public class Game implements Serializable {
 
     }
 
+    @Override
+    public int compareTo(Game game) {
+        return game.date.intValue() - this.date.intValue();
+    }
 }
