@@ -417,6 +417,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         //If permission is granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            startLocationUpdates();
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
+                    RaceActivity.this);
             //Instantiate gps sensor manager
             //Get last known location if successfully instantiated
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this,
@@ -424,7 +427,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         @SuppressLint("MissingPermission")
                         @Override
                         public void onSuccess(Location location) {
-                            startLocationUpdates();
                             updateUIWithLocation(location);
                         }
                     });
@@ -463,7 +465,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
-        updateGPS();
         //Creates a thread to make the timer change every second
         //Hence why it was not included in the last function
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
