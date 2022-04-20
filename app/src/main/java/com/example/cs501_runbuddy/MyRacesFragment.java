@@ -132,25 +132,19 @@ public class MyRacesFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
                 if( userID.equals(g.player1.playerId) || (g.player2 != null && userID.equals(g.player2.playerId) )) {
-                    User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
-                        @Override
-                        public void onCallback(String value) {
 
-                            if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
-                                activeRaces.add(g);
-                                Collections.sort(activeRaces);
-                                AdapterGame current = new AdapterGame(getContext(), activeRaces);
-                                //current.setName(value);
-                                ActiveRaceList.setAdapter(current);
-                            }else{
-                                pastRaces.add(g);
-                                Collections.sort(pastRaces);
-                                AdapterGame current = new AdapterGame(getContext(), pastRaces);
-                                HistoryList.setAdapter(current);
+                    if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
+                        activeRaces.add(g);
+                        Collections.sort(activeRaces);
+                        AdapterGame current = new AdapterGame(getContext(), activeRaces);
+                        ActiveRaceList.setAdapter(current);
+                    }else{
+                        pastRaces.add(g);
+                        Collections.sort(pastRaces);
+                        AdapterGame current = new AdapterGame(getContext(), pastRaces);
+                        HistoryList.setAdapter(current);
 
-                            }
-                        }
-                    });
+                    }
                 }
 
             }
@@ -203,10 +197,6 @@ public class MyRacesFragment extends Fragment {
 
 class AdapterGame extends ArrayAdapter<Game>{
 
-
-    private TextView testText;
-    private Game testGame;
-
     public AdapterGame(@NonNull Context context, ArrayList<Game> arrayList) {
         super(context, 0, arrayList );
     }
@@ -223,32 +213,30 @@ class AdapterGame extends ArrayAdapter<Game>{
 
         // get the position of the view from the ArrayAdapter
         Game currentNumberPosition = getItem(position);
-        this.testGame = currentNumberPosition;
+
 
 
         // then according to the position of the view assign the desired TextView 1 for the same
 
         TextView textView1 = currentItemView.findViewById(R.id.tvGameInfo);
-        this.testText = textView1;
-        textView1.setText("Game: " + currentNumberPosition.ID
-                + ", Host: " + currentNumberPosition.player1.playerId
-                + ", Date: " + currentNumberPosition.getStringDate()
-                + ", Distance: " + currentNumberPosition.totalDistance
-        );
 
+        User.getUserNameFromID(currentNumberPosition.player1.playerId, new User.MyCallback() {
+            @Override
+            public void onCallback(String value) {
+                textView1.setText("Game: " + currentNumberPosition.ID
+                        + ", Host: " + value
+                        + ", Date: " + currentNumberPosition.getStringDate()
+                        + ", Distance: " + currentNumberPosition.totalDistance
+                );
 
+            }
+        });
 
+        
         return currentItemView;
     }
 
-    public void setName(String name){
-        this.testText.setText("Game: " + this.testGame.ID
-                + ", Host: " + this.testGame.player1.playerId
-                + ", Date: " + this.testGame.getStringDate()
-                + ", Distance: " + this.testGame.totalDistance
 
-        );
-    }
 
 
 }
