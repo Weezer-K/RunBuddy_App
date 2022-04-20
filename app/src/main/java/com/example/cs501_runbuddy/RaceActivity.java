@@ -589,31 +589,34 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         //                    other time elapsed = r.time - start time
         //                    while (other time elapsed > local time elapsed) {
         //                    }
-        if(currentLocationOtherPlayer == null && otherRaceLocations.size()>0){
-            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
-            otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
-            otherPlayerLocationIndex++;
-        }else{
-            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
-            RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
-            if(currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
-                totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
-                if (totalDistanceOtherPlayer >= maxDistance / 100) {
-                    otherPlayerRef.removeEventListener(otherPlayerListener);
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(intent);
-                    totalDistance = 0;
-                    totalDistanceOtherPlayer = 0;
-                    stopLocationUpdates();
-                } else {
-                    if (totalDistanceOtherPlayer > totalDistance) {
-                        playerAhead(localPlayerTrack, otherPlayerTrack);
-                    } else {
-                        playerAhead(otherPlayerTrack, localPlayerTrack);
-                    }
-                    otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
-                }
+        if (otherRaceLocations.size()>0){
+            if (currentLocationOtherPlayer == null) {
+                currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+                otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
                 otherPlayerLocationIndex++;
+            }
+            else {
+                currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+                RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+                if(currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
+                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
+                    if (totalDistanceOtherPlayer >= maxDistance / 100) {
+                        otherPlayerRef.removeEventListener(otherPlayerListener);
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                        totalDistance = 0;
+                        totalDistanceOtherPlayer = 0;
+                        stopLocationUpdates();
+                    } else {
+                        if (totalDistanceOtherPlayer > totalDistance) {
+                            playerAhead(localPlayerTrack, otherPlayerTrack);
+                        } else {
+                            playerAhead(otherPlayerTrack, localPlayerTrack);
+                        }
+                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                    }
+                    otherPlayerLocationIndex++;
+                }
             }
         }
     }
