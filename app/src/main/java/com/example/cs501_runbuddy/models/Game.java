@@ -111,14 +111,15 @@ public class Game implements Serializable {
                     gameRef.child(ID).child(field).setValue(player1Values);
                 else
                     gameRef.child(ID).child(field + "/" + subField).setValue(player1Values.get(subField));
-            }else{
+            } else if (field.equals("player2")) {
                 Map<String, Object> player2Values = player2.toMap();
                 if (subField.equals(""))
                     gameRef.child(ID).child(field).setValue(player2Values);
                 else
                     gameRef.child(ID).child(field + "/" + subField).setValue(player2Values.get(subField));
+            } else {
+                gameRef.child(ID).child(field).setValue(gameValues.get(field));
             }
-
         }else {
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put("/" + ID, gameValues);
