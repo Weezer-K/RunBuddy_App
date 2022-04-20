@@ -1,16 +1,21 @@
 package com.example.cs501_runbuddy;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -20,6 +25,9 @@ public class ResultActivity extends AppCompatActivity {
     private Button btnDetail;
     private Button btnBackHome;
     private Game game;
+    private boolean isPlayer1;
+    private DatabaseReference otherPlayerRef;
+    private ValueEventListener otherPlayerListener;
 
 
     @Override
@@ -28,6 +36,34 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
+        isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+
+        if (isPlayer1) {
+            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
+        } else {
+            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerFinished");
+        }
+
+        otherPlayerListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.getValue(Boolean.class)) {
+                        if (isPlayer1) {
+                            game.player2.playerFinished = true;
+                        } else {
+                            game.player1.playerFinished = true;
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
 
         tvResult = findViewById(R.id.tvResult);
         tvPlayer1 = findViewById(R.id.tvPlayer1);
@@ -54,7 +90,6 @@ public class ResultActivity extends AppCompatActivity {
         });
 
 
-
         btnDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,5 +106,17 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void getWinner() {
+        if (game.player1.playerFinished && game.player2.playerFinished) {
+            game.readOtherPlayerLocations(isPlayer1, new Game.MyCallback() {
+                @Override
+                public void onCallback() {
+
+                }
+            });
+
+        }
     }
 }

@@ -319,9 +319,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         quitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isPlayer1){
+                    game.player1.playerFinished = true;
+                    game.writeToDatabase("player1", "playerFinished");
+                }else{
+                    game.player2.playerFinished = true;
+                    game.writeToDatabase("player2", "playerFinished");
+                }
                 otherPlayerRef.removeEventListener(otherPlayerListener);
                 stopLocationUpdates();
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                intent.putExtra("game", game);
                 startActivity(intent);
             }
         });
@@ -525,8 +533,16 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     playerAhead(localPlayerTrack, otherPlayerTrack);
                 }
                 if(totalDistance >= maxDistance/100){
+                    if(isPlayer1){
+                        game.player1.playerFinished = true;
+                        game.writeToDatabase("player1", "playerFinished");
+                    }else{
+                        game.player2.playerFinished = true;
+                        game.writeToDatabase("player2", "playerFinished");
+                    }
                     otherPlayerRef.removeEventListener(otherPlayerListener);
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                    intent.putExtra("game", game);
                     startActivity(intent);
                     totalDistance = 0;
                     stopLocationUpdates();
@@ -602,18 +618,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     if (totalDistanceOtherPlayer >= maxDistance / 100) {
                         otherPlayerRef.removeEventListener(otherPlayerListener);
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        startActivity(intent);
                         totalDistance = 0;
                         totalDistanceOtherPlayer = 0;
-                        stopLocationUpdates();
                     } else {
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
                         } else {
                             playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
-                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                        if(totalDistanceOtherPlayer < maxDistance/100) {
+                            otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                        }
                     }
                     otherPlayerLocationIndex++;
                 }

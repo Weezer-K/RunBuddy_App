@@ -171,4 +171,38 @@ public class Game implements Serializable {
 
         return formatDate;
     }
+
+    public interface MyCallback {
+        void onCallback();
+    }
+
+    public void readOtherPlayerLocations(boolean isPlayer1, Game.MyCallback myCallback) {
+        DatabaseReference otherPlayerLocationRef;
+        if(isPlayer1) {
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
+        }else{
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1");
+        }
+
+
+        otherPlayerLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    RacePlayer r = dataSnapshot.getValue(RacePlayer.class);
+                    if(isPlayer1){
+                        player2.playerLocation = r.playerLocation;
+                    }else{
+                        player1.playerLocation = r.playerLocation;
+                    }
+                    myCallback.onCallback();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
 }
