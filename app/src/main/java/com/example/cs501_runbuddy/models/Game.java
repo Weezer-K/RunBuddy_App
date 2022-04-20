@@ -98,19 +98,25 @@ public class Game implements Serializable {
         return result;
     }
 
-    public void writeToDatabase(String field) {
+    public void writeToDatabase(String field, String subField) {
         FirebaseDatabase db = RunBuddyApplication.getDatabase();
         DatabaseReference gameRef = db.getReference("games");
 
         Map<String, Object> gameValues = this.toMap();
         //Update database to have proper player locations
-        if (!field.equals("") && field.contains("player")) {
-            if(field.contains("player1")){
+        if (!field.equals("")) {
+            if(field.equals("player1")){
                 Map<String, Object> player1Values = player1.toMap();
-                gameRef.child(ID).child(field).setValue(player1Values);
+                if (subField.equals(""))
+                    gameRef.child(ID).child(field).setValue(player1Values);
+                else
+                    gameRef.child(ID).child(field + "/" + subField).setValue(player1Values.get(subField));
             }else{
                 Map<String, Object> player2Values = player2.toMap();
-                gameRef.child(ID).child(field).setValue(player2Values);
+                if (subField.equals(""))
+                    gameRef.child(ID).child(field).setValue(player2Values);
+                else
+                    gameRef.child(ID).child(field + "/" + subField).setValue(player2Values.get(subField));
             }
 
         }else {

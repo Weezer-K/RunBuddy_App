@@ -153,7 +153,7 @@ public class LobbyFragment extends Fragment {
                 null,
                 date);
 
-        game.writeToDatabase("");
+        game.writeToDatabase("",  "");
 
         LIDtv.setText("Game Lobby ID: " + ID);
         player1tv.setText("Player 1: " + acct.getGivenName());
@@ -171,7 +171,7 @@ public class LobbyFragment extends Fragment {
                 }else{
                     Intent intent = new Intent(getActivity(), RaceActivity.class);
                     game.player1.playerStarted = true;
-                    game.writeToDatabase("player1");
+                    game.writeToDatabase("player1", "playerStarted");
                     intent.putExtra("game", game);
                     intent.putExtra("localPlayerColor", color1);
                     intent.putExtra("onlinePlayerColor", color2);
@@ -188,7 +188,7 @@ public class LobbyFragment extends Fragment {
         game.player2 = new RacePlayer(acct.getId(), new HashMap<String, RaceLocation>(), false, false);
         game.joinAble = false;
 
-        game.writeToDatabase("");
+        game.writeToDatabase("", "");
 
         LIDtv.setText("Game Lobby: " + game.ID);
         player1tv.setText("Player 1: " + game.player1.playerId);
@@ -209,7 +209,7 @@ public class LobbyFragment extends Fragment {
                 } else {
                     Intent intent = new Intent(getActivity(), RaceActivity.class);
                     game.player2.playerStarted = true;
-                    game.writeToDatabase("player2");
+                    game.writeToDatabase("player2", "playerStarted");
                     intent.putExtra("localPlayerColor", color2);
                     intent.putExtra("onlinePlayerColor", color1);
                     intent.putExtra("game", game);
@@ -236,7 +236,7 @@ public class LobbyFragment extends Fragment {
             return Color.GRAY;
         }
     }
-        public void rejoinGame (Game g){
+        public void rejoinGame (Game g) {
 
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
             String pId = acct.getId();
@@ -280,10 +280,10 @@ public class LobbyFragment extends Fragment {
                     } else {
                         if (pId.equals(game.player1.playerId)) {
                             game.player1.playerStarted = true;
-                            game.writeToDatabase("player1");
+                            game.writeToDatabase("player1", "playerStarted");
                         } else {
                             game.player2.playerStarted = true;
-                            game.writeToDatabase("player2");
+                            game.writeToDatabase("player2", "playerStarted");
                         }
                         intent.putExtra("localPlayerColor", color2);
                         intent.putExtra("onlinePlayerColor", color1);
@@ -308,7 +308,7 @@ public class LobbyFragment extends Fragment {
                                 player2tv.setText(value);
                                 game.joinAble = false;
                                 game.player2 = p2;
-                                game.writeToDatabase("player2");
+                                game.writeToDatabase("player2", "");
                                 player2Ref.removeEventListener(player2Listener);
                             }
                         });
