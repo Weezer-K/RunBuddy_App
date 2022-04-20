@@ -158,7 +158,7 @@ public class LobbyFragment extends Fragment {
 
         LIDtv.setText("Game Lobby ID: " + ID);
         player1tv.setText("Player 1: " + acct.getGivenName());
-        player2tv.setText("Player 2: ");
+        player2tv.setText("Player 2: Not Yet Joined");
 
         initializePlayer2Ref();
 
@@ -199,7 +199,7 @@ public class LobbyFragment extends Fragment {
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
             @Override
             public void onCallback(String value) {
-                player1tv.setText(value);
+                player1tv.setText("Player 1: " + value);
             }
         });
 
@@ -248,23 +248,23 @@ public class LobbyFragment extends Fragment {
             LIDtv.setText("Game Lobby: " + game.ID);
 
             if (!game.joinAble && pId.equals(game.player1.playerId)) {
-                player1tv.setText(acct.getGivenName());
+                player1tv.setText("Player 1: " + acct.getGivenName());
                 User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                     @Override
                     public void onCallback(String value) {
-                        player2tv.setText(value);
+                        player2tv.setText("Player 2: "+ value);
                     }
                 });
             } else if (pId.equals(game.player1.playerId)) {
-                player1tv.setText(acct.getGivenName());
-                player2tv.setText("Not Yet Joined");
+                player1tv.setText("Player 1: " + acct.getGivenName());
+                player2tv.setText("Player 2: Not Yet Joined");
                 initializePlayer2Ref();
             } else {
-                player2tv.setText(acct.getGivenName());
+                player2tv.setText("Player 2: " +acct.getGivenName());
                 User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
                     @Override
                     public void onCallback(String value) {
-                        player1tv.setText(value);
+                        player1tv.setText("Player 1: " + value);
                     }
                 });
             }
@@ -307,7 +307,7 @@ public class LobbyFragment extends Fragment {
                         User.getUserNameFromID(p2.playerId, new User.MyCallback() {
                             @Override
                             public void onCallback(String value) {
-                                player2tv.setText(value);
+                                player2tv.setText("Player 2: " + value);
                                 game.joinAble = false;
                                 game.player2 = p2;
                                 game.writeToDatabase("player2", "");

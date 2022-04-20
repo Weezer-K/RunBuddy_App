@@ -537,6 +537,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 }else{
                     playerAhead(localPlayerTrack, otherPlayerTrack);
                 }
+
                 if(totalDistance >= maxDistance/100){
                     if(isPlayer1){
                         game.player1.playerFinished = true;
@@ -631,19 +632,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     if (totalDistanceOtherPlayer >= maxDistance / 100) {
                         otherPlayerRef.removeEventListener(otherPlayerListener);
-                        totalDistance = 0;
-                        totalDistanceOtherPlayer = 0;
                     } else {
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
                         } else {
                             playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
-                        if(totalDistanceOtherPlayer < maxDistance/100) {
-                            otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
-                        }
+
+                        otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
+                        otherPlayerLocationIndex++;
+
                     }
-                    otherPlayerLocationIndex++;
                 }
             }
         }
