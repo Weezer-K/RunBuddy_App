@@ -107,6 +107,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     // Variable necessary for calculating running data
     private Instant startTime;
     private double totalDistance;
+    private double totalTimeRan;
 
     private RaceLocation currentLocationOtherPlayer;
 
@@ -266,10 +267,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
-
-        //stopLocationUpdates();
-
-
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -322,9 +319,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 if(isPlayer1){
                     game.player1.playerFinished = true;
                     game.writeToDatabase("player1", "playerFinished");
+                    game.player1.totalDistanceRan = totalDistance;
+                    game.writeToDatabase("player1", "totalDistanceRan");
+                    game.player1.totalTimeRan = totalTimeRan;
+                    game.writeToDatabase("player1", "totalTimeRan");
                 }else{
                     game.player2.playerFinished = true;
                     game.writeToDatabase("player2", "playerFinished");
+                    game.player2.totalDistanceRan = totalDistance;
+                    game.writeToDatabase("player2", "totalDistanceRan");
+                    game.player2.totalTimeRan = totalTimeRan;
+                    game.writeToDatabase("player2", "totalTimeRan");
                 }
                 otherPlayerRef.removeEventListener(otherPlayerListener);
                 stopLocationUpdates();
@@ -536,9 +541,17 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     if(isPlayer1){
                         game.player1.playerFinished = true;
                         game.writeToDatabase("player1", "playerFinished");
+                        game.player1.totalDistanceRan = game.totalDistance;
+                        game.writeToDatabase("player1", "totalDistanceRan");
+                        game.player1.totalTimeRan = totalTimeRan;
+                        game.writeToDatabase("player1", "totalTimeRan");
                     }else{
                         game.player2.playerFinished = true;
                         game.writeToDatabase("player2", "playerFinished");
+                        game.player2.totalDistanceRan = game.totalDistance;
+                        game.writeToDatabase("player2", "totalDistanceRan");
+                        game.player2.totalTimeRan = totalTimeRan;
+                        game.writeToDatabase("player2", "totalTimeRan");
                     }
                     otherPlayerRef.removeEventListener(otherPlayerListener);
                     Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
@@ -654,9 +667,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     double startTimeMilis = startTime.toEpochMilli();
                     double endTimeMilis = Instant.now().toEpochMilli();
-                    double temp = endTimeMilis - startTimeMilis;
-                    int minutes = (int) temp / 60000;
-                    int seconds = (int) (temp % 60000) / 1000;
+                    totalTimeRan = endTimeMilis - startTimeMilis;
+                    int minutes = (int) totalTimeRan / 60000;
+                    int seconds = (int) (totalTimeRan % 60000) / 1000;
                     String secondString = Integer.toString(seconds);
                     if (secondString.length() == 1) {
                         secondString = "0" + secondString;

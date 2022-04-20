@@ -54,7 +54,7 @@ public class ResultActivity extends AppCompatActivity {
                         } else {
                             game.player1.playerFinished = true;
                         }
-
+                        getWinner();
                     }
                 }
             }
@@ -64,6 +64,8 @@ public class ResultActivity extends AppCompatActivity {
 
             }
         };
+
+        otherPlayerRef.addValueEventListener(otherPlayerListener);
 
         tvResult = findViewById(R.id.tvResult);
         tvPlayer1 = findViewById(R.id.tvPlayer1);
@@ -100,6 +102,7 @@ public class ResultActivity extends AppCompatActivity {
         btnBackHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                otherPlayerRef.removeEventListener(otherPlayerListener);
                 Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
                 intent.putExtra("fragment", "History");
                 startActivity(intent);
@@ -110,10 +113,27 @@ public class ResultActivity extends AppCompatActivity {
 
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
-            game.readOtherPlayerLocations(isPlayer1, new Game.MyCallback() {
+            game.readOtherPlayerDistanceRan(isPlayer1, new Game.MyCallback() {
                 @Override
                 public void onCallback() {
-
+                    if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
+                        if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
+                            game.winner = game.player1.playerId;
+                        } else {
+                            game.winner = game.player2.playerId;
+                        }
+                    } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
+                        if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
+                            game.winner = game.player1.playerId;
+                        } else {
+                            game.winner = game.player2.playerId;
+                        }
+                    } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
+                        game.winner = game.player2.playerId;
+                    } else {
+                        game.winner = game.player1.playerId;
+                    }
+                    game.writeToDatabase("winner", "");
                 }
             });
 

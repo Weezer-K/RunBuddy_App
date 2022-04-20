@@ -176,12 +176,12 @@ public class Game implements Serializable {
         void onCallback();
     }
 
-    public void readOtherPlayerLocations(boolean isPlayer1, Game.MyCallback myCallback) {
+    public void readOtherPlayerDistanceRan(boolean isPlayer1, Game.MyCallback myCallback) {
         DatabaseReference otherPlayerLocationRef;
         if(isPlayer1) {
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2").child("totalDistanceRan");
         }else{
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1");
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1").child("totalDistanceRan");
         }
 
 
@@ -189,11 +189,11 @@ public class Game implements Serializable {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    RacePlayer r = dataSnapshot.getValue(RacePlayer.class);
+                    Double d = dataSnapshot.getValue(Double.class);
                     if(isPlayer1){
-                        player2.playerLocation = r.playerLocation;
+                        player2.totalDistanceRan = d;
                     }else{
-                        player1.playerLocation = r.playerLocation;
+                        player1.totalDistanceRan = d;
                     }
                     myCallback.onCallback();
                 }
