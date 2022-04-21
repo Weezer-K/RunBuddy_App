@@ -1,5 +1,6 @@
 package com.example.cs501_runbuddy;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     private PublicGameListFragment PublicGameListFragment;
     private FragmentManager fm;
     public ArrayList<Double> distFilters;
+    private GoogleSignInClient mGoogleSignInClient;
 
 
     @Override
@@ -94,6 +97,14 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
 
         if (id == R.id.menu_history) {
             fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
+            return true;
+        }
+
+        if (id == R.id.menu_logout) {
+            mGoogleSignInClient = GoogleSignIn.getClient(this,RunBuddyApplication.getGoogleSignInClient()) ;
+            mGoogleSignInClient.signOut();
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
             return true;
         }
 
