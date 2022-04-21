@@ -24,18 +24,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class PublicGameListFragment extends Fragment implements SearchFragment.SearchGame {
 
     private ListView GameList;//The ListView for public games
     private TextView tvGameList;//A hint for how to get in this game
-    private ArrayList<String> gameSummaries; //Arraylist that have the games info
     private ArrayList<String> gameIds;
+    private ArrayList<Game> activeRaces;
     private SearchFragment.SearchGame listener;
     private DatabaseReference gamesRef;
     private ArrayList<Double> distFilters;
     private ChildEventListener gameListener;
+
 
     public PublicGameListFragment() {
         // Required empty public constructor
@@ -50,13 +52,13 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         GameList = v.findViewById(R.id.GameList);
         tvGameList = v.findViewById(R.id.tvGameList);
 
-        gameSummaries = new ArrayList<String>(){};
         gameIds = new ArrayList<String>(){};
+        activeRaces = new ArrayList<Game>(){};
+
 
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), gameSummaries.get(i), Toast.LENGTH_SHORT).show();
                 Game.joinGameFromDB(gameIds.get(i), listener, getActivity());
             }
 
@@ -71,32 +73,22 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                         && g.joinAble
                         && distFilters.contains(g.totalDistance)
                         && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
-                    User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
-                        @Override
-                        public void onCallback(String value) {
-                            String summary = "Game: " + g.ID + ", Date: " + g.getStringDate() + ", Host: " + value + ", Distance: " + g.totalDistance;
-                            gameSummaries.add(summary);
-                            gameIds.add(g.ID);
-                            ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, gameSummaries);
-                            GameList.setAdapter(arrayAdapter);
-                        }
-                    });
+                    gameIds.add(g.ID);
+                    activeRaces.add(g);
+                    Collections.sort(activeRaces);
+                    AdapterGame current = new AdapterGame(getContext(), activeRaces);
+                    GameList.setAdapter(current);
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
-                User.getUserNameFromID(g.player1.playerId, new User.MyCallback() {
-                    @Override
-                    public void onCallback(String value) {
-                        String summary = "Game: " + g.ID + ", Date: " + g.getStringDate() + ", Host: " + value + ", Distance: " + g.totalDistance;
-                        gameSummaries.remove(summary);
-                        gameIds.remove(g.ID);
-                        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1 ,gameSummaries);
-                        GameList.setAdapter(arrayAdapter);
-                    }
-                });
+                gameIds.remove(g.ID);
+                activeRaces.remove(g);
+                Collections.sort(activeRaces);
+                AdapterGame current = new AdapterGame(getContext(), activeRaces);
+                GameList.setAdapter(current);
             }
 
             @Override

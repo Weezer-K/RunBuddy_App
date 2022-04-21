@@ -2,6 +2,7 @@ package com.example.cs501_runbuddy.models;
 
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.cs501_runbuddy.RunBuddyApplication;
@@ -208,5 +209,12 @@ public class Game implements Serializable, Comparable<Game>{
     @Override
     public int compareTo(Game game) {
         return game.date.intValue() - this.date.intValue();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Game other = new Game();
+        if(obj instanceof Game){ other = (Game) obj; }
+        return this.ID.equals(other.ID);
     }
 }

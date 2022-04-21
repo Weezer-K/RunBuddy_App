@@ -232,7 +232,7 @@ class AdapterGame extends ArrayAdapter<Game>{
             }
         });
 
-        
+
         return currentItemView;
     }
 

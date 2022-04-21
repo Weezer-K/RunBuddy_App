@@ -16,7 +16,7 @@
             android:id="@+id/tvGameList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Joinable Games: (Double Click to Join In)"
+            android:text="Joinable Games: (Click to Join In)"
             android:textSize="20sp" />
 
         <ListView
