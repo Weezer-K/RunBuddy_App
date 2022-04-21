@@ -53,6 +53,12 @@ public class LobbyFragment extends Fragment {
     private DatabaseReference player2Ref;
     private ValueEventListener player2Listener;
 
+    private DatabaseReference otherPlayerStartedRef;
+    private ValueEventListener otherPlayerStartedListener;
+
+    private DatabaseReference otherPlayerReadyRef;
+    private ValueEventListener otherPlayerReadyListener;
+
     public LobbyFragment() {
         // Required empty public constructor
     }
@@ -127,16 +133,20 @@ public class LobbyFragment extends Fragment {
             initializePlayer2Ref();
         }
 
+        if (!game.isAsync) {
+            startBtn.setText("Ready");
+        }
+
         return v;
     }
 
-    public void createGame(String ID, boolean isPrivate, double totalDistance) {
+    public void createGame(String ID, boolean isPrivate, boolean isAsync, double totalDistance) {
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();
 
         RacePlayer player1 = new RacePlayer(player1Id, new HashMap<String, RaceLocation>(),
-                false, false, 0.0, 0.0, 0L);
+                false, false, false, 0.0, 0.0, 0L);
         RacePlayer player2 = new RacePlayer();
 
         Long date = null;
@@ -149,6 +159,7 @@ public class LobbyFragment extends Fragment {
                 isPrivate,
                 totalDistance,
                 true,
+                isAsync,
                 player1,
                 player2,
                 null,
@@ -169,14 +180,17 @@ public class LobbyFragment extends Fragment {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 }else if(game.joinAble){
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(getActivity(), RaceActivity.class);
+                } else if (!game.isAsync) {
+                    game.player1.playerReady = true;
+                    game.writeToDatabase("player1", "playerReady");
+                    player1tv.setTextColor(Color.GREEN);
+                    if (game.player2.playerReady) {
+                        startRace(color1, color2);
+                    }
+                } else{
                     game.player1.playerStarted = true;
                     game.writeToDatabase("player1", "playerStarted");
-                    intent.putExtra("game", game);
-                    intent.putExtra("localPlayerColor", color1);
-                    intent.putExtra("onlinePlayerColor", color2);
-                    startActivity(intent);
+                    startRace(color1, color2);
                 }
             }
         });
@@ -187,7 +201,7 @@ public class LobbyFragment extends Fragment {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
 
         game.player2 = new RacePlayer(acct.getId(), new HashMap<String, RaceLocation>(),
-                false, false, 0.0, 0.0, 0L);
+                false, false, false, 0.0, 0.0, 0L);
         game.joinAble = false;
 
         game.writeToDatabase("", "");
@@ -208,14 +222,17 @@ public class LobbyFragment extends Fragment {
             public void onClick(View view) {
                 if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
+                } else if (!game.isAsync) {
+                    game.player2.playerReady = true;
+                    game.writeToDatabase("player2", "playerReady");
+                    player2tv.setTextColor(Color.GREEN);
+                    if (game.player1.playerReady) {
+                        startRace(color2, color1);
+                    }
                 } else {
-                    Intent intent = new Intent(getActivity(), RaceActivity.class);
                     game.player2.playerStarted = true;
                     game.writeToDatabase("player2", "playerStarted");
-                    intent.putExtra("localPlayerColor", color2);
-                    intent.putExtra("onlinePlayerColor", color1);
-                    intent.putExtra("game", game);
-                    startActivity(intent);
+                    startRace(color2, color1);
                 }
             }
         });
@@ -238,98 +255,201 @@ public class LobbyFragment extends Fragment {
             return Color.GRAY;
         }
     }
-        public void rejoinGame (Game g) {
 
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-            String pId = acct.getId();
+    public void rejoinGame (Game g) {
 
-            game = g;
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        String pId = acct.getId();
 
-            LIDtv.setText("Game Lobby: " + game.ID);
+        game = g;
 
-            if (!game.joinAble && pId.equals(game.player1.playerId)) {
-                player1tv.setText("Player 1: " + acct.getGivenName());
-                User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
-                    @Override
-                    public void onCallback(String value) {
-                        player2tv.setText("Player 2: "+ value);
-                    }
-                });
-            } else if (pId.equals(game.player1.playerId)) {
-                player1tv.setText("Player 1: " + acct.getGivenName());
-                player2tv.setText("Player 2: Not Yet Joined");
-                initializePlayer2Ref();
-            } else {
-                player2tv.setText("Player 2: " +acct.getGivenName());
-                User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
-                    @Override
-                    public void onCallback(String value) {
-                        player1tv.setText("Player 1: " + value);
-                    }
-                });
-            }
+        LIDtv.setText("Game Lobby: " + game.ID);
 
-
-            startBtn.setOnClickListener(new View.OnClickListener() {
+        if (!game.joinAble && pId.equals(game.player1.playerId)) {
+            player1tv.setText("Player 1: " + acct.getGivenName());
+            User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
-                public void onClick(View view) {
-                    //Todo: don't let him start unless player 2 join in
-                    Intent intent = new Intent(getActivity(), RaceActivity.class);
-                    if (color1.equals(color2)) {
-                        Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
-                    }else if (game.joinAble) {
-                        Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (pId.equals(game.player1.playerId)) {
-                            game.player1.playerStarted = true;
-                            game.writeToDatabase("player1", "playerStarted");
-                        } else {
-                            game.player2.playerStarted = true;
-                            game.writeToDatabase("player2", "playerStarted");
-                        }
-                        intent.putExtra("localPlayerColor", color2);
-                        intent.putExtra("onlinePlayerColor", color1);
-                        intent.putExtra("game", game);
-                        startActivity(intent);
-                    }
+                public void onCallback(String value) {
+                    player2tv.setText("Player 2: "+ value);
+                }
+            });
+        } else if (pId.equals(game.player1.playerId)) {
+            player1tv.setText("Player 1: " + acct.getGivenName());
+            player2tv.setText("Player 2: Not Yet Joined");
+            initializePlayer2Ref();
+        } else {
+            player2tv.setText("Player 2: " +acct.getGivenName());
+            User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
+                @Override
+                public void onCallback(String value) {
+                    player1tv.setText("Player 1: " + value);
                 }
             });
         }
 
-        public void initializePlayer2Ref () {
-            player2Ref = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2");
-            player2Listener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        // dataSnapshot is the "game" node with all children with id equal to joinId
-                        RacePlayer p2 = snapshot.getValue(RacePlayer.class);
-                        User.getUserNameFromID(p2.playerId, new User.MyCallback() {
-                            @Override
-                            public void onCallback(String value) {
-                                player2tv.setText("Player 2: " + value);
-                                game.joinAble = false;
-                                game.player2 = p2;
-                                game.writeToDatabase("player2", "");
-                                player2Ref.removeEventListener(player2Listener);
+
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (color1.equals(color2)) {
+                    Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
+                }else if (game.joinAble) {
+                    Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
+                }  else if (!game.isAsync) {
+                    if (pId.equals(game.player1.playerId)) {
+                        game.player1.playerReady = true;
+                        game.writeToDatabase("player1", "playerReady");
+                        player1tv.setTextColor(Color.GREEN);
+                    } else {
+                        game.player2.playerReady = true;
+                        game.writeToDatabase("player2", "playerReady");
+                        player2tv.setTextColor(Color.GREEN);
+                    }
+                    if (game.player1.playerReady && game.player2.playerReady) {
+                        startRace(color2, color1);
+                    }
+                } else {
+                    if (pId.equals(game.player1.playerId)) {
+                        game.player1.playerStarted = true;
+                        game.writeToDatabase("player1", "playerStarted");
+                    } else {
+                        game.player2.playerStarted = true;
+                        game.writeToDatabase("player2", "playerStarted");
+                    }
+                    startRace(color2, color1);
+                }
+            }
+        });
+    }
+
+    public void startRace(Integer localColor, Integer onlineColor) {
+        // TODO Make Countdown and Better UI to Display Beginning of the Game
+        Intent intent = new Intent(getActivity(), RaceActivity.class);
+        intent.putExtra("localPlayerColor", localColor);
+        intent.putExtra("onlinePlayerColor", onlineColor);
+        intent.putExtra("game", game);
+        startActivity(intent);
+    }
+
+    public void initializePlayer2Ref() {
+        player2Ref = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2");
+        player2Listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    RacePlayer p2 = snapshot.getValue(RacePlayer.class);
+                    User.getUserNameFromID(p2.playerId, new User.MyCallback() {
+                        @Override
+                        public void onCallback(String value) {
+                            player2tv.setText("Player 2: " + value);
+                            game.joinAble = false;
+                            game.player2 = p2;
+                            game.writeToDatabase("player2", "");
+                            player2Ref.removeEventListener(player2Listener);
+                            if (!game.isAsync) {
+                                initializeOtherPlayerReadyRef();
+                            } else {
+                                initializeOtherPlayerStartedRef();
                             }
-                        });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        player2Ref.addValueEventListener(player2Listener);
+    }
+
+    public void initializeOtherPlayerReadyRef() {
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        String pId = acct.getId();
+
+        if (pId.equals(game.player1.playerId)) {
+            otherPlayerReadyRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(game.ID).child("player2").child("playerReady");
+        } else {
+            otherPlayerReadyRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(game.ID).child("player1").child("playerReady");
+        }
+
+        otherPlayerReadyListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.getValue(Boolean.class)) {
+                        if (pId.equals(game.player1.playerId)) {
+                            game.player2.playerReady = true;
+                            player2tv.setTextColor(Color.GREEN);
+                            if (game.player1.playerReady) {
+                                startRace(color1, color2);
+                            }
+                        } else {
+                            game.player1.playerReady = true;
+                            player1tv.setTextColor(Color.GREEN);
+                            if (game.player2.playerReady) {
+                                startRace(color2, color1);
+                            }
+                        }
+                        otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            };
-            player2Ref.addValueEventListener(player2Listener);
-        }
-
-        @Override
-        public void onDetach () {
-            super.onDetach();
-            if (player2Ref != null)
-                player2Ref.removeEventListener(player2Listener);
-        }
+            }
+        };
+        otherPlayerReadyRef.addValueEventListener(otherPlayerReadyListener);
     }
+
+    public void initializeOtherPlayerStartedRef() {
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        String pId = acct.getId();
+
+        if (pId.equals(game.player1.playerId)) {
+            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(game.ID).child("player2").child("playerStarted");
+        } else {
+            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(game.ID).child("player1").child("playerStarted");
+        }
+
+        otherPlayerStartedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.getValue(Boolean.class)) {
+                        if (pId.equals(game.player1.playerId)) {
+                            player2tv.setTextColor(Color.GREEN);
+                        } else {
+                            player1tv.setTextColor(Color.GREEN);
+                        }
+                        otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
+    }
+
+    @Override
+    public void onDetach () {
+        super.onDetach();
+        if (player2Ref != null)
+            player2Ref.removeEventListener(player2Listener);
+    }
+}
 

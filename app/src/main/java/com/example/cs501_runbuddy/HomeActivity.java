@@ -112,9 +112,9 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     }
 
     @Override
-    public void startGame(String ID, boolean isPrivate, int totalDistance) {
+    public void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance) {
         fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
-        LobbyFragment.createGame(ID,isPrivate,totalDistance);
+        LobbyFragment.createGame(ID, isPrivate, isAsync, totalDistance);
     }
 
 

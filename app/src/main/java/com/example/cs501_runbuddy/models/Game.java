@@ -29,6 +29,7 @@ public class Game implements Serializable, Comparable<Game>{
     public String ID;//Game Lobby ID
     public Boolean isPrivate;//private or public
     public Boolean joinAble;//Is the game ready to be searchable
+    public Boolean isAsync;//Is the game asynchronous or synchronous
     public Double totalDistance;//mile for this game
     public RacePlayer player1;
     public RacePlayer player2;
@@ -46,6 +47,7 @@ public class Game implements Serializable, Comparable<Game>{
                 Boolean isPrivate,
                 Double totalDistance,
                 Boolean joinAble,
+                Boolean isAsync,
                 RacePlayer player1,
                 RacePlayer player2,
                 String winner,
@@ -54,6 +56,7 @@ public class Game implements Serializable, Comparable<Game>{
         this.isPrivate = isPrivate;
         this.ID = ID;
         this.joinAble = joinAble;
+        this.isAsync = isAsync;
         this.totalDistance = totalDistance;
         this.player1 = player1;
         this.player2 = player2;
@@ -91,6 +94,7 @@ public class Game implements Serializable, Comparable<Game>{
         result.put("ID", ID);
         result.put("isPrivate", isPrivate);
         result.put("joinAble", joinAble);
+        result.put("isAsync", isAsync);
         result.put("totalDistance", totalDistance);
         result.put("player1", player1);
         result.put("player2", player2);

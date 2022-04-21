@@ -21,6 +21,7 @@ public class CreateFragment extends Fragment {
     private CheckBox mile5BoxCreate;
     private CheckBox mile10BoxCreate;
     private CheckBox privateBtn;
+    private CheckBox isAsyncBtn;
 
     private Button Createbtn;
     private TextView ExplainRoomType;
@@ -28,7 +29,7 @@ public class CreateFragment extends Fragment {
     private CreateGame listener;
 
     public interface CreateGame{
-        void startGame(String ID, boolean isPrivate, int totalDistance);
+        void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance);
     }
 
 
@@ -47,6 +48,7 @@ public class CreateFragment extends Fragment {
         mile5BoxCreate = v.findViewById(R.id.mile5BoxCreate);
         mile10BoxCreate = v.findViewById(R.id.mile10BoxCreate);
         privateBtn = v.findViewById(R.id.privateBtn);
+        isAsyncBtn = v.findViewById(R.id.isAsyncBtn);
         Createbtn = v.findViewById(R.id.Createbtn);
         ExplainRoomType = v.findViewById(R.id.ExplainRoomType);
 
@@ -88,12 +90,14 @@ public class CreateFragment extends Fragment {
 
                 boolean input2 = privateBtn.isChecked();//boolean value of private room or not
 
-                int input3 = 1;//default mile if user doesn't select
-                if(mile1BoxCreate.isChecked()){input3 = 1;}
-                else if (mile5BoxCreate.isChecked()){input3 = 5;}
-                else{input3 = 10;}
+                boolean input3 = isAsyncBtn.isChecked();
 
-                listener.startGame(input1,input2,input3);
+                int input4 = 1;//default mile if user doesn't select
+                if(mile1BoxCreate.isChecked()){input4 = 1;}
+                else if (mile5BoxCreate.isChecked()){input4 = 5;}
+                else{input4 = 10;}
+
+                listener.startGame(input1,input2,input3,input4);
             }
         });
 

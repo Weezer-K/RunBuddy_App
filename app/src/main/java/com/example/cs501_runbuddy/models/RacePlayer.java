@@ -11,7 +11,7 @@ public class RacePlayer implements Serializable {
     public String playerId; // Player name
     public HashMap<String, RaceLocation> playerLocation;//distance that player One has been completed during the time
     public Boolean playerFinished;//If true player reached finish line
-
+    public Boolean playerReady;//If true player is ready for sync race
     public Boolean playerStarted; // if they clicked the start button from lobby fragment
     public Double totalDistanceRan;
     public Double totalTimeRan;
@@ -21,13 +21,14 @@ public class RacePlayer implements Serializable {
 
     }
 
-    public RacePlayer(String playerId, HashMap<String, RaceLocation> playerLocation, Boolean playerFinished,
+    public RacePlayer(String playerId, HashMap<String, RaceLocation> playerLocation, Boolean playerFinished, Boolean playerReady,
                       Boolean playerStarted, Double totalDistanceRan, Double totalTimeRan, Long playerStartTime){
         this.playerId = playerId;
         this.playerLocation = playerLocation;
         this.playerFinished = playerFinished;
         this.playerStarted = playerStarted;
         this.playerStartTime = playerStartTime;
+        this.playerReady = playerReady;
         this.totalDistanceRan = totalDistanceRan;
         this.totalTimeRan = totalTimeRan;
     }
@@ -38,6 +39,7 @@ public class RacePlayer implements Serializable {
         result.put("playerId", playerId);
         result.put("playerLocation", playerLocation);
         result.put("playerFinished", playerFinished);
+        result.put("playerReady", playerReady);
         result.put("playerStarted", playerStarted);
         result.put("totalDistanceRan", totalDistanceRan);
         result.put("totalTimeRan", totalTimeRan);
