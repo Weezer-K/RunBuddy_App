@@ -789,4 +789,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         ahead.setClickable(false);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed(); // do not call super during a race
+    }
 }

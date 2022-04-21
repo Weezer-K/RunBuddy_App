@@ -199,4 +199,14 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed(); // do not call super, especially after a race since you should
+        // never go back to the race activity
+        otherPlayerRef.removeEventListener(otherPlayerListener);
+        Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
+        intent.putExtra("fragment", "History");
+        startActivity(intent);
+    }
 }
