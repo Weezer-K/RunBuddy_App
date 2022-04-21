@@ -1,23 +1,38 @@
 package com.example.cs501_runbuddy;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.User;
+import com.fitbit.api.loaders.ResourceLoaderResult;
+import com.fitbit.api.models.HeartRateContainer;
+import com.fitbit.api.models.HeartRateData;
+import com.fitbit.api.models.HeartRateInfo;
+import com.fitbit.api.models.UserContainer;
+import com.fitbit.api.services.HeartRateService;
+import com.fitbit.api.services.UserService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class ResultActivity extends AppCompatActivity {
+import java.util.Date;
+import java.util.List;
+
+public class ResultActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<ResourceLoaderResult<HeartRateContainer>>{
 
     private TextView tvResult;
     private TextView tvPlayer1;
@@ -109,6 +124,11 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+        getLoaderManager().initLoader(getLoaderId(), null, this).forceLoad();
+    }
+
+    protected int getLoaderId() {
+        return 2;
     }
 
     public void getWinner() {
@@ -138,5 +158,45 @@ public class ResultActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    //The next 4 functions are used to interact
+    //with the fitbit api library
+
+    //This gets the profile and retrieves the data
+    @NonNull
+    @Override
+    public Loader<ResourceLoaderResult<HeartRateContainer>> onCreateLoader(int id, @Nullable Bundle args) {
+        if (isPlayer1)
+            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
+                    game.date, game.player1.playerStartTime,
+                    game.player1.playerStartTime + Double.valueOf(game.player1.totalTimeRan).longValue());
+        else
+            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
+                    game.date, game.player2.playerStartTime,
+                    game.player2.playerStartTime + Double.valueOf(game.player2.totalTimeRan).longValue());
+    }
+
+    //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui
+    @Override
+    public void onLoadFinished(Loader<ResourceLoaderResult<HeartRateContainer>> loader, ResourceLoaderResult<HeartRateContainer> data) {
+        if (data.isSuccessful()) {
+//            bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ResourceLoaderResult<HeartRateContainer>> loader) {
+
+    }
+
+    //Uses info obtained from fitBit and sets the appropriate
+    //Views to display them
+    public void bindHeartbeatInfo(List<HeartRateData> dataset) {
+
+        for (HeartRateData data : dataset) {
+
+        }
+
     }
 }

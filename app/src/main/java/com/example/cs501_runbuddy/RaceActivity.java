@@ -323,6 +323,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.writeToDatabase("player1", "totalDistanceRan");
                     game.player1.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player1", "totalTimeRan");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        game.player1.playerStartTime = startTime.toEpochMilli();
+                        game.writeToDatabase("player1", "playerStartedTime");
+                    }
                 }else{
                     game.player2.playerFinished = true;
                     game.writeToDatabase("player2", "playerFinished");
@@ -330,6 +334,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.writeToDatabase("player2", "totalDistanceRan");
                     game.player2.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player2", "totalTimeRan");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        game.player2.playerStartTime = startTime.toEpochMilli();
+                        game.writeToDatabase("player2", "playerStartedTime");
+                    }
                 }
                 otherPlayerRef.removeEventListener(otherPlayerListener);
                 stopLocationUpdates();
@@ -505,7 +513,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             savedLocations.add(currentLocation);
             updateOtherPlayerUI();
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 double curTime = Instant.now().toEpochMilli();
                 LatLngDB latLngDB = new LatLngDB(currentLocation.latitude, currentLocation.longitude);
                 game.addLocData(isPlayer1, latLngDB, curTime);
@@ -546,6 +554,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.writeToDatabase("player1", "totalDistanceRan");
                         game.player1.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player1", "totalTimeRan");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            game.player1.playerStartTime = startTime.toEpochMilli();
+                            game.writeToDatabase("player1", "playerStartedTime");
+                        }
                     }else{
                         game.player2.playerFinished = true;
                         game.writeToDatabase("player2", "playerFinished");
@@ -553,6 +565,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.writeToDatabase("player2", "totalDistanceRan");
                         game.player2.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player2", "totalTimeRan");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            game.player2.playerStartTime = startTime.toEpochMilli();
+                            game.writeToDatabase("player2", "playerStartedTime");
+                        }
                     }
                     otherPlayerRef.removeEventListener(otherPlayerListener);
                     Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
@@ -586,7 +602,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
                 //Pace calculation
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     double startTimeMilis = startTime.toEpochMilli();
                     double endTimeMilis = Instant.now().toEpochMilli();
                     double temp = endTimeMilis - startTimeMilis;
@@ -741,8 +757,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         if (data.isSuccessful()) {
             bindProfileInfo(data.getResult().getUser());
         }
-
-
     }
 
     @Override
@@ -775,8 +789,4 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         ahead.setClickable(false);
 
     }
-
-
-
-
 }

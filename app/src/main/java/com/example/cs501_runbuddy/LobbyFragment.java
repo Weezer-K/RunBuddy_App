@@ -136,7 +136,7 @@ public class LobbyFragment extends Fragment {
         String player1Id = acct.getId();
 
         RacePlayer player1 = new RacePlayer(player1Id, new HashMap<String, RaceLocation>(),
-                false, false, 0.0, 0.0);
+                false, false, 0.0, 0.0, 0L);
         RacePlayer player2 = new RacePlayer();
 
         Long date = null;
@@ -187,7 +187,7 @@ public class LobbyFragment extends Fragment {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
 
         game.player2 = new RacePlayer(acct.getId(), new HashMap<String, RaceLocation>(),
-                false, false, 0.0, 0.0);
+                false, false, 0.0, 0.0, 0L);
         game.joinAble = false;
 
         game.writeToDatabase("", "");
