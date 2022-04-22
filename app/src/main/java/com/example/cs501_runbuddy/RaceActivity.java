@@ -79,6 +79,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private SupportMapFragment mapFragment;
     private LatLng currentLocation;
     private ArrayList<LatLng> savedLocations = new ArrayList<LatLng>();
+    private ArrayList<Integer> savedPolyColors = new ArrayList<>();
     private Game game;
 
     private Polyline poly;
@@ -95,6 +96,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private CircularSeekBar localPlayerTrack;
     private CircularSeekBar otherPlayerTrack;
     private Button quitButton;
+
+    private double currentPace;
 
     private TextView localColorIndicator;
     private TextView onlineColorIndicator;
@@ -137,6 +140,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     private ArrayList<RaceLocation> otherRaceLocations;
 
+    private int colorSlowPace = Color.RED;
+    private int colorMediumPace = Color.YELLOW;
+    private int colorFastPace = Color.GREEN;
+
+
 
     //1 used to set up the UI elements and overall logic of the google map
     //And spotify
@@ -171,6 +179,18 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
         isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
+        if(isPlayer1){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                game.player1.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+                game.writeToDatabase("player1", "playerStartTime");
+            }
+        }else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                game.player2.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+                game.writeToDatabase("player2", "playerStartTime");
+            }
+        }
+
         localColor = (Integer) getIntent().getExtras().get("localPlayerColor");
         onlineColor = (Integer) getIntent().getExtras().get("onlinePlayerColor");
         maxDistance = (int) (game.totalDistance * 100);
@@ -325,10 +345,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.writeToDatabase("player1", "totalDistanceRan");
                     game.player1.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player1", "totalTimeRan");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        game.player1.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                        game.writeToDatabase("player1", "playerStartedTime");
-                    }
                 }else{
                     game.player2.playerFinished = true;
                     game.writeToDatabase("player2", "playerFinished");
@@ -336,10 +352,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.writeToDatabase("player2", "totalDistanceRan");
                     game.player2.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player2", "totalTimeRan");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        game.player2.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                        game.writeToDatabase("player2", "playerStartedTime");
-                    }
                 }
                 otherPlayerRef.removeEventListener(otherPlayerListener);
                 stopLocationUpdates();
@@ -513,6 +525,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //add current location to saved location list
             //Which is a list that saves every point of the run
             savedLocations.add(currentLocation);
+
             updateOtherPlayerUI();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -525,9 +538,16 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             mapAPI.clear();
 
             //Create polyline and draw on map
+
             poly = mapAPI.addPolyline(new PolylineOptions().add(savedLocations.get(0)));
             poly.setPoints(savedLocations);
             poly.setVisible(true);
+
+            /*
+            currentPace = distance(currentLocation.latitude, currentLocation.longitude, savedLocations.get(1).latitude, savedLocations.get(1).longitude);
+            paceColorAdder();
+            reDrawPolyLines();
+            */
 
             //Add marker for current location to map
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
@@ -548,6 +568,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     playerAhead(localPlayerTrack, otherPlayerTrack);
                 }
 
+
+
                 if(totalDistance >= maxDistance/100){
                     if(isPlayer1){
                         game.player1.playerFinished = true;
@@ -556,10 +578,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.writeToDatabase("player1", "totalDistanceRan");
                         game.player1.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player1", "totalTimeRan");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            game.player1.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                            game.writeToDatabase("player1", "playerStartedTime");
-                        }
                     }else{
                         game.player2.playerFinished = true;
                         game.writeToDatabase("player2", "playerFinished");
@@ -567,10 +585,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.writeToDatabase("player2", "totalDistanceRan");
                         game.player2.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player2", "totalTimeRan");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            game.player2.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-                            game.writeToDatabase("player2", "playerStartedTime");
-                        }
                     }
                     otherPlayerRef.removeEventListener(otherPlayerListener);
                     Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
@@ -620,12 +634,23 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     double pace = totalDistance/hours;
                     tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
                 }
+
             }
             //This happens when the page first launches and
             //there is only one save location i.e. the current location
             else{
                 mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
             }
+        }
+    }
+
+    public void paceColorAdder(){
+        if(currentPace < 5){
+            savedPolyColors.add(colorSlowPace);
+        }else if(currentPace < 8){
+            savedPolyColors.add(colorMediumPace);
+        }else{
+            savedPolyColors.add(colorFastPace);
         }
     }
 
@@ -795,5 +820,16 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super during a race
+    }
+
+    public void reDrawPolyLines(){
+        for(int i = 0; i < savedLocations.size(); i+=2){
+            poly.setColor(savedPolyColors.get(i));
+            ArrayList temp = new ArrayList();
+            temp.add(savedLocations.get(i));
+            poly.setPoints(temp);
+            poly.setVisible(true);
+        }
+
     }
 }

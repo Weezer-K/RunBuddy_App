@@ -16,13 +16,14 @@ public class RacePlayer implements Serializable {
     public Double totalDistanceRan;
     public Double totalTimeRan;
     public Long playerStartTime;
+    public Double heartRate;
 
     public RacePlayer(){
 
     }
 
     public RacePlayer(String playerId, HashMap<String, RaceLocation> playerLocation, Boolean playerFinished, Boolean playerReady,
-                      Boolean playerStarted, Double totalDistanceRan, Double totalTimeRan, Long playerStartTime){
+                      Boolean playerStarted, Double totalDistanceRan, Double totalTimeRan, Long playerStartTime, Double heartRate){
         this.playerId = playerId;
         this.playerLocation = playerLocation;
         this.playerFinished = playerFinished;
@@ -31,6 +32,7 @@ public class RacePlayer implements Serializable {
         this.playerReady = playerReady;
         this.totalDistanceRan = totalDistanceRan;
         this.totalTimeRan = totalTimeRan;
+        this.heartRate = heartRate;
     }
 
     @Exclude
@@ -44,6 +46,7 @@ public class RacePlayer implements Serializable {
         result.put("totalDistanceRan", totalDistanceRan);
         result.put("totalTimeRan", totalTimeRan);
         result.put("playerStartTime", playerStartTime);
+        result.put("heartRate", heartRate);
         return result;
     }
 

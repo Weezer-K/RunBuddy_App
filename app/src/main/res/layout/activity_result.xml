@@ -10,7 +10,7 @@
         android:id="@+id/tvResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Victory: Game 014923"
+        android:text="Game 014923"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,49 +20,142 @@
         app:layout_constraintVertical_bias="0.052" />
 
     <TextView
-        android:id="@+id/tvPlayer1"
+        android:id="@+id/winnerLoserText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Tanky: 189 seconds"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvResult"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvResult"
+        android:layout_marginTop="8dp"
+        android:text="Winner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvResult" />
 
-    <TextView
-        android:id="@+id/tvPlayer2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Squishy: 200 seconds"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvPlayer1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvPlayer1"
-        app:layout_constraintTop_toBottomOf="@+id/tvPlayer1" />
-
-    <Button
-        android:id="@+id/btnDetail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="detail"
+    <LinearLayout
+        android:id="@+id/horizontalLinearLayout"
+        android:layout_width="338dp"
+        android:layout_height="481dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
+        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText">
 
-    <Button
-        android:id="@+id/btnBackHome"
+        <LinearLayout
+            android:id="@+id/player1"
+            android:layout_width="169dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/finishTimeLocalPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time finished: " />
+
+            <TextView
+                android:id="@+id/distanceLocalPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Distance:" />
+
+            <TextView
+                android:id="@+id/paceLocalPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="pace:" />
+
+            <TextView
+                android:id="@+id/avgHeartRateLocalPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Heart Rate:" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/localPlayerMapButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Map"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/player2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/finishTimeOtherPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time finished: " />
+
+            <TextView
+                android:id="@+id/distanceOtherPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Distance:" />
+
+            <TextView
+                android:id="@+id/paceOtherPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="pace:" />
+
+            <TextView
+                android:id="@+id/avgHeartRateOtherPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Heart Rate:" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/otherPlayerMapButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Map"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.008" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/localName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Back Home"
-        app:layout_constraintEnd_toEndOf="@+id/btnDetail"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/btnDetail"
-        app:layout_constraintTop_toBottomOf="@+id/btnDetail" />
+        android:text="NamePlayer1"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalLinearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/winnerLoserText"
+        app:layout_constraintHorizontal_bias="0.639"
+        app:layout_constraintStart_toStartOf="@+id/horizontalLinearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText"
+        app:layout_constraintVertical_bias="0.482" />
+
+    <TextView
+        android:id="@+id/otherName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player2Name"
+        app:layout_constraintBottom_toBottomOf="@+id/localName"
+        app:layout_constraintEnd_toEndOf="@+id/horizontalLinearLayout"
+        app:layout_constraintStart_toEndOf="@+id/winnerLoserText"
+        app:layout_constraintTop_toTopOf="@+id/localName" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
