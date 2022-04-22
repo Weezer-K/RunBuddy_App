@@ -173,10 +173,10 @@ public class LobbyFragment extends Fragment {
                 }else if(game.joinAble){
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
                 } else if (!game.isAsync) {
-                    game.player1.playerReady = true;
+                    game.player1.playerReady = !game.player1.playerReady;
                     game.writeToDatabase("player1", "playerReady");
-                    player1tv.setTextColor(Color.GREEN);
-                    if (game.player2.playerReady) {
+                    setTextColorForPlayer(player1tv, game.player1.playerReady);
+                    if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color1, color2);
                     }
                 } else{
@@ -213,10 +213,10 @@ public class LobbyFragment extends Fragment {
                 if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 } else if (!game.isAsync) {
-                    game.player2.playerReady = true;
+                    game.player2.playerReady = !game.player2.playerReady;
                     game.writeToDatabase("player2", "playerReady");
-                    player2tv.setTextColor(Color.GREEN);
-                    if (game.player1.playerReady) {
+                    setTextColorForPlayer(player2tv, game.player2.playerReady);
+                    if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
                     }
                 } else {
@@ -285,13 +285,13 @@ public class LobbyFragment extends Fragment {
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
                 }  else if (!game.isAsync) {
                     if (pId.equals(game.player1.playerId)) {
-                        game.player1.playerReady = true;
+                        game.player1.playerReady = !game.player1.playerReady;
                         game.writeToDatabase("player1", "playerReady");
-                        player1tv.setTextColor(Color.GREEN);
+                        setTextColorForPlayer(player1tv, game.player1.playerReady);
                     } else {
-                        game.player2.playerReady = true;
+                        game.player2.playerReady = !game.player2.playerReady;
                         game.writeToDatabase("player2", "playerReady");
-                        player2tv.setTextColor(Color.GREEN);
+                        setTextColorForPlayer(player2tv, game.player2.playerReady);
                     }
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
@@ -371,21 +371,20 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    if (snapshot.getValue(Boolean.class)) {
-                        if (pId.equals(game.player1.playerId)) {
-                            game.player2.playerReady = true;
-                            player2tv.setTextColor(Color.GREEN);
-                            if (game.player1.playerReady) {
-                                startRace(color1, color2);
-                            }
-                        } else {
-                            game.player1.playerReady = true;
-                            player1tv.setTextColor(Color.GREEN);
-                            if (game.player2.playerReady) {
-                                startRace(color2, color1);
-                            }
+                    if (pId.equals(game.player1.playerId)) {
+                        game.player2.playerReady = snapshot.getValue(Boolean.class);
+                        setTextColorForPlayer(player2tv, game.player2.playerReady);
+                        if (game.player1.playerReady && game.player2.playerReady) {
+                            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+                            startRace(color1, color2);
                         }
-                        otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+                    } else {
+                        game.player1.playerReady = snapshot.getValue(Boolean.class);
+                        setTextColorForPlayer(player1tv, game.player1.playerReady);
+                        if (game.player1.playerReady && game.player2.playerReady) {
+                            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+                            startRace(color2, color1);
+                        }
                     }
                 }
             }
@@ -432,6 +431,13 @@ public class LobbyFragment extends Fragment {
             }
         };
         otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
+    }
+
+    public void setTextColorForPlayer(TextView tv, boolean isReady) {
+        if (isReady)
+            tv.setTextColor(Color.GREEN);
+        else
+            tv.setTextColor(Color.GRAY);
     }
 
     @Override
