@@ -20,7 +20,6 @@ public class HeartRateIntraInfo {
     @Expose
     private String datasetType;
 
-
     public List<HeartRateData> getDataset() {
         return dataset;
     }

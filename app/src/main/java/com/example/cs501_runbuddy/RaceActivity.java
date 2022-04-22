@@ -52,6 +52,8 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 //import androidx.loader.app.LoaderManager;
@@ -324,7 +326,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.player1.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player1", "totalTimeRan");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        game.player1.playerStartTime = startTime.toEpochMilli();
+                        game.player1.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
                         game.writeToDatabase("player1", "playerStartedTime");
                     }
                 }else{
@@ -335,7 +337,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     game.player2.totalTimeRan = totalTimeRan;
                     game.writeToDatabase("player2", "totalTimeRan");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        game.player2.playerStartTime = startTime.toEpochMilli();
+                        game.player2.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
                         game.writeToDatabase("player2", "playerStartedTime");
                     }
                 }
@@ -555,7 +557,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.player1.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player1", "totalTimeRan");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            game.player1.playerStartTime = startTime.toEpochMilli();
+                            game.player1.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
                             game.writeToDatabase("player1", "playerStartedTime");
                         }
                     }else{
@@ -566,7 +568,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.player2.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player2", "totalTimeRan");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            game.player2.playerStartTime = startTime.toEpochMilli();
+                            game.player2.playerStartTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
                             game.writeToDatabase("player2", "playerStartedTime");
                         }
                     }

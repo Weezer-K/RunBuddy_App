@@ -25,12 +25,12 @@ import java.util.Locale;
  */
 public class HeartRateService {
 
-    private final static String HEART_RATE_URL = "https://api.fitbit.com/1/user/-/activities/heart/date/%s/1d/1min/.json";
+    private final static String HEART_RATE_URL = "https://api.fitbit.com/1/user/-/activities/heart/date/%s/1d/1sec/time/%s/%s.json";
     private static final ResourceLoaderFactory<HeartRateContainer> USER_HEART_RATE_LOADER_FACTORY = new ResourceLoaderFactory<HeartRateContainer>(HEART_RATE_URL, HeartRateContainer.class);
 
     public static Loader<ResourceLoaderResult<HeartRateContainer>> getHeartRateSummaryLoader(Activity activityContext, Long date, Long startTime, Long endTime) throws MissingScopesException, TokenExpiredException {
 //        return USER_HEART_RATE_LOADER_FACTORY.newResourceLoader(activityContext, new Scope[]{Scope.heartrate}, getStringDate(date), getStringTime(startTime), getStringTime(endTime));
-        return USER_HEART_RATE_LOADER_FACTORY.newResourceLoader(activityContext, new Scope[]{Scope.heartrate}, "2022-04-21");
+        return USER_HEART_RATE_LOADER_FACTORY.newResourceLoader(activityContext, new Scope[]{Scope.heartrate}, "2022-04-21", "16:30", "16:35");
     }
 
     public static String getStringDate(Long d) {

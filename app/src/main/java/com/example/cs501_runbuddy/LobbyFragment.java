@@ -130,11 +130,10 @@ public class LobbyFragment extends Fragment {
 
         if (savedInstanceState != null) {
             game = (Game) savedInstanceState.getSerializable("game");
+            if (!game.isAsync) {
+                startBtn.setText("Ready");
+            }
             initializePlayer2Ref();
-        }
-
-        if (!game.isAsync) {
-            startBtn.setText("Ready");
         }
 
         return v;

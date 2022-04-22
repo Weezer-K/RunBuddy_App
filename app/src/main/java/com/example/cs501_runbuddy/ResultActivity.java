@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -181,7 +182,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<ResourceLoaderResult<HeartRateContainer>> loader, ResourceLoaderResult<HeartRateContainer> data) {
         if (data.isSuccessful()) {
-//            bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
+            bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
         }
     }
 
@@ -194,10 +195,15 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     //Views to display them
     public void bindHeartbeatInfo(List<HeartRateData> dataset) {
 
-        for (HeartRateData data : dataset) {
+        double sumRate = 0;
 
+        for (HeartRateData data : dataset) {
+            sumRate += data.getValue();
         }
 
+        double averageHeartRate = sumRate / dataset.size();
+
+        //TODO display avg heart rate
     }
 
     @Override
