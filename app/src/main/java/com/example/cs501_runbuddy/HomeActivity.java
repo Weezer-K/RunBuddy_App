@@ -17,6 +17,8 @@ import com.example.cs501_runbuddy.models.Game;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     private FragmentManager fm;
     public ArrayList<Double> distFilters;
     private GoogleSignInClient mGoogleSignInClient;
-
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,30 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
 
         fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
 
+        bottomNavigationView = findViewById(R.id.theMenu);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menu_create:
+                        fm.beginTransaction().replace(R.id.homeFragment, CreateFragment).commitNow();
+                        return true;
+                    case R.id.menu_history:
+                        fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
+                        return true;
+                    case R.id.menu_search:
+                        fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
+                        return true;
+                    case R.id.menu_logout:
+                        mGoogleSignInClient = GoogleSignIn.getClient(HomeActivity.this,RunBuddyApplication.getGoogleSignInClient()) ;
+                        mGoogleSignInClient.signOut();
+                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                        startActivity(intent);
+                        return true;
+                }
+                return false;
+            }
+        });
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
             String personName = acct.getDisplayName();
@@ -74,42 +100,6 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar
-        getMenuInflater().inflate(R.menu.home_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        if (id == R.id.menu_create) {
-            fm.beginTransaction().replace(R.id.homeFragment, CreateFragment).commitNow();
-            return true;
-        }
-
-        if (id == R.id.menu_search) {
-            fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
-            return true;
-        }
-
-        if (id == R.id.menu_history) {
-            fm.beginTransaction().replace(R.id.homeFragment, MyRacesFragment).commitNow();
-            return true;
-        }
-
-        if (id == R.id.menu_logout) {
-            mGoogleSignInClient = GoogleSignIn.getClient(this,RunBuddyApplication.getGoogleSignInClient()) ;
-            mGoogleSignInClient.signOut();
-            Intent intent = new Intent(this, SignInActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);  //if none of the above are true, do the default and return a boolean.
-    }
 
     @Override
     public void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance) {

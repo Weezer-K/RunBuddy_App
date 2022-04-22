@@ -3,28 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_history"
+        android:title="My Races"
+        android:icon="@drawable/myrace"
+        >
+    </item>
+
+    <item
         android:id="@+id/menu_create"
         android:title="Create"
-        app:showAsAction="ifRoom">
+        android:icon="@drawable/creategame"
+        >
     </item>
 
 
     <item
         android:id="@+id/menu_search"
         android:title="Search"
-        app:showAsAction="ifRoom">
-    </item>
-
-    <item
-        android:id="@+id/menu_history"
-        android:title="My Races"
-        app:showAsAction="ifRoom">
+        android:icon="@drawable/searchgame"
+        >
     </item>
 
     <item
         android:id="@+id/menu_logout"
         android:title="Log Out"
-        app:showAsAction="ifRoom">
+        android:icon="@drawable/logout"
+        >
     </item>
 
 </menu>
