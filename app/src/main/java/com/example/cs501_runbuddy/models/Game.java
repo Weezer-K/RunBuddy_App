@@ -181,12 +181,12 @@ public class Game implements Serializable, Comparable<Game>{
         void onCallback();
     }
 
-    public void readOtherPlayerDistanceRan(boolean isPlayer1, Game.MyCallback myCallback) {
+    public void readOtherPlayer(boolean isPlayer1, Game.MyCallback myCallback) {
         DatabaseReference otherPlayerLocationRef;
         if(isPlayer1) {
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2").child("totalDistanceRan");
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
         }else{
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1").child("totalDistanceRan");
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1");
         }
 
 
@@ -194,11 +194,11 @@ public class Game implements Serializable, Comparable<Game>{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Double d = dataSnapshot.getValue(Double.class);
+                    RacePlayer r = dataSnapshot.getValue(RacePlayer.class);
                     if(isPlayer1){
-                        player2.totalDistanceRan = d;
+                        player2 = r;
                     }else{
-                        player1.totalDistanceRan = d;
+                        player1 = r;
                     }
                     myCallback.onCallback();
                 }

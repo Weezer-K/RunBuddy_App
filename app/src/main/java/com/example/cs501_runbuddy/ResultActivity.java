@@ -109,7 +109,6 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
         tvResult = findViewById(R.id.tvResult);
 
-
         tvResult.setText("Game ID: " + game.ID);
 
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
@@ -151,7 +150,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
-            game.readOtherPlayerDistanceRan(isPlayer1, new Game.MyCallback() {
+            game.readOtherPlayer(isPlayer1, new Game.MyCallback() {
                 @Override
                 public void onCallback() {
                     if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
