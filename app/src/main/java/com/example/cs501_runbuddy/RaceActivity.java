@@ -171,7 +171,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
 
         otherRaceLocations = new ArrayList<RaceLocation>();
-
+        otherPlayerLocationIndex = 0;
         isSpotifyOnScreen = false;
         totalDistance = 0;
         totalDistanceOtherPlayer = 0;
@@ -668,7 +668,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
                 otherPlayerLocationIndex++;
             }
-            else {
+            else if (otherRaceLocations.size() > otherPlayerLocationIndex){
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
                 if(currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){

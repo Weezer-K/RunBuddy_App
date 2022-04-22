@@ -199,7 +199,9 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<ResourceLoaderResult<HeartRateContainer>> loader, ResourceLoaderResult<HeartRateContainer> data) {
         if (data.isSuccessful()) {
-            bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
+            if(data.getResult().getActivitiesHeartIntraday().getDataset().size() > 0) {
+                bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
+            }
         }
     }
 

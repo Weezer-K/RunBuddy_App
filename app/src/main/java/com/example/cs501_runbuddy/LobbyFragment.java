@@ -128,14 +128,6 @@ public class LobbyFragment extends Fragment {
             }
         });
 
-        if (savedInstanceState != null) {
-            game = (Game) savedInstanceState.getSerializable("game");
-            if (!game.isAsync) {
-                startBtn.setText("Ready");
-            }
-            initializePlayer2Ref();
-        }
-
         return v;
     }
 
@@ -169,7 +161,7 @@ public class LobbyFragment extends Fragment {
 
         LIDtv.setText("Game Lobby ID: " + ID);
         player1tv.setText("Player 1: " + acct.getGivenName());
-        player2tv.setText("Player 2: Not Yet Joined");
+        player2tv.setText("Player 2:");
 
         initializePlayer2Ref();
 
@@ -188,8 +180,6 @@ public class LobbyFragment extends Fragment {
                         startRace(color1, color2);
                     }
                 } else{
-                    game.player1.playerStarted = true;
-                    game.writeToDatabase("player1", "playerStarted");
                     startRace(color1, color2);
                 }
             }
@@ -205,7 +195,7 @@ public class LobbyFragment extends Fragment {
         game.joinAble = false;
 
         game.writeToDatabase("", "");
-
+        initializePlayer2Ref();
         LIDtv.setText("Game Lobby: " + game.ID);
         player1tv.setText("Player 1: " + game.player1.playerId);
         player2tv.setText("Player 2: " + acct.getGivenName());
@@ -230,8 +220,6 @@ public class LobbyFragment extends Fragment {
                         startRace(color2, color1);
                     }
                 } else {
-                    game.player2.playerStarted = true;
-                    game.writeToDatabase("player2", "playerStarted");
                     startRace(color2, color1);
                 }
             }
@@ -275,7 +263,7 @@ public class LobbyFragment extends Fragment {
             });
         } else if (pId.equals(game.player1.playerId)) {
             player1tv.setText("Player 1: " + acct.getGivenName());
-            player2tv.setText("Player 2: Not Yet Joined");
+            player2tv.setText("Player 2: ");
             initializePlayer2Ref();
         } else {
             player2tv.setText("Player 2: " +acct.getGivenName());
@@ -287,7 +275,7 @@ public class LobbyFragment extends Fragment {
             });
         }
 
-
+        initializePlayer2Ref();
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -309,13 +297,6 @@ public class LobbyFragment extends Fragment {
                         startRace(color2, color1);
                     }
                 } else {
-                    if (pId.equals(game.player1.playerId)) {
-                        game.player1.playerStarted = true;
-                        game.writeToDatabase("player1", "playerStarted");
-                    } else {
-                        game.player2.playerStarted = true;
-                        game.writeToDatabase("player2", "playerStarted");
-                    }
                     startRace(color2, color1);
                 }
             }
@@ -324,6 +305,14 @@ public class LobbyFragment extends Fragment {
 
     public void startRace(Integer localColor, Integer onlineColor) {
         // TODO Make Countdown and Better UI to Display Beginning of the Game
+        boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
+        if(isPlayer1){
+            game.player1.playerStarted = true;
+            game.writeToDatabase("player1", "playerStarted");
+        }else{
+            game.player2.playerStarted = true;
+            game.writeToDatabase("player2", "playerStarted");
+        }
         Intent intent = new Intent(getActivity(), RaceActivity.class);
         intent.putExtra("localPlayerColor", localColor);
         intent.putExtra("onlinePlayerColor", onlineColor);
