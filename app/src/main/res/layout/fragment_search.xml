@@ -5,76 +5,78 @@
     android:id="@+id/searchFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00203F"
     tools:context=".SearchFragment">
-
-    <CheckBox
-        android:id="@+id/mile1Box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1 mile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.082"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.134" />
-
-    <CheckBox
-        android:id="@+id/mile5Box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="5 miles"
-        app:layout_constraintEnd_toEndOf="@+id/mile1Box"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/mile1Box"
-        app:layout_constraintTop_toBottomOf="@+id/mile1Box" />
 
     <CheckBox
         android:id="@+id/mile10Box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:buttonTint="#ADEFD1"
         android:text="10 miles"
-        app:layout_constraintEnd_toEndOf="@+id/mile5Box"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/mile5Box"
-        app:layout_constraintTop_toBottomOf="@+id/mile5Box" />
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="231dp" />
+
+    <CheckBox
+        android:id="@+id/mile1Box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="#ADEFD1"
+        android:text="1 mile"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="130dp" />
+
+    <CheckBox
+        android:id="@+id/mile5Box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="#ADEFD1"
+        android:text="5 miles"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="183dp" />
 
     <Button
         android:id="@+id/RSbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="235dp"
+        android:layout_height="67dp"
+        android:backgroundTint="#ADEFD1"
         android:text="Public Search"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.088"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.465" />
+        android:textColor="#00203F"
+        android:textSize="20sp"
+        app:cornerRadius="9dp"
+        tools:layout_editor_absoluteX="88dp"
+        tools:layout_editor_absoluteY="348dp" />
 
     <Button
         android:id="@+id/SBIbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="194dp"
+        android:layout_height="64dp"
+        android:backgroundTint="#ADEFD1"
         android:text="Join by ID"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.663" />
+        android:textColor="#00203F"
+        android:textSize="20sp"
+        app:cornerRadius="9dp"
+        tools:layout_editor_absoluteX="108dp"
+        tools:layout_editor_absoluteY="620dp" />
 
     <EditText
         android:id="@+id/edtRoomID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:hint="Type in room number"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.664" />
+        android:textColor="#FFFFFF"
+        android:textColorHint="#DDDDDDDD"
+        android:textSize="24sp"
+        tools:layout_editor_absoluteX="66dp"
+        tools:layout_editor_absoluteY="532dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
