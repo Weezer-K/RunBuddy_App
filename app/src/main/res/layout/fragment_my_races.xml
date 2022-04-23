@@ -8,75 +8,65 @@
     tools:context=".MyRacesFragment" >
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/myActiveRaceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="216dp"
+            android:text="Active"
+            app:layout_constraintBottom_toBottomOf="@+id/pastRacesButton"
+            app:layout_constraintEnd_toEndOf="@+id/_dynamic"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/ActiveRacesList"
+            app:layout_constraintTop_toTopOf="@+id/pastRacesButton"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <Button
+            android:id="@+id/pastRacesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="200dp"
+            android:text="Finished"
+            app:layout_constraintEnd_toEndOf="@+id/ActiveRacesList"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/_dynamic"
+            app:layout_constraintTop_toBottomOf="@+id/tvHistoryList" />
 
         <TextView
             android:id="@+id/tvHistoryList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Race"
-            android:textSize="20sp" />
+            android:text="My Races"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="409dp"
-            android:layout_height="77dp">
-
-            <Button
-                android:id="@+id/myActiveRaceButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="92dp"
-                android:text="Active"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/pastRacesButton"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.551" />
-
-            <Button
-                android:id="@+id/pastRacesButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Finished"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.72"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.551" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ListView
-                android:id="@+id/HistoryList"
-                android:layout_width="wrap_content"
-                android:layout_height="489dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.367" />
-            <ListView
-                android:id="@+id/ActiveRacesList"
-                android:layout_width="wrap_content"
-                android:layout_height="489dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.367" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+        <ListView
+            android:id="@+id/ActiveRacesList"
+            android:layout_width="305dp"
+            android:layout_height="428dp"
+            android:layout_marginTop="52dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pastRacesButton"
+            app:layout_constraintVertical_bias="0.0" />
+        <ListView
+            android:id="@+id/HistoryList"
+            android:layout_width="305dp"
+            android:layout_height="428dp"
+            android:layout_marginTop="52dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pastRacesButton"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </FrameLayout>

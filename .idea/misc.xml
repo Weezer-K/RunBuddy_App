@@ -38,7 +38,8 @@
         <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/activity_sign_in.xml" value="0.3125" />
         <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/activity_sign_up.xml" value="0.3125" />
         <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_lobby.xml" value="0.5541666666666667" />
-        <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_my_races.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_my_races.xml" value="0.5" />
+        <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_public_game_list.xml" value="0.35052083333333334" />
         <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_search.xml" value="0.24427083333333333" />
         <entry key="..\:/Users/kpete/CS501 Project/CS501-RunBuddy/app/src/main/res/layout/fragment_spotify.xml" value="0.48755832037325036" />
         <entry key="app/src/main/res/layout/activity_dashboard.xml" value="0.1793478260869565" />

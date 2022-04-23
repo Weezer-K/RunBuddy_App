@@ -27,6 +27,19 @@ public class RaceLocation implements Serializable {
         }
     }
 
+    public int compareTo(RaceLocation r){
+        if(this.time > r.time){
+            return 1;
+        }else if(this.time < r.time){
+            return -1;
+        }else{
+            return 0;
+        }
+    }
+
+
+
+
 
 
 

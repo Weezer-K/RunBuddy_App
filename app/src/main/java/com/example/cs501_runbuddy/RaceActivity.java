@@ -113,6 +113,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private Instant startTime;
     private double totalDistance;
     private double totalTimeRan;
+    private double prevMilis;
 
     private RaceLocation currentLocationOtherPlayer;
 
@@ -538,16 +539,31 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             mapAPI.clear();
 
             //Create polyline and draw on map
-
+            /*
             poly = mapAPI.addPolyline(new PolylineOptions().add(savedLocations.get(0)));
             poly.setPoints(savedLocations);
             poly.setVisible(true);
-
-            /*
-            currentPace = distance(currentLocation.latitude, currentLocation.longitude, savedLocations.get(1).latitude, savedLocations.get(1).longitude);
-            paceColorAdder();
-            reDrawPolyLines();
             */
+
+
+            double currentMilis = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                currentMilis = Instant.now().toEpochMilli();
+            }
+
+            if(savedLocations.size()>1) {
+                double temp =  currentMilis - prevMilis;
+                double hours = temp / 60000 / 60.0;
+                LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
+                currentPace = distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude) / hours;
+                paceColorAdder();
+                reDrawPolyLines();
+                prevMilis = currentMilis;
+            }else{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    prevMilis = Instant.now().toEpochMilli();
+                }
+            }
 
             //Add marker for current location to map
             mapAPI.addMarker(new MarkerOptions().position(currentLocation).title("TestPoint"));
@@ -618,10 +634,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
                 //Pace calculation
+                double temp = 0;
+                double hours = 0;
+                double startTimeMilis = 0;
+                double endTimeMilis = 0;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    double startTimeMilis = startTime.toEpochMilli();
-                    double endTimeMilis = Instant.now().toEpochMilli();
-                    double temp = endTimeMilis - startTimeMilis;
+                    startTimeMilis = startTime.toEpochMilli();
+                    endTimeMilis = Instant.now().toEpochMilli();
+                    temp = endTimeMilis - startTimeMilis;
                     int seconds = (int) (temp % 60000) / 1000;
                     String secondString = Integer.toString(seconds);
                     //Used when seconds are single digits
@@ -630,9 +650,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         secondString = "0" + secondString;
                     }
 
-                    double hours = temp/60000/60.0;
+                    hours = temp/60000/60.0;
                     double pace = totalDistance/hours;
-                    tv_pace.setText("Pace: " + df.format(pace) + " mi/h");
+                    tv_pace.setText("Pace: " + df.format(currentPace) + " mi/h");
                 }
 
             }
@@ -823,12 +843,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
     public void reDrawPolyLines(){
-        for(int i = 0; i < savedLocations.size(); i+=2){
-            poly.setColor(savedPolyColors.get(i));
-            ArrayList temp = new ArrayList();
-            temp.add(savedLocations.get(i));
-            poly.setPoints(temp);
-            poly.setVisible(true);
+        int colorCounter = 0;
+        for(int i = 0; i < savedLocations.size() - 1; i+=1){
+            Polyline p = mapAPI.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .add(savedLocations.get(i), savedLocations.get(i+1)));
+            p.setColor(savedPolyColors.get(colorCounter));
+            p.setVisible(true);
+            colorCounter++;
         }
 
     }
