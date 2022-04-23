@@ -18,8 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        app:itemTextColor="@drawable/bottom_navigation_selector"
+        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@drawable/bottom_navigation_selector"
         app:menu="@menu/home_menu"
-        >
+        app:backgroundTint="#00203F">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

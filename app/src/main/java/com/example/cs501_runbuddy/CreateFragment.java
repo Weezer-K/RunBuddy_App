@@ -24,7 +24,7 @@ public class CreateFragment extends Fragment {
     private CheckBox isAsyncBtn;
 
     private Button Createbtn;
-    private TextView ExplainRoomType;
+
 
     private CreateGame listener;
 
@@ -50,7 +50,7 @@ public class CreateFragment extends Fragment {
         privateBtn = v.findViewById(R.id.privateBtn);
         isAsyncBtn = v.findViewById(R.id.isAsyncBtn);
         Createbtn = v.findViewById(R.id.Createbtn);
-        ExplainRoomType = v.findViewById(R.id.ExplainRoomType);
+
 
         mile1BoxCreate.setChecked(true);
 
