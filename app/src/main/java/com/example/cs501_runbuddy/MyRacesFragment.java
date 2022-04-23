@@ -218,16 +218,19 @@ class AdapterGame extends ArrayAdapter<Game>{
 
         // then according to the position of the view assign the desired TextView 1 for the same
 
-        TextView textView1 = currentItemView.findViewById(R.id.tvGameInfo);
+        TextView tvLobbyID = currentItemView.findViewById(R.id.tvLobbyID);
+        TextView tvHost = currentItemView.findViewById(R.id.tvHost);
+        TextView tvDate = currentItemView.findViewById(R.id.tvDate);
+        TextView tvDistance = currentItemView.findViewById(R.id.tvDistance);
+
 
         User.getUserNameFromID(currentNumberPosition.player1.playerId, new User.MyCallback() {
             @Override
             public void onCallback(String value) {
-                textView1.setText("Game: " + currentNumberPosition.ID
-                        + ", Host: " + value
-                        + ", Date: " + currentNumberPosition.getStringDate()
-                        + ", Distance: " + currentNumberPosition.totalDistance
-                );
+                tvLobbyID.setText("Game: " + currentNumberPosition.ID);
+                tvDate.setText(currentNumberPosition.getStringDate());
+                tvHost.setText("Host: " + value);
+                tvDistance.setText("Distance: " + currentNumberPosition.totalDistance);
 
             }
         });

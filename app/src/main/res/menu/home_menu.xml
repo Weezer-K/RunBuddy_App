@@ -4,10 +4,9 @@
 
     <item
         android:id="@+id/menu_history"
-        android:title="My Races"
         android:icon="@drawable/myrace"
-        >
-    </item>
+        android:title="My Races"
+        ></item>
 
     <item
         android:id="@+id/menu_create"
