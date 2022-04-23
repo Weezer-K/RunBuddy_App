@@ -10,13 +10,17 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#00203F">
 
         <Button
             android:id="@+id/myActiveRaceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#ADEFD1"
             android:text="Active"
+            android:textColor="#00203F"
+            app:cornerRadius="9dp"
             tools:layout_editor_absoluteX="216dp"
             tools:layout_editor_absoluteY="79dp" />
 
@@ -24,16 +28,12 @@
             android:id="@+id/pastRacesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#ADEFD1"
             android:text="Finished"
+            android:textColor="#00203F"
+            app:cornerRadius="9dp"
             tools:layout_editor_absoluteX="76dp"
             tools:layout_editor_absoluteY="79dp" />
-
-        <TextView
-            android:id="@+id/tvHistoryList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="My Races"
-            android:textSize="20sp" />
 
         <ListView
             android:id="@+id/ActiveRacesList"

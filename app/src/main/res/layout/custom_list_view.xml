@@ -15,7 +15,7 @@
             android:id="@+id/tvLobbyID"
             android:layout_width="223dp"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:ignore="RtlHardcoded" />
@@ -24,19 +24,22 @@
             android:id="@+id/tvDate"
             android:layout_width="18dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textColor="#DDDDDD" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvHost"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/tvDistance"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF" />
 
 
 </LinearLayout>
