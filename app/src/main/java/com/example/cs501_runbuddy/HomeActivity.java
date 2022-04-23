@@ -1,15 +1,18 @@
 package com.example.cs501_runbuddy;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -66,11 +69,32 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
                         fm.beginTransaction().replace(R.id.homeFragment, SearchFragment).commitNow();
                         return true;
                     case R.id.menu_logout:
-                        mGoogleSignInClient = GoogleSignIn.getClient(HomeActivity.this,RunBuddyApplication.getGoogleSignInClient()) ;
-                        mGoogleSignInClient.signOut();
-                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                        startActivity(intent);
-                        return true;
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                        builder.setCancelable(true);
+                        builder.setTitle(Html.fromHtml("<font color='#00203F'>Logout?</font>"));
+                        builder.setMessage(Html.fromHtml("<font color='#00203F'>Are you sure you want to logout?</font>"));
+                        builder.setPositiveButton(Html.fromHtml("<font color='#00203F'>Yes</font>"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mGoogleSignInClient = GoogleSignIn.getClient(HomeActivity.this,RunBuddyApplication.getGoogleSignInClient()) ;
+                                        mGoogleSignInClient.signOut();
+                                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                        builder.setNegativeButton(Html.fromHtml("<font color='#00203F'>No</font>"), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return false;
+
                 }
                 return false;
             }
