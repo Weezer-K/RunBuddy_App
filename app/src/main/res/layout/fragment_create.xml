@@ -9,101 +9,98 @@
     tools:context=".CreateFragment">
 
 
-    <CheckBox
-        android:id="@+id/mile10BoxCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:buttonTint="#ADEFD1"
-        android:text="10 miles"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="232dp" />
-
-    <CheckBox
-        android:id="@+id/mile1BoxCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:buttonTint="#ADEFD1"
-        android:text="1 mile"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="131dp" />
-
-    <CheckBox
-        android:id="@+id/mile5BoxCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:buttonTint="#ADEFD1"
-        android:text="5 miles"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="184dp" />
-
     <Button
         android:id="@+id/Createbtn"
-        android:layout_width="201dp"
-        android:layout_height="78dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:backgroundTint="#ADEFD1"
         android:text="Create Game"
         android:textColor="#00203F"
-        android:textSize="20sp"
+        android:textSize="14sp"
         app:cornerRadius="9dp"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="604dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/isAsyncBtn"
+        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintStart_toStartOf="@+id/isAsyncBtn"
+        app:layout_constraintTop_toBottomOf="@+id/isAsyncBtn"
+        app:layout_constraintVertical_bias="0.105" />
 
     <CheckBox
         android:id="@+id/privateBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:buttonTint="#ADEFD1"
         android:text="Make Race Private"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="76dp"
-        tools:layout_editor_absoluteY="381dp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView6"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <CheckBox
         android:id="@+id/isAsyncBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:buttonTint="#ADEFD1"
         android:text="Make Race Aysnchronous"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="54dp"
-        tools:layout_editor_absoluteY="508dp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/privateBtn"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="@+id/privateBtn"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="341dp"
         android:layout_height="46dp"
+        android:layout_marginTop="16dp"
         android:text="Note: If your race is private, share your game ID for your friend to join directly"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="429dp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView6"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/privateBtn" />
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="321dp"
-        android:layout_height="74dp"
-        android:text="Select A Distance For Your Race"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Distance"
         android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        tools:layout_editor_absoluteX="54dp"
-        tools:layout_editor_absoluteY="27dp" />
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.042" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:text="Adjust Settings For Your Race"
         android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="306dp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/white"
+        android:popupBackground="#00203F"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

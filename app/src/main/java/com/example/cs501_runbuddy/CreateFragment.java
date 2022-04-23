@@ -2,17 +2,20 @@ package com.example.cs501_runbuddy;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
+import java.util.ArrayList;
 
 
 public class CreateFragment extends Fragment {
@@ -27,6 +30,8 @@ public class CreateFragment extends Fragment {
 
 
     private CreateGame listener;
+
+    private int selectedDistance;
 
     public interface CreateGame{
         void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance);
@@ -44,43 +49,41 @@ public class CreateFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_create, container, false);
 
-        mile1BoxCreate = v.findViewById(R.id.mile1BoxCreate);
-        mile5BoxCreate = v.findViewById(R.id.mile5BoxCreate);
-        mile10BoxCreate = v.findViewById(R.id.mile10BoxCreate);
         privateBtn = v.findViewById(R.id.privateBtn);
         isAsyncBtn = v.findViewById(R.id.isAsyncBtn);
         Createbtn = v.findViewById(R.id.Createbtn);
 
 
-        mile1BoxCreate.setChecked(true);
+        Spinner spinner = (Spinner) v.findViewById(R.id.spinner);
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("1 Mile");
+        arrayList.add("5 Miles");
+        arrayList.add("10 Miles");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_white_colors, arrayList);
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_white_colors);
+        spinner.setAdapter(arrayAdapter);
 
-        //make user only choose one certain mile game
-        mile1BoxCreate.setOnClickListener(new View.OnClickListener() {
+
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                mile1BoxCreate.setChecked(true);
-                mile5BoxCreate.setChecked(false);
-                mile10BoxCreate.setChecked(false);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(spinner.getItemAtPosition(i).equals("1 Mile")){
+                    selectedDistance = 1;
+                }else if(spinner.getItemAtPosition(i).equals("5 Miles")){
+                    selectedDistance = 5;
+                }else{
+                    selectedDistance = 10;
+                }
 
             }
-        });
-        mile5BoxCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mile1BoxCreate.setChecked(false);
-                mile5BoxCreate.setChecked(true);
-                mile10BoxCreate.setChecked(false);
 
-            }
-        });
-        mile10BoxCreate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mile1BoxCreate.setChecked(false);
-                mile5BoxCreate.setChecked(false);
-                mile10BoxCreate.setChecked(true);
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                selectedDistance = 1;
             }
         });
+
 
         // Create Game Button on click listener
         Createbtn.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +95,9 @@ public class CreateFragment extends Fragment {
 
                 boolean input3 = isAsyncBtn.isChecked();
 
-                int input4 = 1;//default mile if user doesn't select
-                if(mile1BoxCreate.isChecked()){input4 = 1;}
-                else if (mile5BoxCreate.isChecked()){input4 = 5;}
-                else{input4 = 10;}
+                int input4 = selectedDistance;
 
-                listener.startGame(input1,input2,input3,input4);
+                listener.startGame(input1,input2,input3, input4);
             }
         });
 
