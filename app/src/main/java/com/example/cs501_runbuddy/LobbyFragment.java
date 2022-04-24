@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -351,20 +352,29 @@ public class LobbyFragment extends Fragment {
     }
 
     public void startRace(Integer localColor, Integer onlineColor) {
-        startCountDown();
-        boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
-        if(isPlayer1){
-            game.player1.playerStarted = true;
-            game.writeToDatabase("player1", "playerStarted");
-        }else{
-            game.player2.playerStarted = true;
-            game.writeToDatabase("player2", "playerStarted");
-        }
-        Intent intent = new Intent(getActivity(), RaceActivity.class);
-        intent.putExtra("localPlayerColor", localColor);
-        intent.putExtra("onlinePlayerColor", onlineColor);
-        intent.putExtra("game", game);
-        startActivity(intent);
+        //startCountDown();
+        new CountDownTimer(4000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                LIDtv.setText("Game Start In: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
+                if(isPlayer1){
+                    game.player1.playerStarted = true;
+                    game.writeToDatabase("player1", "playerStarted");
+                }else{
+                    game.player2.playerStarted = true;
+                    game.writeToDatabase("player2", "playerStarted");
+                }
+                Intent intent = new Intent(getActivity(), RaceActivity.class);
+                intent.putExtra("localPlayerColor", localColor);
+                intent.putExtra("onlinePlayerColor", onlineColor);
+                intent.putExtra("game", game);
+                startActivity(intent);
+            }
+        }.start();
     }
 
     public void initializePlayer2Ref() {
