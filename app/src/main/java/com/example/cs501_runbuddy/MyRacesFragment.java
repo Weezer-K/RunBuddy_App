@@ -43,6 +43,10 @@ public class MyRacesFragment extends Fragment {
 
     private DatabaseReference gamesRef;
     private ChildEventListener gameListener;
+    private TextView instructions;
+
+    private String activeText;
+    private String finishedText;
 
     private BackToLobby listener;
 
@@ -62,28 +66,38 @@ public class MyRacesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_my_races, container, false);
 
         HistoryList = v.findViewById(R.id.HistoryList);
-        tvHistoryList = v.findViewById(R.id.tvHistoryList);
         ActiveRaceList = v.findViewById(R.id.ActiveRacesList);
 
         activeRaceButton = (Button) v.findViewById(R.id.myActiveRaceButton);
         pastRaceButton = (Button) v.findViewById(R.id.pastRacesButton);
+
+        instructions = (TextView) v.findViewById(R.id.instructionTextView);
 
         activeRaceButton.setBackgroundColor(Color.TRANSPARENT);
         pastRaceButton.setBackgroundColor(Color.TRANSPARENT);
 
         ActiveRaceList.setVisibility(View.INVISIBLE);
 
-        pastRaceButton.setTextColor(Color.GREEN);
+        finishedText = "Select a race for results";
+        activeText = "Select a race to continue";
+
+
+        //Displays that finished Races is on and
+        //Active Races is off
+        pastRaceButton.setTextColor(Color.BLUE);
         activeRaceButton.setTextColor(Color.GRAY);
+        instructions.setText(finishedText);
+
 
 
         pastRaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pastRaceButton.setTextColor(Color.GREEN);
+                pastRaceButton.setTextColor(Color.BLUE);
                 activeRaceButton.setTextColor(Color.GRAY);
                 ActiveRaceList.setVisibility(View.INVISIBLE);
                 HistoryList.setVisibility(View.VISIBLE);
+                instructions.setText(finishedText);
             }
         });
 
@@ -91,9 +105,10 @@ public class MyRacesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 pastRaceButton.setTextColor(Color.GRAY);
-                activeRaceButton.setTextColor(Color.GREEN);
+                activeRaceButton.setTextColor(Color.BLUE);
                 ActiveRaceList.setVisibility(View.VISIBLE);
                 HistoryList.setVisibility(View.INVISIBLE);
+                instructions.setText(activeText);
             }
         });
 

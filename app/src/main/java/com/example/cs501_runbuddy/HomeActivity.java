@@ -1,12 +1,13 @@
 package com.example.cs501_runbuddy;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,7 +26,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame, MyRacesFragment.BackToLobby{
+public class HomeActivity extends AppCompatActivity implements CreateFragment.CreateGame, SearchFragment.SearchGame, MyRacesFragment.BackToLobby, LobbyFragment.fragmentListener{
 
     private SearchFragment SearchFragment;
     private CreateFragment CreateFragment;
@@ -48,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         LobbyFragment = new LobbyFragment();
         MyRacesFragment = new MyRacesFragment();
         PublicGameListFragment = new PublicGameListFragment();
+
 
         distFilters = new ArrayList<Double>();
         fm = getSupportFragmentManager();
@@ -175,4 +177,11 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
         LobbyFragment.rejoinGame(game);
     }
+
+    @Override
+    public AudioManager getAudioManager() {
+        return (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    }
+
+
 }

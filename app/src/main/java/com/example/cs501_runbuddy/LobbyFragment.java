@@ -1,7 +1,10 @@
 package com.example.cs501_runbuddy;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,11 +36,12 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class LobbyFragment extends Fragment {
 
-
+    private Toast mToastToShow;
     private TextView LIDtv;
     private TextView player1tv;
     private TextView player2tv;
@@ -58,9 +62,29 @@ public class LobbyFragment extends Fragment {
 
     private DatabaseReference otherPlayerReadyRef;
     private ValueEventListener otherPlayerReadyListener;
+    private MediaPlayer startSounds;
+    private AudioManager audio;
+    private fragmentListener f;
 
     public LobbyFragment() {
         // Required empty public constructor
+    }
+
+    public interface fragmentListener{
+        AudioManager getAudioManager();
+       // void setTimerText(String s);
+        //void setBackgroundOn();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof fragmentListener) {
+            f = (fragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FragmentAListener");
+        }
     }
 
 
@@ -76,6 +100,9 @@ public class LobbyFragment extends Fragment {
         startBtn = v.findViewById(R.id.startBtn);
         player1Color = (Spinner) v.findViewById(R.id.player1Spinner);
         player2Color = (Spinner) v.findViewById(R.id.player2Spinner);
+        startSounds = MediaPlayer.create(getActivity(), R.raw.start_sound_effect);
+        audio = f.getAudioManager();
+        f = (fragmentListener) getActivity();
 
         List<String> colorsList = new ArrayList<String>();
         //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
@@ -84,22 +111,24 @@ public class LobbyFragment extends Fragment {
         colorsList.add("Green");
         colorsList.add("Yellow");
         colorsList.add("Cyan");
-        colorsList.add("Gray");
+        color1 = Color.RED;
 
         List<String> colorsList2 = new ArrayList<String>();
         //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
+        colorsList2.add("Green");
         colorsList2.add("Blue");
         colorsList2.add("Red");
-        colorsList2.add("Green");
         colorsList2.add("Yellow");
         colorsList2.add("Cyan");
-        colorsList2.add("Gray");
+        color1 = Color.GREEN;
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, colorsList);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, colorsList2);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.spinner_white_colors, colorsList);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), R.layout.spinner_white_colors, colorsList2);
+        adapter.setDropDownViewResource(R.layout.spinner_white_colors);
+        adapter2.setDropDownViewResource(R.layout.spinner_white_colors);
         player1Color.setAdapter(adapter);
         player2Color.setAdapter(adapter2);
         player1Color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -107,6 +136,11 @@ public class LobbyFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String colorPicked = player1Color.getItemAtPosition(i).toString();
                 color1 = colorValFinder(colorPicked);
+                try {
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
+                }catch(Exception e){
+
+                }
             }
 
             @Override
@@ -120,16 +154,22 @@ public class LobbyFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String colorPicked = player2Color.getItemAtPosition(i).toString();
                 color2 = colorValFinder(colorPicked);
+                try {
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color2);
+                }catch(Exception e){
+
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                color2 = Color.RED;
+                color2 = Color.BLUE;
             }
         });
 
         return v;
     }
+
 
     public void createGame(String ID, boolean isPrivate, boolean isAsync, double totalDistance) {
 
@@ -160,8 +200,8 @@ public class LobbyFragment extends Fragment {
         game.writeToDatabase("",  "");
 
         LIDtv.setText("Game Lobby ID: " + ID);
-        player1tv.setText("Player 1: " + acct.getGivenName());
-        player2tv.setText("Player 2:");
+        player1tv.setText("Name: " + acct.getGivenName());
+        player2tv.setText("Name: Not Joined Yet");
 
         initializePlayer2Ref();
 
@@ -177,6 +217,12 @@ public class LobbyFragment extends Fragment {
                     game.writeToDatabase("player1", "playerReady");
                     setTextColorForPlayer(player1tv, game.player1.playerReady);
                     if (game.player1.playerReady && game.player2.playerReady) {
+
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         startRace(color1, color2);
                     }
                 } else{
@@ -197,13 +243,13 @@ public class LobbyFragment extends Fragment {
         game.writeToDatabase("", "");
         initializePlayer2Ref();
         LIDtv.setText("Game Lobby: " + game.ID);
-        player1tv.setText("Player 1: " + game.player1.playerId);
-        player2tv.setText("Player 2: " + acct.getGivenName());
+        player1tv.setText("Name: " + game.player1.playerId);
+        player2tv.setText("Name: " + acct.getGivenName());
 
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
             @Override
             public void onCallback(String value) {
-                player1tv.setText("Player 1: " + value);
+                player1tv.setText("Name: " + value);
             }
         });
 
@@ -227,21 +273,22 @@ public class LobbyFragment extends Fragment {
     }
 
     public int colorValFinder(String c) {
+       int colorPicked = Color.RED;
         if (c.equals("Blue")) {
-            return Color.BLUE;
+            colorPicked = Color.BLUE;
         } else if (c.equals("Red")) {
-            return Color.RED;
+            colorPicked = Color.RED;
         } else if (c.equals("Green")) {
-            return Color.GREEN;
+            colorPicked = Color.GREEN;
         } else if (c.equals("Yellow")) {
-            return Color.YELLOW;
+            colorPicked = Color.YELLOW;
         } else if (c.equals("Cyan")) {
-            return Color.CYAN;
+            colorPicked = Color.CYAN;
         } else if (c.equals("Black")) {
-            return Color.BLACK;
-        } else {
-            return Color.GRAY;
+            colorPicked = Color.BLACK;
         }
+
+        return colorPicked;
     }
 
     public void rejoinGame (Game g) {
@@ -254,23 +301,23 @@ public class LobbyFragment extends Fragment {
         LIDtv.setText("Game Lobby: " + game.ID);
 
         if (!game.joinAble && pId.equals(game.player1.playerId)) {
-            player1tv.setText("Player 1: " + acct.getGivenName());
+            player1tv.setText("Name: " + acct.getGivenName());
             User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
                 public void onCallback(String value) {
-                    player2tv.setText("Player 2: "+ value);
+                    player2tv.setText("Name: "+ value);
                 }
             });
         } else if (pId.equals(game.player1.playerId)) {
-            player1tv.setText("Player 1: " + acct.getGivenName());
-            player2tv.setText("Player 2: ");
+            player1tv.setText("Name: " + acct.getGivenName());
+            player2tv.setText("Name: Not Joined Yet");
             initializePlayer2Ref();
         } else {
-            player2tv.setText("Player 2: " +acct.getGivenName());
+            player2tv.setText("Name: " +acct.getGivenName());
             User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
                 @Override
                 public void onCallback(String value) {
-                    player1tv.setText("Player 1: " + value);
+                    player1tv.setText("Name: " + value);
                 }
             });
         }
@@ -304,7 +351,7 @@ public class LobbyFragment extends Fragment {
     }
 
     public void startRace(Integer localColor, Integer onlineColor) {
-        // TODO Make Countdown and Better UI to Display Beginning of the Game
+        startCountDown();
         boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
         if(isPlayer1){
             game.player1.playerStarted = true;
@@ -331,7 +378,7 @@ public class LobbyFragment extends Fragment {
                     User.getUserNameFromID(p2.playerId, new User.MyCallback() {
                         @Override
                         public void onCallback(String value) {
-                            player2tv.setText("Player 2: " + value);
+                            player2tv.setText("Name: " + value);
                             game.joinAble = false;
                             game.player2 = p2;
                             game.writeToDatabase("player2", "");
@@ -445,6 +492,34 @@ public class LobbyFragment extends Fragment {
         super.onDetach();
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
+        f = null;
     }
+
+
+    private void startCountDown(){
+        //f.setBackgroundOn();
+
+        int toastDurationInMilliSeconds = 10000;
+        Integer i = 3;
+
+        // Set the countdown to display the toast
+
+
+        if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
+            startSounds.start();
+        }
+        try {
+            Toast.makeText(getActivity(), "3", Toast.LENGTH_SHORT).show();
+            TimeUnit.SECONDS.sleep(1);
+            Toast.makeText(getActivity(), "2", Toast.LENGTH_SHORT).show();
+            TimeUnit.SECONDS.sleep(1);
+            Toast.makeText(getActivity(), "1", Toast.LENGTH_SHORT).show();
+            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 

@@ -8,6 +8,21 @@
     android:background="#00203F"
     tools:context=".SearchFragment">
 
+
+    <TextView
+        android:id="@+id/filterTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter Settings"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.05" />
+
     <CheckBox
         android:id="@+id/mile10Box"
         android:layout_width="wrap_content"
@@ -16,8 +31,8 @@
         android:text="10 miles"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="163dp"
-        tools:layout_editor_absoluteY="231dp" />
+        app:layout_constraintStart_toStartOf="@+id/mile5Box"
+        app:layout_constraintTop_toBottomOf="@+id/mile5Box" />
 
     <CheckBox
         android:id="@+id/mile1Box"
@@ -27,8 +42,12 @@
         android:text="1 mile"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="163dp"
-        tools:layout_editor_absoluteY="130dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.406"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterTV"
+        app:layout_constraintVertical_bias="0.024" />
 
     <CheckBox
         android:id="@+id/mile5Box"
@@ -38,37 +57,54 @@
         android:text="5 miles"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="163dp"
-        tools:layout_editor_absoluteY="183dp" />
+        app:layout_constraintStart_toStartOf="@+id/mile1Box"
+        app:layout_constraintTop_toBottomOf="@+id/mile1Box" />
 
     <Button
         android:id="@+id/RSbtn"
         android:layout_width="235dp"
         android:layout_height="67dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#ADEFD1"
         android:text="Public Search"
         android:textColor="#00203F"
         android:textSize="20sp"
         app:cornerRadius="9dp"
-        tools:layout_editor_absoluteX="88dp"
-        tools:layout_editor_absoluteY="348dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mile10Box" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="#adefd1"
+        app:layout_constraintBottom_toTopOf="@+id/edtRoomID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RSbtn" />
 
     <Button
         android:id="@+id/SBIbtn"
         android:layout_width="194dp"
         android:layout_height="64dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#ADEFD1"
         android:text="Join by ID"
         android:textColor="#00203F"
         android:textSize="20sp"
         app:cornerRadius="9dp"
-        tools:layout_editor_absoluteX="108dp"
-        tools:layout_editor_absoluteY="620dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtRoomID" />
 
     <EditText
         android:id="@+id/edtRoomID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
         android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:hint="Type in room number"
@@ -76,7 +112,9 @@
         android:textColor="#FFFFFF"
         android:textColorHint="#DDDDDDDD"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="66dp"
-        tools:layout_editor_absoluteY="532dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RSbtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

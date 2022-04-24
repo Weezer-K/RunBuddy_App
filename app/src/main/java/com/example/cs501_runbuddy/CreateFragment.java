@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -62,6 +61,7 @@ public class CreateFragment extends Fragment {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_white_colors, arrayList);
         arrayAdapter.setDropDownViewResource(R.layout.spinner_white_colors);
         spinner.setAdapter(arrayAdapter);
+
 
 
 

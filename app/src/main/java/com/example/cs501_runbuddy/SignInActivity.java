@@ -2,14 +2,17 @@ package com.example.cs501_runbuddy;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,8 +27,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SignInActivity extends AppCompatActivity implements AuthenticationHandler {
 
@@ -33,7 +34,10 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
     private EditText email;
     private EditText password;
     private Button signInAccount;
+    private ImageView image;
     private int RC_SIGN_IN = 9999;
+    AudioManager audio;
+    MediaPlayer signInSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +45,13 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         setContentView(R.layout.activity_sign_in);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         signInAccount = (Button) findViewById(R.id.signInAccount);
-
+        audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         signInAccount.setVisibility(View.INVISIBLE);
+        signInSound = MediaPlayer.create(getApplicationContext(), R.raw.signinsoundeffect);
+
+        image = (ImageView) findViewById(R.id.logoSignInImage);
+
+        image.setImageResource(R.drawable.run_buddy);
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, RunBuddyApplication.getGoogleSignInClient());
@@ -62,6 +71,9 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
 
         if (acct != null) {
+            if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE){
+                signInSound.start();
+            }
             signInUser();
         } else {
             signInAccount.setVisibility(View.VISIBLE);
@@ -78,6 +90,9 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
     public void onAuthFinished(AuthenticationResult result) {
         if(result.isSuccessful()){
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
+                signInSound.start();
+            }
             startActivity(intent);
         }
     }
@@ -109,6 +124,9 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
             //If access token for fitbit valid
             //Go straight to dashboard
             if(AuthenticationManager.isLoggedIn()){
+                if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
+                    signInSound.start();
+                }
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
             }

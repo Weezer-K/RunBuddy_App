@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -116,42 +117,49 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         mapLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isPlayer1 && game.player1.playerFinished){
-                    if(mapFragment.isVisible()){
-                        mapFragment.getView().setVisibility(View.INVISIBLE);
-                        mapLocal.setBackgroundColor(Color.GREEN);
-                    }else{
-                        mapFragment.getView().setVisibility(View.VISIBLE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            setMap(game.player1, true);
+                try {
+                    if (isPlayer1 && game.player1.playerFinished) {
+                        if (mapFragment.isVisible()) {
+                            mapFragment.getView().setVisibility(View.INVISIBLE);
+                            mapLocal.setBackgroundColor(Color.GREEN);
+                        } else {
+                            mapFragment.getView().setVisibility(View.VISIBLE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                setMap(game.player1, true);
+                            }
+
+                            double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
+                            double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
+                            LatLng latLng = new LatLng(lat, lng);
+                            mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
+                            resultsFromMap.setVisibility(View.VISIBLE);
+                            resultsFromMap.setClickable(true);
                         }
 
-                        double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-                        double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
-                        LatLng latLng = new LatLng(lat, lng);
-                        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                        resultsFromMap.setVisibility(View.VISIBLE);
-                        resultsFromMap.setClickable(true);
+                    } else if (!isPlayer1 && game.player2.playerFinished) {
+                        if (mapFragment.isVisible()) {
+                            mapFragment.getView().setVisibility(View.INVISIBLE);
+                            mapOther.setBackgroundColor(Color.GREEN);
+                        } else {
+                            mapFragment.getView().setVisibility(View.VISIBLE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                setMap(game.player2, true);
+                            }
+                            double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
+                            double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
+                            LatLng latLng = new LatLng(lat, lng);
+                            mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
+                            resultsFromMap.setVisibility(View.VISIBLE);
+                            resultsFromMap.setClickable(true);
+                        }
                     }
 
-                }else if(!isPlayer1 && game.player2.playerFinished ){
-                    if(mapFragment.isVisible()){
-                        mapFragment.getView().setVisibility(View.INVISIBLE);
-                        mapOther.setBackgroundColor(Color.GREEN);
-                    }else{
-                        mapFragment.getView().setVisibility(View.VISIBLE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            setMap(game.player2, true);
-                        }
-                        double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-                        double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
-                        LatLng latLng = new LatLng(lat, lng);
-                        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                        resultsFromMap.setVisibility(View.VISIBLE);
-                        resultsFromMap.setClickable(true);
-                    }
+                } catch (Exception e) {
+                    Toast.makeText(ResultActivity.this, "You had no gps data Sorry, you can look at the other things though", Toast.LENGTH_SHORT).show();
+                    mapFragment.getView().setVisibility(View.INVISIBLE);
+                    mapLocal.setClickable(false);
+                    mapLocal.setVisibility(View.INVISIBLE);
                 }
-
             }
         });
 
@@ -448,7 +456,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     private void setMap(RacePlayer player, boolean isLocal){
         if(isLocal) {
-            if (localRaceLocations == null) {
+            if (localRaceLocations == null|| otherRaceLocations.size() == 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     localRaceLocations = populatePolyLists(player);
                     reDrawPolyLines(localRaceLocations);
@@ -458,7 +466,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                 reDrawPolyLines(localRaceLocations);
             }
         }else{
-            if (otherRaceLocations == null) {
+            if (otherRaceLocations == null || otherRaceLocations.size() == 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     otherRaceLocations = populatePolyLists(player);
                     reDrawPolyLines(otherRaceLocations);
@@ -477,14 +485,19 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private ArrayList<RaceLocation> populatePolyLists(RacePlayer p){
-        ArrayList<RaceLocation> savedLocations = new ArrayList<RaceLocation>(p.playerLocation.values());
-        savedLocations.sort(new Comparator<RaceLocation>() {
-            @Override
-            public int compare(RaceLocation l1, RaceLocation l2) {
-                return l1.compareTo(l2);
-            }
-        });
-        return savedLocations;
+        try {
+            ArrayList<RaceLocation> savedLocations = new ArrayList<RaceLocation>(p.playerLocation.values());
+            savedLocations.sort(new Comparator<RaceLocation>() {
+                @Override
+                public int compare(RaceLocation l1, RaceLocation l2) {
+                    return l1.compareTo(l2);
+                }
+            });
+            return savedLocations;
+        }catch(Exception e){
+
+        }
+        return new ArrayList<RaceLocation>();
     }
 
     public void reDrawPolyLines(List<RaceLocation> savedLocations){

@@ -17,45 +17,90 @@
             android:id="@+id/myActiveRaceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="64dp"
             android:backgroundTint="#ADEFD1"
             android:text="Active"
             android:textColor="#00203F"
             app:cornerRadius="9dp"
-            tools:layout_editor_absoluteX="216dp"
-            tools:layout_editor_absoluteY="79dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/pastRacesButton" />
 
         <Button
             android:id="@+id/pastRacesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="84dp"
             android:backgroundTint="#ADEFD1"
             android:text="Finished"
             android:textColor="#00203F"
             app:cornerRadius="9dp"
-            tools:layout_editor_absoluteX="76dp"
-            tools:layout_editor_absoluteY="79dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/myActiveRaceButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.023" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:background="#adefd1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pastRacesButton" />
 
         <ListView
             android:id="@+id/ActiveRacesList"
             android:layout_width="match_parent"
             android:layout_height="428dp"
-            android:layout_marginTop="52dp"
+            android:divider="@color/white"
+            android:dividerHeight="1dip"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pastRacesButton"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
             app:layout_constraintVertical_bias="0.0" />
 
         <ListView
             android:id="@+id/HistoryList"
             android:layout_width="match_parent"
             android:layout_height="428dp"
-            android:layout_marginTop="52dp"
+            android:divider="@color/white"
+            android:dividerHeight="1dip"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pastRacesButton"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
             app:layout_constraintVertical_bias="0.0" />
+
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#adefd1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ActiveRacesList" />
+
+        <TextView
+            android:id="@+id/instructionTextView"
+            android:layout_width="319dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider2"
+            app:layout_constraintVertical_bias="0.283" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
