@@ -353,10 +353,14 @@ public class LobbyFragment extends Fragment {
 
     public void startRace(Integer localColor, Integer onlineColor) {
         //startCountDown();
-        new CountDownTimer(4000, 1000) {
 
+        if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
+            startSounds.start();
+        }
+        new CountDownTimer(4000, 1000) {
+            int counter = 0;
             public void onTick(long millisUntilFinished) {
-                LIDtv.setText("Game Start In: " + millisUntilFinished / 1000);
+                LIDtv.setText("Game Start In: " + ((millisUntilFinished / 1000)));
             }
 
             public void onFinish() {
@@ -375,6 +379,7 @@ public class LobbyFragment extends Fragment {
                 startActivity(intent);
             }
         }.start();
+
     }
 
     public void initializePlayer2Ref() {

@@ -4,27 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00203F"
     tools:context=".ResultActivity">
 
     <TextView
         android:id="@+id/tvResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Game 014923"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.046"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.052" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/winnerLoserText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:text="Winner"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,17 +33,16 @@
 
     <LinearLayout
         android:id="@+id/horizontalLinearLayout"
-        android:layout_width="338dp"
-        android:layout_height="481dp"
+        android:layout_width="336dp"
+        android:layout_height="159dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText">
+        app:layout_constraintTop_toBottomOf="@+id/textView7">
 
         <LinearLayout
             android:id="@+id/player1"
-            android:layout_width="169dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -50,46 +50,70 @@
                 android:id="@+id/finishTimeLocalPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Time finished: " />
+                android:text="Time finished: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/distanceLocalPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Distance:" />
+                android:text="Distance: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/paceLocalPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="pace:" />
+                android:text="Pace NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/avgHeartRateLocalPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Heart Rate:" />
+                android:text="Heart Rate NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <Button
                     android:id="@+id/localPlayerMapButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="#ADEFD1"
                     android:text="Map"
+                    android:textColor="#00203F"
+                    app:cornerRadius="9dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.49"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
         <LinearLayout
             android:id="@+id/player2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -97,40 +121,58 @@
                 android:id="@+id/finishTimeOtherPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Time finished: " />
+                android:text="Time finished: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/distanceOtherPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Distance:" />
+                android:text="Distance: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/paceOtherPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="pace:" />
+                android:text="Pace: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/avgHeartRateOtherPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Heart Rate:" />
+                android:text="Heart Rate NA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteY="78dp">
 
                 <Button
                     android:id="@+id/otherPlayerMapButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="#ADEFD1"
                     android:text="Map"
+                    android:textColor="#00203F"
+                    app:cornerRadius="9dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.49"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.008" />
+                    app:layout_constraintVertical_bias="0.0" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
@@ -140,46 +182,62 @@
         android:id="@+id/localName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
         android:text="NamePlayer1"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalLinearLayout"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/winnerLoserText"
-        app:layout_constraintHorizontal_bias="0.639"
-        app:layout_constraintStart_toStartOf="@+id/horizontalLinearLayout"
-        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText"
-        app:layout_constraintVertical_bias="0.482" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText" />
 
     <TextView
         android:id="@+id/otherName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Player2Name"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/localName"
-        app:layout_constraintEnd_toEndOf="@+id/horizontalLinearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/winnerLoserText"
-        app:layout_constraintTop_toTopOf="@+id/localName" />
+        app:layout_constraintTop_toTopOf="@+id/localName"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="20dp"
+        android:background="#adefd1"
+        app:layout_constraintTop_toBottomOf="@+id/localName"
+        tools:layout_editor_absoluteX="0dp" />
 
     <fragment
         android:id="@+id/localMapAPI"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="268dp"
+        android:layout_height="337dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.005">
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLinearLayout"
+        app:layout_constraintVertical_bias="0.16">
 
     </fragment>
 
-    <Button
-        android:id="@+id/backToResults"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Results"
-        app:layout_constraintBottom_toBottomOf="@+id/localMapAPI"
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalLinearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

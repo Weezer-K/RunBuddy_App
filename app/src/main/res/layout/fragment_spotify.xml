@@ -16,7 +16,6 @@
             android:id="@+id/backgroundOfSpotify"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="TextView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -64,8 +63,8 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="185dp"
+            android:layout_width="128dp"
+            android:layout_height="149dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -80,32 +79,32 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
             android:src="@drawable/shuffle_off"
+            app:layout_constraintBottom_toBottomOf="@+id/repeatImageButton"
             app:layout_constraintEnd_toStartOf="@+id/previousImageButton"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+            app:layout_constraintTop_toTopOf="@+id/repeatImageButton" />
 
         <ImageButton
             android:id="@+id/previousImageButton"
             android:layout_width="69dp"
             android:layout_height="44dp"
             android:src="@drawable/skip_back"
-            app:layout_constraintBottom_toBottomOf="@+id/shuffleImageButton"
+            app:layout_constraintBottom_toBottomOf="@+id/skipImageButton"
             app:layout_constraintEnd_toStartOf="@+id/playImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/skipImageButton"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageButton
             android:id="@+id/playImageButton"
             android:layout_width="46dp"
             android:layout_height="41dp"
+            android:layout_marginTop="20dp"
             android:src="@drawable/play"
-            app:layout_constraintBottom_toBottomOf="@+id/previousImageButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar"
-            app:layout_constraintVertical_bias="0.714" />
+            app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
         <ImageButton
             android:id="@+id/repeatImageButton"

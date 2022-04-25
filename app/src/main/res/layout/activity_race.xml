@@ -15,8 +15,10 @@
         android:textColorHighlight="#330707"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.example.cs501_runbuddy.CircularSeekBar
         android:id="@+id/localPlayerTrack"
@@ -61,99 +63,95 @@
         app:use_custom_radii="true" />
 
     <TextView
-        android:id="@+id/tv_gender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gender:0"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.853"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_pace"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
         android:id="@+id/tv_pace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:text="Pace: 0 mi/h"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_distance"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/tv_distance"
-        app:layout_constraintTop_toBottomOf="@+id/tv_distance"
-        app:layout_constraintVertical_bias="0.157" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_distance" />
+
+    <TextView
+        android:id="@+id/tv_paceOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="Pace: 0 mi/h"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pace"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_distanceOther"
+        app:layout_constraintTop_toTopOf="@+id/tv_pace"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="28dp"
         android:text="Distance: 0 mi"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.061"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapAPI" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/localColorIndicator"
+        app:layout_constraintTop_toBottomOf="@+id/localColorIndicator" />
 
     <TextView
-        android:id="@+id/tv_age"
+        android:id="@+id/tv_distanceOther"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Age:0"
+        android:layout_marginEnd="48dp"
+        android:text="Distance: 0 mi"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_distance"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tv_gender"
-        app:layout_constraintTop_toTopOf="@+id/tv_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_distance"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:shadowColor="#FFFFFF"
         android:text="Time: 00:00"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_pace"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/tv_pace"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pace"
-        app:layout_constraintVertical_bias="0.196" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_pace" />
 
-    <ImageView
-        android:id="@+id/profilePicImageView"
-        android:layout_width="64dp"
-        android:layout_height="71dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_gender"
-        app:layout_constraintEnd_toEndOf="@+id/tv_gender"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/tv_gender"
-        app:layout_constraintTop_toBottomOf="@+id/googleMapsButton"
-        app:layout_constraintVertical_bias="0.846"
-        tools:src="@tools:sample/avatars" />
+    <TextView
+        android:id="@+id/tv_timeOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:shadowColor="#FFFFFF"
+        android:text="Time: 00:00"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_paceOther"
+        app:layout_constraintTop_toTopOf="@+id/tv_time"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/spotify"
         android:layout_width="103dp"
         android:layout_height="42dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="4dp"
         android:backgroundTint="#ADEFD1"
         android:text="spotify"
         android:textColor="#00203F"
         android:textSize="12sp"
         app:cornerRadius="9dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintHorizontal_bias="0.201"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/localPlayerTrack" />
 
@@ -173,17 +171,17 @@
 
     <Button
         android:id="@+id/quitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="394dp"
+        android:layout_height="49dp"
         android:backgroundTint="#ADEFD1"
         android:text="Quit"
         android:textColor="#00203F"
         app:cornerRadius="9dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_age"
-        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time"
-        app:layout_constraintVertical_bias="0.118" />
+        app:layout_constraintVertical_bias="0.186" />
 
     <TextView
         android:id="@+id/distancebetween"
@@ -225,21 +223,29 @@
         android:id="@+id/localColorIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:shadowColor="#FFFFFF"
         android:text="Local Player"
-        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/onlineColorIndicator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.102"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/onlineColorIndicator"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/onlineColorIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="Online Player"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/googleMapsButton"
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toStartOf="@+id/tv_distanceOther"
+        app:layout_constraintTop_toBottomOf="@+id/googleMapsButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

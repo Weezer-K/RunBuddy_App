@@ -3,13 +3,13 @@ package com.example.cs501_runbuddy;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,14 +58,10 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     private TextView timeRanOther;
     private Button mapOther;
 
-    private Button btnDetail;
     private Game game;
     private boolean isPlayer1;
     private DatabaseReference otherPlayerRef;
     private ValueEventListener otherPlayerListener;
-    private GoogleMap localMapApi;
-    private GoogleMap otherMapApi;
-    private boolean localPlayerMapButtonPressed = false;
     private GoogleMap mapApi;
 
     private int colorSlowPace = Color.RED;
@@ -75,20 +71,21 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     private ArrayList<RaceLocation> localRaceLocations;
     private ArrayList<RaceLocation> otherRaceLocations;
 
-    private ArrayList<Integer> localPolyColors;
-    private ArrayList<Integer> otherPolyColors;
-
     private SupportMapFragment mapFragment;
-    private Button resultsFromMap;
 
     private TextView localHeartRate;
     private TextView otherHeartRate;
+    private boolean mapLocalActivated;
+    private boolean mapOtherActivated;
+    private TextView winnerLoser;
+    private int activateColor = Color.parseColor("#00203F");
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
         isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
@@ -102,67 +99,55 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         timeRanOther = (TextView) findViewById(R.id.finishTimeOtherPlayer);
         mapLocal = (Button) findViewById(R.id.localPlayerMapButton);
         mapOther = (Button) findViewById(R.id.otherPlayerMapButton);
-        mapLocal.setBackgroundColor(Color.GRAY);
-        mapOther.setBackgroundColor(Color.GRAY);
+        //mapLocal.setBackgroundColor(Color.GRAY);
+        //mapOther.setBackgroundColor(Color.GRAY);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.localMapAPI);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
-        resultsFromMap = (Button) findViewById(R.id.backToResults);
-        resultsFromMap.setVisibility(View.INVISIBLE);
-        resultsFromMap.setClickable(false);
         localHeartRate = (TextView) findViewById(R.id.avgHeartRateLocalPlayer);
         otherHeartRate = (TextView) findViewById(R.id.avgHeartRateOtherPlayer);
+        winnerLoser = (TextView) findViewById(R.id.winnerLoserText);
+        mapLocalActivated = false;
+        mapOtherActivated = false;
+
 
 
         mapLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
+                if(!mapFragment.isVisible()) {
                     if (isPlayer1 && game.player1.playerFinished) {
-                        if (mapFragment.isVisible()) {
-                            mapFragment.getView().setVisibility(View.INVISIBLE);
-                            mapLocal.setBackgroundColor(Color.GREEN);
-                        } else {
-                            mapFragment.getView().setVisibility(View.VISIBLE);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                setMap(game.player1, true);
-                            }
-
-                            double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-                            double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
-                            LatLng latLng = new LatLng(lat, lng);
-                            mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                            resultsFromMap.setVisibility(View.VISIBLE);
-                            resultsFromMap.setClickable(true);
-                        }
-
-                    } else if (!isPlayer1 && game.player2.playerFinished) {
-                        if (mapFragment.isVisible()) {
-                            mapFragment.getView().setVisibility(View.INVISIBLE);
-                            mapOther.setBackgroundColor(Color.GREEN);
-                        } else {
-                            mapFragment.getView().setVisibility(View.VISIBLE);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                setMap(game.player2, true);
-                            }
-                            double lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-                            double lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
-                            LatLng latLng = new LatLng(lat, lng);
-                            mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                            resultsFromMap.setVisibility(View.VISIBLE);
-                            resultsFromMap.setClickable(true);
+                        mapButtonsPressed(game.player1, true);
+                        mapLocalActivated = true;
+                       // mapLocal.setBackgroundColor(Color.GRAY);
+                    }else if(!isPlayer1 && game.player2.playerFinished){
+                        mapButtonsPressed(game.player2, true);
+                        mapLocalActivated = true;
+                       // mapLocal.setBackgroundColor(Color.GRAY);
+                    }
+                }else{
+                    if(mapLocalActivated){
+                        mapLocalActivated = false;
+                        mapApi.clear();
+                        mapFragment.getView().setVisibility(View.INVISIBLE);
+                        //mapLocal.setBackgroundColor(activateColor);
+                    }else if(mapOtherActivated){
+                        mapOtherActivated = false;
+                        mapLocalActivated = true;
+                        mapApi.clear();
+                        if (isPlayer1 && game.player1.playerFinished){
+                            mapButtonsPressed(game.player1, true);
+                            //mapLocal.setBackgroundColor(Color.GRAY);
+                            //mapOther.setBackgroundColor(activateColor);
+                        }else if(!isPlayer1 && game.player2.playerFinished){
+                            mapButtonsPressed(game.player2, true);
+                            //mapOther.setBackgroundColor(activateColor);
                         }
                     }
-
-                } catch (Exception e) {
-                    Toast.makeText(ResultActivity.this, "You had no gps data Sorry, you can look at the other things though", Toast.LENGTH_SHORT).show();
-                    mapFragment.getView().setVisibility(View.INVISIBLE);
-                    mapLocal.setClickable(false);
-                    mapLocal.setVisibility(View.INVISIBLE);
                 }
             }
         });
-
+        /*
         resultsFromMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,44 +156,44 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                 mapLocal.setBackgroundColor(Color.GREEN);
                 resultsFromMap.setVisibility(View.INVISIBLE);
                 resultsFromMap.setClickable(false);
+                mapLocal.setClickable(true);
+                mapOther.setClickable(true);
             }
         });
+
+         */
 
         mapOther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isPlayer1 && game.player2.playerFinished){
-                    if(mapFragment.isVisible()){
-                        mapFragment.getView().setVisibility(View.INVISIBLE);
-                        mapOther.setBackgroundColor(Color.GREEN);
-                    }else{
-                        mapFragment.getView().setVisibility(View.VISIBLE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            setMap(game.player2, false);
-                        }
-                        double lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
-                        double lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
-                        LatLng latLng = new LatLng(lat, lng);
-                        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                        resultsFromMap.setVisibility(View.VISIBLE);
-                        resultsFromMap.setClickable(true);
+                if (!mapFragment.isVisible()) {
+                    if (isPlayer1 && game.player2.playerFinished) {
+                        mapButtonsPressed(game.player2, false);
+                        mapOtherActivated = true;
+                        //mapOther.setBackgroundColor(Color.GRAY);
+                    } else if (!isPlayer1 && game.player1.playerFinished) {
+                        mapButtonsPressed(game.player1, false);
+                        mapOtherActivated = true;
+                        //mapOther.setBackgroundColor(Color.GRAY);
                     }
-
-                }else if(!isPlayer1 && game.player1.playerFinished ){
-                    if(mapFragment.isVisible()){
+                } else {
+                    if (mapOtherActivated) {
+                        mapOtherActivated = false;
+                        mapApi.clear();
                         mapFragment.getView().setVisibility(View.INVISIBLE);
-                        mapLocal.setBackgroundColor(Color.GREEN);
-                    }else{
-                        mapFragment.getView().setVisibility(View.VISIBLE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            setMap(game.player1, false);
+                        //mapOther.setBackgroundColor(activateColor);
+                    } else if (mapLocalActivated) {
+                        mapLocalActivated = false;
+                        mapOtherActivated = true;
+                        mapApi.clear();
+                        if (isPlayer1 && game.player2.playerFinished) {
+                            mapButtonsPressed(game.player2, false);
+                            mapOther.setBackgroundColor(Color.GRAY);
+                            //mapLocal.setBackgroundColor(activateColor);
+                        } else if (!isPlayer1 && game.player1.playerFinished) {
+                            mapButtonsPressed(game.player1, false);
+                            //mapLocal.setBackgroundColor(activateColor);
                         }
-                        double lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
-                        double lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
-                        LatLng latLng = new LatLng(lat, lng);
-                        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
-                        resultsFromMap.setVisibility(View.VISIBLE);
-                        resultsFromMap.setClickable(true);
                     }
                 }
             }
@@ -290,6 +275,26 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     protected int getLoaderId() {
         return 2;
+    }
+
+
+    public void mapButtonsPressed(RacePlayer p, boolean isLocal){
+        mapFragment.getView().setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            setMap(p, isLocal);
+        }
+        double lat = 0;
+        double lng = 0;
+
+        if(!isLocal){
+            lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
+            lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
+        }else{
+            lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
+            lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
+        }
+        LatLng latLng = new LatLng(lat, lng);
+        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
     }
 
     public void getWinner() {
@@ -388,27 +393,66 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         startActivity(intent);
     }
 
+    public void setWinner(){
+        if(isPlayer1){
+            if(game.player1.totalDistanceRan > game.player2.totalDistanceRan){
+                winnerLoser.setText("Winner");
+            }else if(game.player1.totalDistanceRan < game.player2.totalDistanceRan){
+                winnerLoser.setText("Loser");
+            }else{
+                if(game.player1.totalTimeRan < game.player2.totalTimeRan){
+                    winnerLoser.setText("Winner");
+                }else if(game.player1.totalTimeRan < game.player2.totalTimeRan){
+                    winnerLoser.setText("Loser");
+                }
+            }
+        }else{
+            if(game.player2.totalDistanceRan > game.player1.totalDistanceRan){
+                winnerLoser.setText("Winner");
+            }else if(game.player2.totalDistanceRan < game.player1.totalDistanceRan){
+                winnerLoser.setText("Loser");
+            }else{
+                if(game.player2.totalTimeRan < game.player1.totalTimeRan){
+                    winnerLoser.setText("Winner");
+                }else if(game.player2.totalTimeRan < game.player1.totalTimeRan){
+                    winnerLoser.setText("Loser");
+                }
+            }
+        }
+    }
+
 
     public void setTextViews(){
         if(game.player1.playerFinished && game.player2.playerFinished){
             if(isPlayer1){
                 setTextViewsLocal(game.player1);
                 setTextViewsOther(game.player2);
+                setWinner();
             }else{
                 setTextViewsLocal(game.player2);
                 setTextViewsOther(game.player1);
+                setWinner();
+
             }
         }else if(game.player1.playerFinished){
             if(isPlayer1){
                 setTextViewsLocal(game.player1);
+                mapOther.setVisibility(View.INVISIBLE);
+                winnerLoser.setText("In Progress");
+                mapOther.setClickable(false);
             }else{
                 setTextViewsOther(game.player1);
+                winnerLoser.setText("In Progress");
             }
         }else{
             if(!isPlayer1){
                 setTextViewsLocal(game.player2);
+                mapOther.setVisibility(View.INVISIBLE);
+                mapOther.setClickable(false);
+                winnerLoser.setText("In Progress");
             }else{
                 setTextViewsOther(game.player2);
+                winnerLoser.setText("In Progress");
             }
         }
     }
@@ -427,7 +471,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         timeRanLocal.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
         paceLocal.setText("Pace: " + df.format(pace) + "mph");
-        mapLocal.setBackgroundColor(Color.GREEN);
+        //mapLocal.setBackgroundColor(activateColor);
         if(player.heartRate != null){
             localHeartRate.setText("Heart Rate: " + player.heartRate.toString());
         }
@@ -446,8 +490,8 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         distanceOther.setText("Distance: " + df.format(player.totalDistanceRan));
         timeRanOther.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
-        paceLocal.setText("Pace: " + df.format(pace) + "mph");
-        mapOther.setBackgroundColor(Color.GREEN);
+        paceOther.setText("Pace: " + df.format(pace) + "mph");
+        //mapOther.setBackgroundColor(activateColor);
         if(player.heartRate != null){
             otherHeartRate.setText("Heart Rate: " + player.heartRate.toString());
         }
@@ -456,29 +500,16 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     private void setMap(RacePlayer player, boolean isLocal){
         if(isLocal) {
-            if (localRaceLocations == null|| otherRaceLocations.size() == 0) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    localRaceLocations = populatePolyLists(player);
-                    reDrawPolyLines(localRaceLocations);
-                }
-
-            } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                localRaceLocations = populatePolyLists(player);
                 reDrawPolyLines(localRaceLocations);
             }
         }else{
-            if (otherRaceLocations == null || otherRaceLocations.size() == 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     otherRaceLocations = populatePolyLists(player);
                     reDrawPolyLines(otherRaceLocations);
                 }
-
-            } else {
-                reDrawPolyLines(otherRaceLocations);
-            }
         }
-
-
-
 
     }
 

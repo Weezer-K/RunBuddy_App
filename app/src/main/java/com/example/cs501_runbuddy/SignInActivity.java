@@ -71,9 +71,6 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
 
         if (acct != null) {
-            if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE){
-                signInSound.start();
-            }
             signInUser();
         } else {
             signInAccount.setVisibility(View.VISIBLE);
