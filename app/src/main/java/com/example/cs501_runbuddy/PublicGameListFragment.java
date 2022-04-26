@@ -6,17 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
-import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +47,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_public_game_list, container, false);
         GameList = v.findViewById(R.id.GameList);
+
         tvGameList = v.findViewById(R.id.tvGameList);
 
         gameIds = new ArrayList<String>(){};

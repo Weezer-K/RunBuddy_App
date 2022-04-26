@@ -67,7 +67,7 @@
         <View
             android:id="@+id/divider8"
             android:layout_width="4dp"
-            android:layout_height="490sp"
+            android:layout_height="488sp"
             android:background="#adefd1"
             app:layout_constraintStart_toEndOf="@+id/GameList"
             app:layout_constraintTop_toTopOf="@+id/GameList" />
