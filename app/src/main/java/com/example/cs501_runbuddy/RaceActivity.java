@@ -897,7 +897,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         behind.bringToFront();
         behind.setCircleColor(Color.TRANSPARENT);
         //Track Black
-        ahead.setCircleColor(Color.BLACK);
+        ahead.setCircleColor(Color.WHITE);
         ahead.setCircleProgressColor(ahead.mainColor);
         behind.setClickable(false);
         behind.setIsTouchEnabled(false);
