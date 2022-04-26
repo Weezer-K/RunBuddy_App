@@ -218,12 +218,13 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
-                        if (isPlayer1) {
-                            game.player2.playerFinished = true;
-                        } else {
-                            game.player1.playerFinished = true;
-                        }
-                        getWinner();
+                        game.readOtherPlayer(isPlayer1, new Game.MyCallback() {
+                            @Override
+                            public void onCallback() {
+                                getWinner();
+                                setTextViews();
+                            }
+                        });
                     }
                 }
             }
@@ -402,7 +403,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             }else{
                 if(game.player1.totalTimeRan < game.player2.totalTimeRan){
                     winnerLoser.setText("Winner");
-                }else if(game.player1.totalTimeRan < game.player2.totalTimeRan){
+                }else if(game.player1.totalTimeRan > game.player2.totalTimeRan){
                     winnerLoser.setText("Loser");
                 }
             }
@@ -414,7 +415,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             }else{
                 if(game.player2.totalTimeRan < game.player1.totalTimeRan){
                     winnerLoser.setText("Winner");
-                }else if(game.player2.totalTimeRan < game.player1.totalTimeRan){
+                }else if(game.player2.totalTimeRan > game.player1.totalTimeRan){
                     winnerLoser.setText("Loser");
                 }
             }
