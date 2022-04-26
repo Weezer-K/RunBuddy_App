@@ -499,7 +499,7 @@ public class LobbyFragment extends Fragment {
         if (isReady)
             tv.setTextColor(Color.GREEN);
         else
-            tv.setTextColor(Color.GRAY);
+            tv.setTextColor(Color.WHITE);
     }
 
     @Override
