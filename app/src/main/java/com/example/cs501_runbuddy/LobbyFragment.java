@@ -539,32 +539,44 @@ public class LobbyFragment extends Fragment {
         String s = tv.getText().toString();
         if (game.isAsync) {
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                if (game.player1.playerStarted)
+                if (game.player1.playerStarted) {
                     tv.setText("Player 1: Started");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 1: Not Started");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             } else {
-                if (game.player2.playerReady)
+                if (game.player2.playerReady) {
                     tv.setText("Player 2: Started");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 2: Not Started");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             }
         }
         else{
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                if (game.player1.playerReady)
+                if (game.player1.playerReady) {
                     tv.setText("Player 1: Ready");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 1: Not Ready");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             } else {
-                if (game.player2.playerReady)
+                if (game.player2.playerReady) {
                     tv.setText("Player 2: Ready");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 2: Not Ready");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             }
         }
     }
