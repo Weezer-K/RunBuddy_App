@@ -259,6 +259,8 @@ public class LobbyFragment extends Fragment {
             startBtn.setText("Ready");
         }
 
+        setTextColorForPlayer(player2ReadyText);
+
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
             @Override
             public void onCallback(String value) {
@@ -335,6 +337,8 @@ public class LobbyFragment extends Fragment {
         if(!game.isAsync){
             startBtn.setText("Ready");
         }
+        setTextColorForPlayer(player1ReadyText);
+        setTextColorForPlayer(player2ReadyText);
         initializePlayer2Ref();
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
