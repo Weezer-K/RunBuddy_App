@@ -586,7 +586,8 @@ public class LobbyFragment extends Fragment {
                 }
             }
         }
-        otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+        if (otherPlayerReadyRef != null)
+            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
 
