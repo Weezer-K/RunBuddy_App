@@ -268,7 +268,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
-                        game.readOtherPlayer(isPlayer1, new Game.MyCallback() {
+                        game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
                             @Override
                             public void onCallback() {
                                 getWinner();
@@ -357,7 +357,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
 
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
-            game.readOtherPlayer(isPlayer1, new Game.MyCallback() {
+            game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
                 @Override
                 public void onCallback() {
                     if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {

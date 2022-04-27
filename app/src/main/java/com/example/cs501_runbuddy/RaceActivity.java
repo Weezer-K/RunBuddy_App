@@ -42,6 +42,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -117,6 +118,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     private DatabaseReference otherPlayerRef;
     private ChildEventListener otherPlayerListener;
+
+    private DatabaseReference otherPlayerFinishedRef;
+    private ValueEventListener otherPlayerFinishedListener;
 
     private int localColor;
     private int onlineColor;
@@ -364,8 +368,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         });
         if(isPlayer1){
             otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerLocation");
+            otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
         }else{
             otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerLocation");
+            otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
         }
         otherPlayerListener = new ChildEventListener() {
             @Override
@@ -388,6 +394,35 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        otherPlayerFinishedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.getValue(Boolean.class)) {
+                        game.readOtherPlayerDoubleField(isPlayer1, "totalDistance", new Game.OtherPlayerDoubleFieldCallback(){
+                            @Override
+                            public void onCallback(Double value) {
+                                if (value.equals(game.totalDistance)) {
+                                    Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
+                                }
+                                //TODO stop time of other player
+                                otherPlayerRef.removeEventListener(otherPlayerListener);
+                                otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
+                            }
+                        });
+                    }
+                }
             }
 
             @Override
@@ -420,6 +455,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
 
         otherPlayerRef.addChildEventListener(otherPlayerListener);
+        otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
         //Used to update movement data based of a specific interval
         updateGPS();
     }
@@ -514,6 +550,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             raceStartTime = Instant.now().toEpochMilli();
         }
         updateTime();
+        if (!game.isAsync) {
+            updateTimeOther();
+        }
     }
 
     private void stopLocationUpdates() {
@@ -691,6 +730,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
                 otherPlayerLocationIndex++;
+                if (game.isAsync) {
+                    updateTimeOther();
+                    Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
+                }
             }
             else if (otherRaceLocations.size() > otherPlayerLocationIndex){
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
@@ -718,9 +761,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     Double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
                     tv_otherPlayerPace.setText("Pace : " + df.format(paceOtherPlayer)+ "mph");
-                    if (totalDistanceOtherPlayer >= maxDistance / 100) {
-                        otherPlayerRef.removeEventListener(otherPlayerListener);
-                    } else {
+                    if (totalDistanceOtherPlayer < maxDistance / 100) {
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
                         } else {

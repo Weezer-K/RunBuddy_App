@@ -177,11 +177,11 @@ public class Game implements Serializable, Comparable<Game>{
         return formatDate;
     }
 
-    public interface MyCallback {
+    public interface OtherPlayerCallback {
         void onCallback();
     }
 
-    public void readOtherPlayer(boolean isPlayer1, Game.MyCallback myCallback) {
+    public void readOtherPlayer(boolean isPlayer1, Game.OtherPlayerCallback myCallback) {
         DatabaseReference otherPlayerLocationRef;
         if(isPlayer1) {
             otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
@@ -201,6 +201,35 @@ public class Game implements Serializable, Comparable<Game>{
                         player1 = r;
                     }
                     myCallback.onCallback();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    public interface OtherPlayerDoubleFieldCallback {
+        void onCallback(Double value);
+    }
+
+    public void readOtherPlayerDoubleField(boolean isPlayer1, String field, Game.OtherPlayerDoubleFieldCallback myCallback) {
+        DatabaseReference otherPlayerLocationRef;
+        if(isPlayer1) {
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(ID).child("player2").child(field);
+        }else{
+            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games")
+                    .child(ID).child("player1").child(field);
+        }
+
+
+        otherPlayerLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    myCallback.onCallback(dataSnapshot.getValue(Double.class));
                 }
             }
             @Override
