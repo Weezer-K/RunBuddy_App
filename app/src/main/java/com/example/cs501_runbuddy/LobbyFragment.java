@@ -338,7 +338,8 @@ public class LobbyFragment extends Fragment {
             startBtn.setText("Ready");
         }
         setTextColorForPlayer(player1ReadyText);
-        setTextColorForPlayer(player2ReadyText);
+        if (game.player2 != null)
+            setTextColorForPlayer(player2ReadyText);
         initializePlayer2Ref();
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
