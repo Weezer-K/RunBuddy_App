@@ -142,6 +142,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_otherPlayerDistance;
     private TextView tv_otherPlayerTimer;
     private TextView tv_otherPlayerPace;
+    private TextView threadStopper;
 
 
 
@@ -157,6 +158,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         tv_otherPlayerPace = (TextView) findViewById(R.id.tv_paceOther);
         tv_otherPlayerTimer = (TextView) findViewById(R.id.tv_timeOther);
         tv_distance = findViewById(R.id.tv_distance);
+        threadStopper = (TextView) findViewById(R.id.threadStopperOther);
         tv_time = findViewById(R.id.tv_time);
         spotifyButton = (Button) findViewById(R.id.spotify);
         spotifyButton.setBackgroundColor(Color.LTGRAY);
@@ -169,7 +171,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         gap.setTextColor(Color.WHITE);
         localColorIndicator = (TextView) findViewById(R.id.localColorIndicator);
         onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
-
         otherRaceLocations = new ArrayList<RaceLocation>();
         otherPlayerLocationIndex = 0;
         isSpotifyOnScreen = false;
@@ -199,7 +200,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         localColorIndicator.setTextColor(localColor);
 
         onlineColorIndicator.setTextColor(onlineColor);
-
 
 
         spotifyApp = new SpotifyFragment();
@@ -416,7 +416,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                 else {
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
-                                //TODO stop time of other player
+                                stopOtherPlayerTime();
                                 otherPlayerRef.removeEventListener(otherPlayerListener);
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
                             }
@@ -464,6 +464,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     protected void onResume() {
         super.onResume();
         startLocationUpdates();
+    }
+
+
+    private void stopOtherPlayerTime(){
+        threadStopper = null;
     }
 
     public void makeTrack(CircularSeekBar circ, int color){
@@ -720,6 +725,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
     public void updateOtherPlayerUI(){
+        otherPlayerTrack.setVisibility(View.INVISIBLE);
         double localElapsedTime = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             localElapsedTime = Instant.now().toEpochMilli() - raceStartTime;
@@ -770,7 +776,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         double d = totalDistanceOtherPlayer;
 
                         tv_otherPlayerDistance.setText("Distance: "+df.format(d)+" miles");
-
+                        otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         otherPlayerLocationIndex++;
                         currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);

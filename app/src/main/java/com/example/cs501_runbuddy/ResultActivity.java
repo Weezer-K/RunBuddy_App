@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -164,6 +165,13 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         mapLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ColorStateList cl = mapLocal.getTextColors();
+                //relative.setBackgroundColor(cl.getDefaultColor());
+                if(cl.getDefaultColor() == Color.BLUE){
+                    mapLocal.setTextColor(Color.BLACK);
+                }else{
+                    mapLocal.setTextColor(Color.BLUE);
+                }
                 if(!mapFragment.isVisible()) {
                     if (isPlayer1 && game.player1.playerFinished) {
                         mapButtonsPressed(game.player1, true);
@@ -273,6 +281,8 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                             public void onCallback() {
                                 getWinner();
                                 setTextViews();
+                                mapOther.setVisibility(View.VISIBLE);
+                                mapOther.setTextColor(Color.BLACK);
                             }
                         });
                     }
