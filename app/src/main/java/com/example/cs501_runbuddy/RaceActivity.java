@@ -738,7 +738,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             else if (otherRaceLocations.size() > otherPlayerLocationIndex){
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
-                if(currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
+                while (currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
                     double curTimeOther = 0;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         curTimeOther= Instant.now().toEpochMilli();
@@ -773,6 +773,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         otherPlayerLocationIndex++;
+                        currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+                        secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
                     }
                 }
             }
