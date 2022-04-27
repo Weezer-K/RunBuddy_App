@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.skydoves.balloon.ArrowOrientation;
+import com.skydoves.balloon.ArrowPositionRules;
+import com.skydoves.balloon.Balloon;
+import com.skydoves.balloon.BalloonAnimation;
+import com.skydoves.balloon.BalloonSizeSpec;
+import com.skydoves.balloon.overlay.BalloonOverlayAnimation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -80,6 +87,8 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     private boolean mapOtherActivated;
     private TextView winnerLoser;
     private int activateColor = Color.parseColor("#00203F");
+    private ImageView info1;
+    private ImageView info2;
 
 
     @Override
@@ -105,11 +114,50 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.localMapAPI);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
-        localHeartRate = (TextView) findViewById(R.id.avgHeartRateLocalPlayer);
-        otherHeartRate = (TextView) findViewById(R.id.avgHeartRateOtherPlayer);
+        localHeartRate = (TextView) findViewById(R.id.avgHeartRateLocal);
+        otherHeartRate = (TextView) findViewById(R.id.avgHeartRateOther);
         winnerLoser = (TextView) findViewById(R.id.winnerLoserText);
+        info1 = (ImageView) findViewById(R.id.heartRateInfo1);
+        info2 = (ImageView) findViewById(R.id.heartRateInfo2);
         mapLocalActivated = false;
         mapOtherActivated = false;
+
+        Balloon balloon = new Balloon.Builder(getApplicationContext())
+                .setArrowSize(10)
+                .setArrowOrientation(ArrowOrientation.TOP)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                .setArrowPosition(0.5f)
+                .setWidth(BalloonSizeSpec.WRAP)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setTextSize(15f)
+                .setCornerRadius(4f)
+                .setAlpha(0.9f)
+                .setIsVisibleOverlay(true)
+                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE)
+                .setText("Show your heart rate data. In order to view your heart race you must sync your fitbit device")
+                .setTextColor(Color.WHITE)
+                .setOverlayPadding(6f)
+                .setOverlayColor(Color.parseColor("#9900203F"))
+                .setTextIsHtml(true)
+                .setBackgroundColor(Color.parseColor("#242526"))
+                .setMargin(10)
+                .setPadding(10)
+                .setBalloonAnimation(BalloonAnimation.FADE).build();
+
+
+        info1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                balloon.showAlignBottom(info1);
+            }
+        });
+
+        info2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                balloon.showAlignBottom(info2);
+            }
+        });
 
 
 
@@ -285,6 +333,13 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         mapFragment.getView().setVisibility(View.VISIBLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             setMap(p, isLocal);
+            if(isLocal){
+                mapLocal.setTextColor(Color.BLUE);
+                mapOther.setTextColor(Color.BLACK);
+            }else{
+                mapLocal.setTextColor(Color.BLACK);
+                mapOther.setTextColor(Color.BLUE);
+            }
         }
         double lat = 0;
         double lng = 0;
@@ -399,26 +454,26 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     public void setWinner(){
         if(isPlayer1){
             if(game.player1.totalDistanceRan > game.player2.totalDistanceRan){
-                winnerLoser.setText("Winner");
+                winnerLoser.setText("You Won");
             }else if(game.player1.totalDistanceRan < game.player2.totalDistanceRan){
-                winnerLoser.setText("Loser");
+                winnerLoser.setText("You Lost");
             }else{
                 if(game.player1.totalTimeRan < game.player2.totalTimeRan){
-                    winnerLoser.setText("Winner");
+                    winnerLoser.setText("You Won");
                 }else if(game.player1.totalTimeRan > game.player2.totalTimeRan){
-                    winnerLoser.setText("Loser");
+                    winnerLoser.setText("You Lost");
                 }
             }
         }else{
             if(game.player2.totalDistanceRan > game.player1.totalDistanceRan){
-                winnerLoser.setText("Winner");
+                winnerLoser.setText("You Won");
             }else if(game.player2.totalDistanceRan < game.player1.totalDistanceRan){
-                winnerLoser.setText("Loser");
+                winnerLoser.setText("You Lost");
             }else{
                 if(game.player2.totalTimeRan < game.player1.totalTimeRan){
-                    winnerLoser.setText("Winner");
+                    winnerLoser.setText("You Won");
                 }else if(game.player2.totalTimeRan > game.player1.totalTimeRan){
-                    winnerLoser.setText("Loser");
+                    winnerLoser.setText("You Lost");
                 }
             }
         }
@@ -441,21 +496,21 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             if(isPlayer1){
                 setTextViewsLocal(game.player1);
                 mapOther.setVisibility(View.INVISIBLE);
-                winnerLoser.setText("In Progress");
+                winnerLoser.setText("Other Player Not Finished");
                 mapOther.setClickable(false);
             }else{
                 setTextViewsOther(game.player1);
-                winnerLoser.setText("In Progress");
+                winnerLoser.setText("Other Player Not Finished");
             }
         }else{
             if(!isPlayer1){
                 setTextViewsLocal(game.player2);
                 mapOther.setVisibility(View.INVISIBLE);
                 mapOther.setClickable(false);
-                winnerLoser.setText("In Progress");
+                winnerLoser.setText("Other Player Not Finished");
             }else{
                 setTextViewsOther(game.player2);
-                winnerLoser.setText("In Progress");
+                winnerLoser.setText("Other Player Not Finished");
             }
         }
     }
@@ -478,9 +533,9 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         if(player.heartRate != null){
             int heartRate = (int) Math.round(player.heartRate);
             if(heartRate != 0) {
-                localHeartRate.setText("Heart Rate: " + heartRate + "bpm");
+                localHeartRate.setText("BPM: " + heartRate + "bpm");
             }else{
-                localHeartRate.setText("Heart Rate: NA");
+                localHeartRate.setText("BPM: NA");
             }
         }
     }
@@ -503,9 +558,9 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         if(player.heartRate != null){
             int heartRate = (int) Math.round(player.heartRate);
             if(heartRate != 0) {
-                otherHeartRate.setText("Heart Rate: " + heartRate + "bpm");
+                otherHeartRate.setText("BPM: " + heartRate + "bpm");
             }else{
-                otherHeartRate.setText("Heart Rate: NA");
+                otherHeartRate.setText("BPM: NA");
             }
         }
     }

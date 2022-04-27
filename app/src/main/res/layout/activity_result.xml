@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/avgHeartRateLocalPlayer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00203F"
@@ -32,150 +33,192 @@
         app:layout_constraintTop_toBottomOf="@+id/tvResult" />
 
     <LinearLayout
-        android:id="@+id/horizontalLinearLayout"
-        android:layout_width="336dp"
-        android:layout_height="159dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/player1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7">
-
-        <LinearLayout
-            android:id="@+id/player1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/finishTimeLocalPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Time finished: NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/distanceLocalPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Distance: NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/paceLocalPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pace NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/avgHeartRateLocalPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Heart Rate NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:id="@+id/localPlayerMapButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#ADEFD1"
-                    android:text="Map"
-                    android:textColor="#00203F"
-                    app:cornerRadius="9dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.49"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.050000012">
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="50dp"
+            android:id="@+id/finishTimeLocalPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time finished: NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/distanceLocalPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Distance: NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/paceLocalPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pace NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/heartRateInfo1"
+                android:layout_width="20dp"
+                android:layout_height="19dp"
+                android:src="@drawable/info_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/avgHeartRateLocal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.292"
+                app:layout_constraintStart_toEndOf="@+id/avgHeartRateLocal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.6" />
+
+            <TextView
+                android:id="@+id/avgHeartRateLocal"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:text="BPM: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/localPlayerMapButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#ADEFD1"
+                android:text="Map"
+                android:textColor="#00203F"
+                app:cornerRadius="9dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/player2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/player1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.64"
+        app:layout_constraintStart_toEndOf="@+id/player1"
+        app:layout_constraintTop_toTopOf="@+id/player1"
+        app:layout_constraintVertical_bias="0.07999998">
+
+        <TextView
+            android:id="@+id/finishTimeOtherPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time finished: NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/distanceOtherPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Distance: NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/paceOtherPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pace: NA"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/heartRateInfo2"
+                android:layout_width="20dp"
+                android:layout_height="19dp"
+                android:src="@drawable/info_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/avgHeartRateOther"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.341"
+                app:layout_constraintStart_toEndOf="@+id/avgHeartRateOther"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.6" />
+
+            <TextView
+                android:id="@+id/avgHeartRateOther"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:text="BPM: NA"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            tools:layout_editor_absoluteY="78dp">
 
-        <LinearLayout
-            android:id="@+id/player2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/finishTimeOtherPlayer"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/otherPlayerMapButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Time finished: NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
+                android:backgroundTint="#ADEFD1"
+                android:text="Map"
+                android:textColor="#00203F"
+                app:cornerRadius="9dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.49"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/distanceOtherPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Distance: NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/paceOtherPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pace: NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/avgHeartRateOtherPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Heart Rate NA"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout_editor_absoluteY="78dp">
-
-                <Button
-                    android:id="@+id/otherPlayerMapButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#ADEFD1"
-                    android:text="Map"
-                    android:textColor="#00203F"
-                    app:cornerRadius="9dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.49"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -224,20 +267,29 @@
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalLinearLayout"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/player1"
+        app:layout_constraintVertical_bias="0.758">
 
     </fragment>
 
     <TextView
         android:id="@+id/textView7"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
+        android:layout_width="410dp"
+        android:layout_height="1dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintEnd_toEndOf="@+id/winnerLoserText"
+        app:layout_constraintStart_toStartOf="@+id/winnerLoserText"
+        app:layout_constraintTop_toBottomOf="@+id/winnerLoserText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
