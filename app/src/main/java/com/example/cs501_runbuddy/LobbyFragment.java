@@ -207,9 +207,11 @@ public class LobbyFragment extends Fragment {
         LIDtv.setText("Game Lobby ID: " + ID);
         player1tv.setText("Name: " + acct.getGivenName());
         player2tv.setText("Name: ");
-        if(game.isAsync){
+        if(!game.isAsync){
             startBtn.setText("Ready");
         }
+
+        setTextColorForPlayer(player1ReadyText);
 
         initializePlayer2Ref();
 
@@ -223,7 +225,7 @@ public class LobbyFragment extends Fragment {
                 } else if (!game.isAsync) {
                     game.player1.playerReady = !game.player1.playerReady;
                     game.writeToDatabase("player1", "playerReady");
-                    setTextColorForPlayer(player1ReadyText, game.player1.playerReady);
+                    setTextColorForPlayer(player1ReadyText);
                     if (game.player1.playerReady && game.player2.playerReady) {
 
                         try {
@@ -253,7 +255,7 @@ public class LobbyFragment extends Fragment {
         LIDtv.setText("Game Lobby: " + game.ID);
         player1tv.setText("Name: " + game.player1.playerId);
         player2tv.setText("Name: " + acct.getGivenName());
-        if(game.isAsync){
+        if(!game.isAsync){
             startBtn.setText("Ready");
         }
 
@@ -272,7 +274,7 @@ public class LobbyFragment extends Fragment {
                 } else if (!game.isAsync) {
                     game.player2.playerReady = !game.player2.playerReady;
                     game.writeToDatabase("player2", "playerReady");
-                    setTextColorForPlayer(player2ReadyText, game.player2.playerReady);
+                    setTextColorForPlayer(player2ReadyText);
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
                     }
@@ -330,7 +332,7 @@ public class LobbyFragment extends Fragment {
             });
         }
 
-        if(game.isAsync){
+        if(!game.isAsync){
             startBtn.setText("Ready");
         }
         initializePlayer2Ref();
@@ -345,11 +347,11 @@ public class LobbyFragment extends Fragment {
                     if (pId.equals(game.player1.playerId)) {
                         game.player1.playerReady = !game.player1.playerReady;
                         game.writeToDatabase("player1", "playerReady");
-                        setTextColorForPlayer(player1ReadyText, game.player1.playerReady);
+                        setTextColorForPlayer(player1ReadyText);
                     } else {
                         game.player2.playerReady = !game.player2.playerReady;
                         game.writeToDatabase("player2", "playerReady");
-                        setTextColorForPlayer(player2ReadyText, game.player2.playerReady);
+                        setTextColorForPlayer(player2ReadyText);
                     }
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
@@ -445,14 +447,14 @@ public class LobbyFragment extends Fragment {
                 if (snapshot.exists()) {
                     if (pId.equals(game.player1.playerId)) {
                         game.player2.playerReady = snapshot.getValue(Boolean.class);
-                        setTextColorForPlayer(player2ReadyText, game.player2.playerReady);
+                        setTextColorForPlayer(player2ReadyText);
                         if (game.player1.playerReady && game.player2.playerReady) {
                             otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
                             startRace(color1, color2);
                         }
                     } else {
                         game.player1.playerReady = snapshot.getValue(Boolean.class);
-                        setTextColorForPlayer(player1ReadyText, game.player1.playerReady);
+                        setTextColorForPlayer(player1ReadyText);
                         if (game.player1.playerReady && game.player2.playerReady) {
                             otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
                             startRace(color2, color1);
@@ -488,12 +490,9 @@ public class LobbyFragment extends Fragment {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
                         if (pId.equals(game.player1.playerId)) {
-                            player2ReadyText.setText("Player 2: Ready");
-                            player2ReadyText.setTextColor(Color.GREEN);
-                            //player2tv.setTextColor(Color.GREEN);
+                            setTextColorForPlayer(player2ReadyText);
                         } else {
-                            player1ReadyText.setText("Player 1: Ready");
-                            player1ReadyText.setTextColor(Color.GREEN);
+                            setTextColorForPlayer(player1ReadyText);
                         }
                         otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
                     }
@@ -508,24 +507,35 @@ public class LobbyFragment extends Fragment {
         otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
     }
 
-    public void setTextColorForPlayer(TextView tv, boolean isReady) {
-        if (isReady) {
-            String s = tv.getText().toString();
+    public void setTextColorForPlayer(TextView tv) {
+        String s = tv.getText().toString();
+        if (game.isAsync) {
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                tv.setText("Player 1: Ready");
-                tv.setTextColor(Color.GREEN);
+                if (game.player1.playerStarted)
+                    tv.setText("Player 1: Started");
+                else
+                    tv.setText("Player 1: Not Started");
+                tv.setTextColor(Color.WHITE);
             } else {
-                tv.setText("Player 2: Ready");
-                tv.setTextColor(Color.GREEN);
+                if (game.player2.playerReady)
+                    tv.setText("Player 2: Started");
+                else
+                    tv.setText("Player 2: Not Started");
+                tv.setTextColor(Color.WHITE);
             }
         }
         else{
-            String s = tv.getText().toString();
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                tv.setText("Player 1: Not Ready");
+                if (game.player1.playerReady)
+                    tv.setText("Player 1: Ready");
+                else
+                    tv.setText("Player 1: Not Ready");
                 tv.setTextColor(Color.WHITE);
             } else {
-                tv.setText("Player 2: Not Ready");
+                if (game.player2.playerReady)
+                    tv.setText("Player 2: Ready");
+                else
+                    tv.setText("Player 2: Not Ready");
                 tv.setTextColor(Color.WHITE);
             }
         }

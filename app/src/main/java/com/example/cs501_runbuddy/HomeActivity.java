@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.cs501_runbuddy.models.Game;
+import com.fitbit.authentication.AuthenticationManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -82,6 +83,8 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
                                     public void onClick(DialogInterface dialog, int which) {
                                         mGoogleSignInClient = GoogleSignIn.getClient(HomeActivity.this,RunBuddyApplication.getGoogleSignInClient()) ;
                                         mGoogleSignInClient.signOut();
+                                        if (AuthenticationManager.isLoggedIn())
+                                            AuthenticationManager.logout(HomeActivity.this);
                                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                                         startActivity(intent);
                                     }
@@ -101,15 +104,6 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
                 return false;
             }
         });
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
-        }
     }
 
     @Override

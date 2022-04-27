@@ -34,6 +34,8 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
     private EditText email;
     private EditText password;
     private Button signInAccount;
+    private Button signInWithoutFitbit;
+    private boolean loginWithoutFitbit;
     private ImageView image;
     private int RC_SIGN_IN = 9999;
     AudioManager audio;
@@ -45,6 +47,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         setContentView(R.layout.activity_sign_in);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         signInAccount = (Button) findViewById(R.id.signInAccount);
+        signInWithoutFitbit = (Button) findViewById(R.id.signInWithoutFitbit);
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         signInAccount.setVisibility(View.INVISIBLE);
         signInSound = MediaPlayer.create(getApplicationContext(), R.raw.signinsoundeffect);
@@ -56,9 +59,19 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, RunBuddyApplication.getGoogleSignInClient());
 
+        loginWithoutFitbit = false;
+
         signInAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                signInUser();
+            }
+        });
+
+        signInWithoutFitbit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginWithoutFitbit = true;
                 signInUser();
             }
         });
@@ -120,7 +133,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
 
             //If access token for fitbit valid
             //Go straight to dashboard
-            if(AuthenticationManager.isLoggedIn()){
+            if(loginWithoutFitbit || AuthenticationManager.isLoggedIn()){
                 if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
                     signInSound.start();
                 }

@@ -2,9 +2,7 @@ package com.example.cs501_runbuddy;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -25,10 +23,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.LatLngDB;
 import com.example.cs501_runbuddy.models.RaceLocation;
-import com.fitbit.api.loaders.ResourceLoaderResult;
-import com.fitbit.api.models.User;
-import com.fitbit.api.models.UserContainer;
-import com.fitbit.api.services.UserService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -55,12 +49,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-//import androidx.loader.app.LoaderManager;
-//import androidx.loader.content.Loader;
 
 
 
-public class RaceActivity extends FragmentActivity implements SpotifyFragment.spotifyInterface, OnMapReadyCallback, LoaderManager.LoaderCallbacks<ResourceLoaderResult<UserContainer>> {
+public class RaceActivity extends FragmentActivity implements SpotifyFragment.spotifyInterface, OnMapReadyCallback {
 
     private LocationRequest locationRequest;
 
@@ -522,7 +514,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             raceStartTime = Instant.now().toEpochMilli();
         }
         updateTime();
-        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     private void stopLocationUpdates() {
@@ -858,38 +849,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     @Override
     public void spotifyNotOpen() {
         Toast.makeText(RaceActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
-    }
-
-
-    //The next 4 functions are used to interact
-    //with the fitbit api library
-
-    //This gets the profile and retrieves the data
-    @NonNull
-    @Override
-    public Loader<ResourceLoaderResult<UserContainer>> onCreateLoader(int id, @Nullable Bundle args) {
-        return UserService.getLoggedInUserLoader(RaceActivity.this);
-    }
-
-    //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui
-    @Override
-    public void onLoadFinished(Loader<ResourceLoaderResult<UserContainer>> loader, ResourceLoaderResult<UserContainer> data) {
-        if (data.isSuccessful()) {
-            bindProfileInfo(data.getResult().getUser());
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ResourceLoaderResult<UserContainer>> loader) {
-
-    }
-
-    //Uses info obtained from fitBit and sets the appropriate
-    //Views to display them
-    public void bindProfileInfo(User user) {
-        String age = "Age: "+user.getAge().toString();
-        String avatar = user.getAvatar(); //Profile picture
-        String gender = "Sex: "+ user.getGender(); //Gender
     }
 
 

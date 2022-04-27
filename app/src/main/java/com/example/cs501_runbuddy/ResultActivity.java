@@ -24,6 +24,7 @@ import com.fitbit.api.loaders.ResourceLoaderResult;
 import com.fitbit.api.models.HeartRateContainer;
 import com.fitbit.api.models.HeartRateData;
 import com.fitbit.api.services.HeartRateService;
+import com.fitbit.authentication.AuthenticationManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -265,11 +266,11 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             }
         });
         if(isPlayer1){
-            if(game.player1.heartRate.equals(0.0)){
+            if(game.player1.heartRate.equals(0.0) && AuthenticationManager.isLoggedIn()){
                 getLoaderManager().initLoader(getLoaderId(), null, this).forceLoad();
             }
         }else{
-            if(game.player2.heartRate.equals(0.0)){
+            if(game.player2.heartRate.equals(0.0) && AuthenticationManager.isLoggedIn()){
                 getLoaderManager().initLoader(getLoaderId(), null, this).forceLoad();
             }
         }
