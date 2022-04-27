@@ -226,6 +226,11 @@ public class LobbyFragment extends Fragment {
                     game.player1.playerReady = !game.player1.playerReady;
                     game.writeToDatabase("player1", "playerReady");
                     setTextColorForPlayer(player1ReadyText);
+                    if (game.player1.playerReady) {
+                        startBtn.setText("Ready");
+                    } else {
+                        startBtn.setText("Unready");
+                    }
                     if (game.player1.playerReady && game.player2.playerReady) {
 
                         try {
@@ -277,6 +282,11 @@ public class LobbyFragment extends Fragment {
                     game.player2.playerReady = !game.player2.playerReady;
                     game.writeToDatabase("player2", "playerReady");
                     setTextColorForPlayer(player2ReadyText);
+                    if (game.player2.playerReady) {
+                        startBtn.setText("Ready");
+                    } else {
+                        startBtn.setText("Unready");
+                    }
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
                     }
@@ -353,10 +363,20 @@ public class LobbyFragment extends Fragment {
                         game.player1.playerReady = !game.player1.playerReady;
                         game.writeToDatabase("player1", "playerReady");
                         setTextColorForPlayer(player1ReadyText);
+                        if (game.player1.playerReady) {
+                            startBtn.setText("Ready");
+                        } else {
+                            startBtn.setText("Unready");
+                        }
                     } else {
                         game.player2.playerReady = !game.player2.playerReady;
                         game.writeToDatabase("player2", "playerReady");
                         setTextColorForPlayer(player2ReadyText);
+                        if (game.player1.playerReady) {
+                            startBtn.setText("Ready");
+                        } else {
+                            startBtn.setText("Unready");
+                        }
                     }
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
