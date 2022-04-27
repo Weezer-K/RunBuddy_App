@@ -753,17 +753,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         curTimeOther= Instant.now().toEpochMilli();
                     }
-                    /*
-                    if(savedLocations.size()>1) {
-                        double temp =  currentMilis - prevMilis;
-                        double hours = temp / 60000 / 60.0;
-                        LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
-                        currentPace = distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude) / hours;
-                        paceColorAdder();
-                        reDrawPolyLines();
-                        prevMilis = currentMilis;
-                    }
-                     */
                     DecimalFormat df = new DecimalFormat("#,###.##");
                     double hours = (curTimeOther - previousTimeOther)/60000/60;
                     previousTimeOther = curTimeOther;
@@ -783,8 +772,13 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         otherPlayerLocationIndex++;
-                        currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
-                        secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+                        if(otherRaceLocations.size() <= otherPlayerLocationIndex){
+                            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+                            secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+                        }else{
+                            break;
+                        }
+
                     }
                 }
             }
