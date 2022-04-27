@@ -84,7 +84,7 @@ public class MyRacesFragment extends Fragment {
 
         //Displays that finished Races is on and
         //Active Races is off
-        pastRaceButton.setTextColor(Color.BLUE);
+        pastRaceButton.setTextColor(Color.parseColor("#00203F"));
         activeRaceButton.setTextColor(Color.GRAY);
         instructions.setText(finishedText);
 
@@ -93,7 +93,7 @@ public class MyRacesFragment extends Fragment {
         pastRaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pastRaceButton.setTextColor(Color.BLUE);
+                pastRaceButton.setTextColor(Color.parseColor("#00203F"));
                 activeRaceButton.setTextColor(Color.GRAY);
                 ActiveRaceList.setVisibility(View.INVISIBLE);
                 HistoryList.setVisibility(View.VISIBLE);
@@ -105,7 +105,7 @@ public class MyRacesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 pastRaceButton.setTextColor(Color.GRAY);
-                activeRaceButton.setTextColor(Color.BLUE);
+                activeRaceButton.setTextColor(Color.parseColor("#00203F"));
                 ActiveRaceList.setVisibility(View.VISIBLE);
                 HistoryList.setVisibility(View.INVISIBLE);
                 instructions.setText(activeText);

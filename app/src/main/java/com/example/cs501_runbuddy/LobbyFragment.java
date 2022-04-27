@@ -141,7 +141,7 @@ public class LobbyFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String colorPicked = player1Color.getItemAtPosition(i).toString();
                 color1 = colorValFinder(colorPicked);
-                try {
+                try{
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
                 }catch(Exception e){
 
@@ -151,6 +151,11 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 color1 = Color.RED;
+                try{
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
+                }catch(Exception e){
+
+                }
             }
         });
 
@@ -168,7 +173,12 @@ public class LobbyFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                color2 = Color.BLUE;
+                color2 = Color.GREEN;
+                try{
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color2);
+                }catch(Exception e){
+
+                }
             }
         });
 
@@ -264,6 +274,7 @@ public class LobbyFragment extends Fragment {
             startBtn.setText("Ready");
         }
 
+        setTextColorForPlayer(player1ReadyText);
         setTextColorForPlayer(player2ReadyText);
 
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
@@ -300,15 +311,15 @@ public class LobbyFragment extends Fragment {
     public int colorValFinder(String c) {
        int colorPicked = Color.RED;
         if (c.equals("Blue")) {
-            colorPicked = Color.parseColor("#BAE1FF");
+            colorPicked = Color.parseColor("#46AEFF");
         } else if (c.equals("Red")) {
-            colorPicked = Color.parseColor("#FFB3BA");
+            colorPicked = Color.parseColor("#FF5161");
         } else if (c.equals("Green")) {
-            colorPicked = Color.parseColor("#BAFFC9");
+            colorPicked = Color.parseColor("#47FF6F");
         } else if (c.equals("Yellow")) {
-            colorPicked = Color.parseColor("#FFFFBA");
+            colorPicked = Color.parseColor("#FFFF48");
         } else if (c.equals("Orange")) {
-            colorPicked = Color.parseColor("#FFDFBA");
+            colorPicked = Color.parseColor("#FFA946");
         }
         return colorPicked;
     }
@@ -403,7 +414,7 @@ public class LobbyFragment extends Fragment {
 
             public void onFinish() {
                 if (getActivity() != null) {
-                    if (game.player1.playerReady && game.player2.playerReady) {
+                    if (game.isAsync || (game.player1.playerReady && game.player2.playerReady)) {
                         boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
                         if (isPlayer1) {
                             game.player1.playerStarted = true;
@@ -439,6 +450,7 @@ public class LobbyFragment extends Fragment {
                             game.joinAble = false;
                             game.player2 = p2;
                             game.writeToDatabase("player2", "");
+                            setTextColorForPlayer(player2ReadyText);
                             player2Ref.removeEventListener(player2Listener);
                             if (!game.isAsync) {
                                 initializeOtherPlayerReadyRef();
@@ -518,8 +530,10 @@ public class LobbyFragment extends Fragment {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
                         if (pId.equals(game.player1.playerId)) {
+                            game.player2.playerStarted = true;
                             setTextColorForPlayer(player2ReadyText);
                         } else {
+                            game.player1.playerStarted = true;
                             setTextColorForPlayer(player1ReadyText);
                         }
                         otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
@@ -539,32 +553,44 @@ public class LobbyFragment extends Fragment {
         String s = tv.getText().toString();
         if (game.isAsync) {
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                if (game.player1.playerStarted)
+                if (game.player1.playerStarted) {
                     tv.setText("Player 1: Started");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 1: Not Started");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             } else {
-                if (game.player2.playerReady)
+                if (game.player2.playerStarted) {
                     tv.setText("Player 2: Started");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 2: Not Started");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             }
         }
         else{
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
-                if (game.player1.playerReady)
+                if (game.player1.playerReady) {
                     tv.setText("Player 1: Ready");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 1: Not Ready");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             } else {
-                if (game.player2.playerReady)
+                if (game.player2.playerReady) {
                     tv.setText("Player 2: Ready");
-                else
+                    tv.setTextColor(Color.GREEN);
+                }
+                else {
                     tv.setText("Player 2: Not Ready");
-                tv.setTextColor(Color.WHITE);
+                    tv.setTextColor(Color.WHITE);
+                }
             }
         }
     }
@@ -572,21 +598,24 @@ public class LobbyFragment extends Fragment {
     @Override
     public void onDetach () {
         super.onDetach();
-        if (!game.isAsync) {
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-            if (acct.getId().equals(game.player1.playerId)) {
-                if (!game.player1.playerStarted){
-                    game.player1.playerReady = false;
-                    game.writeToDatabase("player1", "playerReady");
-                }
-            } else {
-                if (!game.player2.playerStarted){
-                    game.player2.playerReady = false;
-                    game.writeToDatabase("player2", "playerReady");
+        if (game != null){
+            if (!game.isAsync) {
+                GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+                if (acct.getId().equals(game.player1.playerId)) {
+                    if (!game.player1.playerStarted) {
+                        game.player1.playerReady = false;
+                        game.writeToDatabase("player1", "playerReady");
+                    }
+                } else {
+                    if (!game.player2.playerStarted) {
+                        game.player2.playerReady = false;
+                        game.writeToDatabase("player2", "playerReady");
+                    }
                 }
             }
         }
-        otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+        if (otherPlayerReadyRef != null)
+            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
 

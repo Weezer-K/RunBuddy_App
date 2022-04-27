@@ -120,6 +120,11 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("fragment", "");
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance) {

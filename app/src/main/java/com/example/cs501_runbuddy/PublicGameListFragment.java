@@ -27,8 +27,6 @@ import java.util.Collections;
 public class PublicGameListFragment extends Fragment implements SearchFragment.SearchGame {
 
     private ListView GameList;//The ListView for public games
-    private TextView tvGameList;//A hint for how to get in this game
-    private ArrayList<String> gameIds;
     private ArrayList<Game> activeRaces;
     private SearchFragment.SearchGame listener;
     private DatabaseReference gamesRef;
@@ -48,16 +46,13 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         View v = inflater.inflate(R.layout.fragment_public_game_list, container, false);
         GameList = v.findViewById(R.id.GameList);
 
-        tvGameList = v.findViewById(R.id.tvGameList);
-
-        gameIds = new ArrayList<String>(){};
         activeRaces = new ArrayList<Game>(){};
 
 
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Game.joinGameFromDB(gameIds.get(i), listener, getActivity());
+                Game.joinGameFromDB(activeRaces.get(i).ID, listener, getActivity());
             }
 
         });
@@ -71,7 +66,6 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                         && g.joinAble
                         && distFilters.contains(g.totalDistance)
                         && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
-                    gameIds.add(g.ID);
                     activeRaces.add(g);
                     Collections.sort(activeRaces);
                     AdapterGame current = new AdapterGame(getContext(), activeRaces);
@@ -82,7 +76,6 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
-                gameIds.remove(g.ID);
                 activeRaces.remove(g);
                 Collections.sort(activeRaces);
                 AdapterGame current = new AdapterGame(getContext(), activeRaces);

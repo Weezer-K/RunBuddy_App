@@ -50,6 +50,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         signInWithoutFitbit = (Button) findViewById(R.id.signInWithoutFitbit);
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         signInAccount.setVisibility(View.INVISIBLE);
+        signInWithoutFitbit.setVisibility(View.INVISIBLE);
         signInSound = MediaPlayer.create(getApplicationContext(), R.raw.signinsoundeffect);
 
         image = (ImageView) findViewById(R.id.logoSignInImage);
@@ -87,6 +88,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
             signInUser();
         } else {
             signInAccount.setVisibility(View.VISIBLE);
+            signInWithoutFitbit.setVisibility(View.VISIBLE);
         }
     }
     //Used to sign in existing users
