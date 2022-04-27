@@ -141,7 +141,7 @@ public class LobbyFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String colorPicked = player1Color.getItemAtPosition(i).toString();
                 color1 = colorValFinder(colorPicked);
-                try {
+                try{
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
                 }catch(Exception e){
 
@@ -151,6 +151,11 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 color1 = Color.RED;
+                try{
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
+                }catch(Exception e){
+
+                }
             }
         });
 
@@ -168,7 +173,12 @@ public class LobbyFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                color2 = Color.BLUE;
+                color2 = Color.GREEN;
+                try{
+                    ((TextView) adapterView.getChildAt(0)).setTextColor(color2);
+                }catch(Exception e){
+
+                }
             }
         });
 
