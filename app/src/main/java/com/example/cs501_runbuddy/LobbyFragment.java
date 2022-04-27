@@ -390,6 +390,7 @@ public class LobbyFragment extends Fragment {
 
     public void startRace(Integer localColor, Integer onlineColor) {
         //startCountDown();
+        startBtn.setEnabled(false);
 
         if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
             startSounds.start();
@@ -401,19 +402,23 @@ public class LobbyFragment extends Fragment {
             }
 
             public void onFinish() {
-                boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
-                if(isPlayer1){
-                    game.player1.playerStarted = true;
-                    game.writeToDatabase("player1", "playerStarted");
-                }else{
-                    game.player2.playerStarted = true;
-                    game.writeToDatabase("player2", "playerStarted");
+                if (getActivity() != null) {
+                    if (game.player1.playerReady && game.player2.playerReady) {
+                        boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
+                        if (isPlayer1) {
+                            game.player1.playerStarted = true;
+                            game.writeToDatabase("player1", "playerStarted");
+                        } else {
+                            game.player2.playerStarted = true;
+                            game.writeToDatabase("player2", "playerStarted");
+                        }
+                        Intent intent = new Intent(getActivity(), RaceActivity.class);
+                        intent.putExtra("localPlayerColor", localColor);
+                        intent.putExtra("onlinePlayerColor", onlineColor);
+                        intent.putExtra("game", game);
+                        startActivity(intent);
+                    }
                 }
-                Intent intent = new Intent(getActivity(), RaceActivity.class);
-                intent.putExtra("localPlayerColor", localColor);
-                intent.putExtra("onlinePlayerColor", onlineColor);
-                intent.putExtra("game", game);
-                startActivity(intent);
             }
         }.start();
 
@@ -474,14 +479,12 @@ public class LobbyFragment extends Fragment {
                         game.player2.playerReady = snapshot.getValue(Boolean.class);
                         setTextColorForPlayer(player2ReadyText);
                         if (game.player1.playerReady && game.player2.playerReady) {
-                            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
                             startRace(color1, color2);
                         }
                     } else {
                         game.player1.playerReady = snapshot.getValue(Boolean.class);
                         setTextColorForPlayer(player1ReadyText);
                         if (game.player1.playerReady && game.player2.playerReady) {
-                            otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
                             startRace(color2, color1);
                         }
                     }
@@ -569,8 +572,24 @@ public class LobbyFragment extends Fragment {
     @Override
     public void onDetach () {
         super.onDetach();
+        if (!game.isAsync) {
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+            if (acct.getId().equals(game.player1.playerId)) {
+                if (!game.player1.playerStarted){
+                    game.player1.playerReady = false;
+                    game.writeToDatabase("player1", "playerReady");
+                }
+            } else {
+                if (!game.player2.playerStarted){
+                    game.player2.playerReady = false;
+                    game.writeToDatabase("player2", "playerReady");
+                }
+            }
+        }
+        otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
+
         f = null;
     }
 
@@ -599,6 +618,5 @@ public class LobbyFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
 }
 
