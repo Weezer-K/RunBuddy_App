@@ -7,6 +7,22 @@
     android:background="#00203F"
     tools:context=".SignInActivity">
 
+    <Button
+        android:id="@+id/signInWithoutFitbit"
+        android:layout_width="215dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="#ADEFD1"
+        android:text="Sign In\nWithout Fitbit"
+        android:textColor="#00203F"
+        android:textSize="20sp"
+        app:cornerRadius="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/signInAccount"
+        app:layout_constraintStart_toStartOf="@+id/signInAccount"
+        app:layout_constraintTop_toBottomOf="@+id/signInAccount"
+        app:layout_constraintVertical_bias="0.027" />
+
     <ImageView
         android:id="@+id/logoSignInImage"
         android:layout_width="339dp"
@@ -16,22 +32,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.348"
+        app:layout_constraintVertical_bias="0.102"
         tools:src="@drawable/run_buddy" />
 
     <Button
         android:id="@+id/signInAccount"
-        android:layout_width="208dp"
-        android:layout_height="76dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="215dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#ADEFD1"
-        android:text="Sign In"
+        android:text="Sign In\nWith Fitbit"
         android:textColor="#00203F"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:cornerRadius="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/logoSignInImage"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="@+id/logoSignInImage"
-        app:layout_constraintTop_toBottomOf="@+id/logoSignInImage" />
+        app:layout_constraintTop_toBottomOf="@+id/logoSignInImage"
+        app:layout_constraintVertical_bias="0.005" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

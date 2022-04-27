@@ -646,7 +646,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 }
 
                 DecimalFormat df = new DecimalFormat("0.00");
-                tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
+                tv_distance.setText("Distance: " + df.format(totalDistance) + " miles");
 
                 //Pace calculation
                 double temp = 0;
@@ -667,7 +667,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
                     hours = temp/60000/60.0;
                     double pace = totalDistance/hours;
-                    tv_pace.setText("Pace: " + df.format(currentPace) + " mi/h");
+                    tv_pace.setText("Pace: " + df.format(currentPace) + " mph");
                 }
 
             }

@@ -1,6 +1,7 @@
 package com.example.cs501_runbuddy;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.skydoves.balloon.ArrowOrientation;
+import com.skydoves.balloon.ArrowPositionRules;
+import com.skydoves.balloon.Balloon;
+import com.skydoves.balloon.BalloonAnimation;
+import com.skydoves.balloon.BalloonSizeSpec;
+import com.skydoves.balloon.overlay.BalloonOverlayAnimation;
 
 import java.util.ArrayList;
 
@@ -31,6 +40,8 @@ public class CreateFragment extends Fragment {
     private CreateGame listener;
 
     private int selectedDistance;
+    private ImageView privateInfoImage;
+    private ImageView makeRaceInfoImage;
 
     public interface CreateGame{
         void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance);
@@ -51,6 +62,75 @@ public class CreateFragment extends Fragment {
         privateBtn = v.findViewById(R.id.privateBtn);
         isAsyncBtn = v.findViewById(R.id.isAsyncBtn);
         Createbtn = v.findViewById(R.id.Createbtn);
+        privateInfoImage = (ImageView) v.findViewById(R.id.privateInfoImage);
+        makeRaceInfoImage = (ImageView) v.findViewById(R.id.makeInfoImage);
+
+
+
+
+
+        Balloon balloon = new Balloon.Builder(getActivity())
+                .setArrowSize(10)
+                .setArrowOrientation(ArrowOrientation.TOP)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                .setArrowPosition(0.5f)
+                .setWidth(BalloonSizeSpec.WRAP)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setTextSize(15f)
+                .setCornerRadius(4f)
+                .setAlpha(0.9f)
+                .setIsVisibleOverlay(true)
+                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE)
+                .setText("If your race is private, share your game ID for your friend to join directly")
+                .setTextColor(Color.WHITE)
+                .setOverlayPadding(6f)
+                .setOverlayColor(Color.parseColor("#9900203F"))
+                .setTextIsHtml(true)
+                .setBackgroundColor(Color.parseColor("#242526"))
+                .setMargin(10)
+                .setPadding(10)
+                .setBalloonAnimation(BalloonAnimation.FADE).build();
+                //.setOnBalloonClickListener(onBalloonClickListener)
+                //.setLifecycleOwner(lifecycleOwner)
+
+        Balloon balloon2 = new Balloon.Builder(getActivity())
+                .setArrowSize(10)
+                .setArrowOrientation(ArrowOrientation.TOP)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                .setArrowPosition(0.5f)
+                .setWidth(BalloonSizeSpec.WRAP)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setTextSize(15f)
+                .setCornerRadius(4f)
+                .setAlpha(0.9f)
+                .setIsVisibleOverlay(true)
+                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE)
+                .setText("When checked, you can race each other at different starting times")
+                .setTextColor(Color.WHITE)
+                .setOverlayPadding(6f)
+                .setOverlayColor(Color.parseColor("#9900203F"))
+                .setTextIsHtml(true)
+                .setBackgroundColor(Color.parseColor("#242526"))
+                .setMargin(10)
+                .setPadding(10)
+                .setBalloonAnimation(BalloonAnimation.FADE).build();
+
+        privateInfoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                balloon.showAlignBottom(privateInfoImage);
+            }
+        });
+
+        makeRaceInfoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                balloon2.showAlignBottom(makeRaceInfoImage);
+            }
+        });
+
+
+
 
 
         Spinner spinner = (Spinner) v.findViewById(R.id.spinner);

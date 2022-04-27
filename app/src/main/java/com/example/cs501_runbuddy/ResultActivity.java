@@ -149,6 +149,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         });
         /*
         resultsFromMap.setOnClickListener(new View.OnClickListener() {
+        resultsFromMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mapApi.clear();
@@ -274,7 +275,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         }
     }
 
-    protected int getLoaderId() {
+    protected int getLoaderId()  {
         return 2;
     }
 
@@ -468,13 +469,18 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             secondString = "0" + secondString;
         }
         String timeElapsed = minutes + ":" + secondString;
-        distanceLocal.setText("Distance: " + df.format(player.totalDistanceRan));
+        distanceLocal.setText("Distance: " + df.format(player.totalDistanceRan) + " miles");
         timeRanLocal.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
         paceLocal.setText("Pace: " + df.format(pace) + "mph");
         //mapLocal.setBackgroundColor(activateColor);
         if(player.heartRate != null){
-            localHeartRate.setText("Heart Rate: " + player.heartRate.toString());
+            int heartRate = (int) Math.round(player.heartRate);
+            if(heartRate != 0) {
+                localHeartRate.setText("Heart Rate: " + heartRate + "bpm");
+            }else{
+                localHeartRate.setText("Heart Rate: NA");
+            }
         }
     }
 
@@ -488,13 +494,18 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             secondString = "0" + secondString;
         }
         String timeElapsed = minutes + ":" + secondString;
-        distanceOther.setText("Distance: " + df.format(player.totalDistanceRan));
+        distanceOther.setText("Distance: " + df.format(player.totalDistanceRan) + " miles");
         timeRanOther.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
         paceOther.setText("Pace: " + df.format(pace) + "mph");
         //mapOther.setBackgroundColor(activateColor);
         if(player.heartRate != null){
-            otherHeartRate.setText("Heart Rate: " + player.heartRate.toString());
+            int heartRate = (int) Math.round(player.heartRate);
+            if(heartRate != 0) {
+                otherHeartRate.setText("Heart Rate: " + heartRate + "bpm");
+            }else{
+                otherHeartRate.setText("Heart Rate: NA");
+            }
         }
     }
 
