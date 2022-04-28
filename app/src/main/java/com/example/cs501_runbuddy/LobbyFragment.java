@@ -310,15 +310,15 @@ public class LobbyFragment extends Fragment {
     public int colorValFinder(String c) {
        int colorPicked = Color.RED;
         if (c.equals("Blue")) {
-            colorPicked = Color.parseColor("#BAE1FF");
+            colorPicked = Color.parseColor("#46AEFF");
         } else if (c.equals("Red")) {
-            colorPicked = Color.parseColor("#FFB3BA");
+            colorPicked = Color.parseColor("#FF5161");
         } else if (c.equals("Green")) {
-            colorPicked = Color.parseColor("#BAFFC9");
+            colorPicked = Color.parseColor("#47FF6F");
         } else if (c.equals("Yellow")) {
-            colorPicked = Color.parseColor("#FFFFBA");
+            colorPicked = Color.parseColor("#FFFF48");
         } else if (c.equals("Orange")) {
-            colorPicked = Color.parseColor("#FFDFBA");
+            colorPicked = Color.parseColor("#FFA946");
         }
         return colorPicked;
     }

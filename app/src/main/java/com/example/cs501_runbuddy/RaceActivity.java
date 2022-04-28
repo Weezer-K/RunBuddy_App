@@ -772,7 +772,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         otherPlayerLocationIndex++;
-                        if(otherRaceLocations.size() <= otherPlayerLocationIndex){
+                        if(otherRaceLocations.size() > otherPlayerLocationIndex){
                             currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                             secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
                         }else{

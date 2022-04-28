@@ -282,6 +282,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                                 getWinner();
                                 setTextViews();
                                 mapOther.setVisibility(View.VISIBLE);
+                                mapOther.setClickable(true);
                                 mapOther.setTextColor(Color.BLACK);
                             }
                         });
