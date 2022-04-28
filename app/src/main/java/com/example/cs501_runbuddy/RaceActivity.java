@@ -129,6 +129,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     private double otherPlayerStartTime;
 
+    private double otherPlayerThreadTime;
+
     private double raceStartTime;
 
     private int otherPlayerLocationIndex;
@@ -564,7 +566,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         updateTime();
         if (!game.isAsync) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                otherPlayerStartTime = Instant.now().toEpochMilli();
+                otherPlayerThreadTime= Instant.now().toEpochMilli();
             }
             updateTimeOther();
         }
@@ -751,7 +753,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 otherPlayerLocationIndex++;
                 if (game.isAsync) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        otherPlayerStartTime = Instant.now().toEpochMilli();
+                        otherPlayerThreadTime = Instant.now().toEpochMilli();
                     }
                     updateTimeOther();
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
@@ -856,6 +858,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 }
 
                  */
+                try{
+                    TimeUnit.SECONDS.sleep(1);
+                }catch(Exception e){
+
+                }
+                /*
                 if(isPlayer1){
                     if(game.player2.playerFinished){
                         return;
@@ -865,8 +873,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         return;
                     }
                 }
+                 */
+
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    double startTimeMilis = otherPlayerStartTime;
+                    double startTimeMilis = otherPlayerThreadTime;
                     double endTimeMilis = Instant.now().toEpochMilli();
                     totalTimeRan = endTimeMilis - startTimeMilis;
                     int minutes = (int) totalTimeRan / 60000;
