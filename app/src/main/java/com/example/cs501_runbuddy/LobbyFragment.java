@@ -530,8 +530,10 @@ public class LobbyFragment extends Fragment {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
                         if (pId.equals(game.player1.playerId)) {
+                            game.player2.playerStarted = true;
                             setTextColorForPlayer(player2ReadyText);
                         } else {
+                            game.player1.playerStarted = true;
                             setTextColorForPlayer(player1ReadyText);
                         }
                         otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
