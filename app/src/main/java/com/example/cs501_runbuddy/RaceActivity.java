@@ -642,6 +642,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
 
                 if(totalDistance >= maxDistance/100){
+                    localPlayerTrack.setProgress((int) maxDistance);
                     if(isPlayer1){
                         game.player1.totalDistanceRan = game.totalDistance;
                         game.writeToDatabase("player1", "totalDistanceRan");
@@ -753,13 +754,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
                 while (currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
-                    double curTimeOther = 0;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        curTimeOther= Instant.now().toEpochMilli();
-                    }
+//                    double curTimeOther = 0;
+//                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                        curTimeOther= Instant.now().toEpochMilli();
+//                    }
                     DecimalFormat df = new DecimalFormat("#,###.##");
-                    double hours = (curTimeOther - previousTimeOther)/60000/60;
-                    previousTimeOther = curTimeOther;
+                    double hours = (currentLocationOtherPlayer.time - secondToLast.time)/60000/60;
+//                    double hours = (curTimeOther - previousTimeOther)/60000/60;
+//                    previousTimeOther = curTimeOther;
                     double previousDistance = totalDistanceOtherPlayer;
                     totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     Double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
