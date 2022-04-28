@@ -949,6 +949,15 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
+
+        if(Double.isNaN(dist)){
+            return 0;
+        }else if(Double.isInfinite(dist)){
+            return 0;
+        }else if(dist <= .0001){
+            return 0;
+        }
+
         return (dist);
     }
 
