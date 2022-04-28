@@ -183,8 +183,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_time"
-        app:layout_constraintVertical_bias="0.41" />
+        app:layout_constraintTop_toBottomOf="@+id/tvOtherStatus"
+        app:layout_constraintVertical_bias="0.272" />
 
     <TextView
         android:id="@+id/distancebetween"
@@ -261,11 +261,14 @@
         android:id="@+id/tvOtherStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Status: Not Started"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
-        tools:layout_editor_absoluteX="250dp"
-        tools:layout_editor_absoluteY="571dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_timeOther"
+        app:layout_constraintTop_toBottomOf="@+id/tv_timeOther" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
