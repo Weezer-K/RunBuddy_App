@@ -78,6 +78,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         });
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -85,7 +86,10 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
 
         if (acct != null) {
-            signInUser();
+            //signInUser();
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(intent);
+
         } else {
             signInAccount.setVisibility(View.VISIBLE);
             signInWithoutFitbit.setVisibility(View.VISIBLE);

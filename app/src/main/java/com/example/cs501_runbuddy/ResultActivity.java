@@ -90,7 +90,6 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     private TextView winnerLoser;
     private int activateColor = Color.parseColor("#00203F");
     private ImageView info1;
-    private ImageView info2;
 
 
     @Override
@@ -121,7 +120,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         otherHeartRate = (TextView) findViewById(R.id.avgHeartRateOther);
         winnerLoser = (TextView) findViewById(R.id.winnerLoserText);
         info1 = (ImageView) findViewById(R.id.heartRateInfo1);
-        info2 = (ImageView) findViewById(R.id.heartRateInfo2);
+        mapLocal.setTextColor(Color.GRAY);
         mapLocalActivated = false;
         mapOtherActivated = false;
 
@@ -157,12 +156,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             }
         });
 
-        info2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                balloon.showAlignBottom(info2);
-            }
-        });
+
 
 
 
@@ -172,7 +166,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                 ColorStateList cl = mapLocal.getTextColors();
                 //relative.setBackgroundColor(cl.getDefaultColor());
                 if(cl.getDefaultColor() == (Color.parseColor("#00203F"))){
-                    mapLocal.setTextColor(Color.BLACK);
+                    mapLocal.setTextColor(Color.GRAY);
                 }else{
                     mapLocal.setTextColor(Color.parseColor("#00203F"));
                 }
@@ -286,7 +280,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                                 setTextViews();
                                 mapOther.setVisibility(View.VISIBLE);
                                 mapOther.setClickable(true);
-                                mapOther.setTextColor(Color.BLACK);
+                                mapOther.setTextColor(Color.GRAY);
                             }
                         });
                     }
@@ -349,9 +343,9 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             setMap(p, isLocal);
             if(isLocal){
                 mapLocal.setTextColor(Color.parseColor("#00203F"));
-                mapOther.setTextColor(Color.BLACK);
+                mapOther.setTextColor(Color.GRAY);
             }else{
-                mapLocal.setTextColor(Color.BLACK);
+                mapLocal.setTextColor(Color.GRAY);
                 mapOther.setTextColor(Color.parseColor("#00203F"));
             }
         }

@@ -406,6 +406,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                         game.player2.playerFinished = true;
                                     else
                                         game.player1.playerFinished = true;
+                                    if(!game.isAsync) {
+                                        timerOn2 = false;
+                                        Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
+                                        tvOtherStatus.setText("Status: Quit");
+                                    }
                                 }
                                 //stops time for other player on screen
                                 //threadStopper = null;
