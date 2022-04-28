@@ -394,10 +394,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                 if (value.equals(game.totalDistance)) {
                                     Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
                                 }
-                                else {
+                                else{
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
-                                stopOtherPlayerTime();
+                                //stops time
+                                threadStopper = null;
                                 otherPlayerRef.removeEventListener(otherPlayerListener);
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
                             }
@@ -471,9 +472,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
 
-    private void stopOtherPlayerTime(){
-        threadStopper = null;
-    }
+
 
     public void makeTrack(CircularSeekBar circ, int color){
         circ.initPaints(color);
@@ -827,7 +826,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         Thread t = new Thread(() -> {
             while(timerOn){
                 try {
-                    threadStopper.setText("");
+                    stopOtherPlayerTime();
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -870,6 +869,21 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
     }
+
+
+    public void stopOtherPlayerTime(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                threadStopper.setText("");
+            }
+        });
+    }
+
+
+
+
+
 
     //given two coordinates, calculate the distance in miles
     private double distance(double lat1, double lon1, double lat2, double lon2) {
