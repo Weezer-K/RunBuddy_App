@@ -413,7 +413,7 @@ public class LobbyFragment extends Fragment {
 
             public void onFinish() {
                 if (getActivity() != null) {
-                    if (game.player1.playerReady && game.player2.playerReady) {
+                    if (game.isAsync || (game.player1.playerReady && game.player2.playerReady)) {
                         boolean isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId()));
                         if (isPlayer1) {
                             game.player1.playerStarted = true;
