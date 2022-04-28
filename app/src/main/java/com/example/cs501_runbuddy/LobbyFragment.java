@@ -447,10 +447,10 @@ public class LobbyFragment extends Fragment {
                         @Override
                         public void onCallback(String value) {
                             player2tv.setText("Name: " + value);
-                            setTextColorForPlayer(player2ReadyText);
                             game.joinAble = false;
                             game.player2 = p2;
                             game.writeToDatabase("player2", "");
+                            setTextColorForPlayer(player2ReadyText);
                             player2Ref.removeEventListener(player2Listener);
                             if (!game.isAsync) {
                                 initializeOtherPlayerReadyRef();
