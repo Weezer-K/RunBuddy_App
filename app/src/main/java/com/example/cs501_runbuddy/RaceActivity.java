@@ -389,7 +389,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     if (snapshot.getValue(Boolean.class)) {
-                        game.readOtherPlayerDoubleField(isPlayer1, "totalDistance", new Game.OtherPlayerDoubleFieldCallback(){
+                        game.readOtherPlayerDoubleField(isPlayer1, "totalDistanceRan", new Game.OtherPlayerDoubleFieldCallback(){
                             @Override
                             public void onCallback(Double value) {
                                 if (value.equals(game.totalDistance)) {

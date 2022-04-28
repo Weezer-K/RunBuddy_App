@@ -562,7 +562,7 @@ public class LobbyFragment extends Fragment {
                     tv.setTextColor(Color.WHITE);
                 }
             } else {
-                if (game.player2.playerReady) {
+                if (game.player2.playerStarted) {
                     tv.setText("Player 2: Started");
                     tv.setTextColor(Color.GREEN);
                 }
