@@ -16,7 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cs501_runbuddy.models.Game;
 import com.example.cs501_runbuddy.models.RaceLocation;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ResultActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<ResourceLoaderResult<HeartRateContainer>>, OnMapReadyCallback{
+public class ResultActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ResourceLoaderResult<HeartRateContainer>>, OnMapReadyCallback{
 
     private TextView tvResult;
     private TextView localNameTextView;
@@ -360,7 +360,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
         }
         LatLng latLng = new LatLng(lat, lng);
-        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
+        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
     }
 
     public void getWinner() {
