@@ -571,6 +571,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 otherPlayerThreadTime= Instant.now().toEpochMilli();
             }
+            Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
+            tvOtherStatus.setText("Status: Running");
             updateTimeOther();
         }
     }
