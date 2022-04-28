@@ -398,7 +398,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                             @Override
                             public void onCallback(Double value) {
                                 if (!value.equals(game.totalDistance)) {
-                                    Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                     otherPlayerRef.removeEventListener(otherPlayerListener);
                                     if (isPlayer1)
                                         game.player2.playerFinished = true;
@@ -793,10 +792,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                             if(isPlayer1){
                                 if (game.player2.playerFinished) {
                                     timerOn2 = false;
+                                    Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
                             }else{
                                 if (game.player1.playerFinished) {
                                     timerOn2 = false;
+                                    Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
