@@ -142,7 +142,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_otherPlayerDistance;
     private TextView tv_otherPlayerTimer;
     private TextView tv_otherPlayerPace;
-    private TextView threadStopper;
+    private LatLngDB threadStopper;
 
 
 
@@ -158,7 +158,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         tv_otherPlayerPace = (TextView) findViewById(R.id.tv_paceOther);
         tv_otherPlayerTimer = (TextView) findViewById(R.id.tv_timeOther);
         tv_distance = findViewById(R.id.tv_distance);
-        threadStopper = (TextView) findViewById(R.id.threadStopperOther);
+        threadStopper = new LatLngDB(10.0, 10.0);
         tv_time = findViewById(R.id.tv_time);
         spotifyButton = (Button) findViewById(R.id.spotify);
         spotifyButton.setBackgroundColor(Color.LTGRAY);
@@ -839,9 +839,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         Thread t = new Thread(() -> {
             while(timerOn){
                 try {
-                    stopOtherPlayerTime();
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
+                    double a = threadStopper.lat;
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -879,20 +878,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             @Override
             public void run() {
                 tv_otherPlayerTimer.setText("Time: " + time);
-            }
-        });
-    }
-
-
-    public void stopOtherPlayerTime(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    threadStopper.setText("");
-                } catch (Exception e) {
-
-                }
             }
         });
     }
