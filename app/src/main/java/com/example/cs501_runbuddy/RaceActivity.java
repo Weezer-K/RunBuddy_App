@@ -446,19 +446,19 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     private void quitGame(){
         if(isPlayer1){
-            game.player1.playerFinished = true;
-            game.writeToDatabase("player1", "playerFinished");
             game.player1.totalDistanceRan = totalDistance;
             game.writeToDatabase("player1", "totalDistanceRan");
             game.player1.totalTimeRan = totalTimeRan;
             game.writeToDatabase("player1", "totalTimeRan");
+            game.player1.playerFinished = true;
+            game.writeToDatabase("player1", "playerFinished");
         }else{
-            game.player2.playerFinished = true;
-            game.writeToDatabase("player2", "playerFinished");
             game.player2.totalDistanceRan = totalDistance;
             game.writeToDatabase("player2", "totalDistanceRan");
             game.player2.totalTimeRan = totalTimeRan;
             game.writeToDatabase("player2", "totalTimeRan");
+            game.player2.playerFinished = true;
+            game.writeToDatabase("player2", "playerFinished");
         }
         otherPlayerRef.removeEventListener(otherPlayerListener);
         stopLocationUpdates();
@@ -643,21 +643,21 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
                 if(totalDistance >= maxDistance/100){
                     if(isPlayer1){
-                        game.player1.playerFinished = true;
-                        game.writeToDatabase("player1", "playerFinished");
                         game.player1.totalDistanceRan = game.totalDistance;
                         game.writeToDatabase("player1", "totalDistanceRan");
                         game.player1.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player1", "totalTimeRan");
+                        game.player1.playerFinished = true;
+                        game.writeToDatabase("player1", "playerFinished");
                         if (!game.player2.playerFinished)
                             otherPlayerRef.removeEventListener(otherPlayerListener);
                     }else{
-                        game.player2.playerFinished = true;
-                        game.writeToDatabase("player2", "playerFinished");
                         game.player2.totalDistanceRan = game.totalDistance;
                         game.writeToDatabase("player2", "totalDistanceRan");
                         game.player2.totalTimeRan = totalTimeRan;
                         game.writeToDatabase("player2", "totalTimeRan");
+                        game.player2.playerFinished = true;
+                        game.writeToDatabase("player2", "playerFinished");
                         if (!game.player1.playerFinished)
                             otherPlayerRef.removeEventListener(otherPlayerListener);
                     }
@@ -775,15 +775,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         tv_otherPlayerDistance.setText("Distance: "+df.format(d)+" mi");
                         otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
-                        otherPlayerLocationIndex++;
-                        if(otherRaceLocations.size() > otherPlayerLocationIndex){
-                            currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
-                            secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
-                        }else{
-                            break;
-                        }
 
-                    }else if(totalDistanceOtherPlayer == maxDistance / 100){
+                    }else {
                         otherPlayerTrack.setProgress((int) (maxDistance));
                         otherPlayerRef.removeEventListener(otherPlayerListener);
                         if (isPlayer1)
@@ -791,6 +784,13 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         else
                             game.player1.playerFinished = true;
                         Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
+                    }
+                    otherPlayerLocationIndex++;
+                    if(otherRaceLocations.size() > otherPlayerLocationIndex){
+                        currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
+                        secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+                    }else{
+                        break;
                     }
                 }
             }
