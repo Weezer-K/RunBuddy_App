@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
-import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -102,6 +100,7 @@ public class MyRacesFragment extends Fragment {
                 ActiveRaceList.setVisibility(View.INVISIBLE);
                 HistoryList.setVisibility(View.VISIBLE);
                 instructions.setText(finishedText);
+                displayNoGames();
             }
         });
 
@@ -113,6 +112,7 @@ public class MyRacesFragment extends Fragment {
                 ActiveRaceList.setVisibility(View.VISIBLE);
                 HistoryList.setVisibility(View.INVISIBLE);
                 instructions.setText(activeText);
+                displayNoGames();
             }
         });
 
@@ -162,21 +162,8 @@ public class MyRacesFragment extends Fragment {
                         Collections.sort(pastRaces);
                         AdapterGame current = new AdapterGame(getContext(), pastRaces);
                         HistoryList.setAdapter(current);
-
                     }
-                    if(pastRaceButton.getTextColors().getDefaultColor() == Color.parseColor("#00203F")){
-                        if(pastRaces.size() > 0){
-                            noGamesIndicator.setVisibility(View.INVISIBLE);
-                        }else{
-                            noGamesIndicator.setVisibility(View.VISIBLE);
-                        }
-                    }else{
-                        if(activeRaces.size() > 0){
-                            noGamesIndicator.setVisibility(View.INVISIBLE);
-                        }else{
-                            noGamesIndicator.setVisibility(View.VISIBLE);
-                        }
-                    }
+                    displayNoGames();
                 }
 
             }
@@ -216,6 +203,22 @@ public class MyRacesFragment extends Fragment {
             listener = (MyRacesFragment.BackToLobby) context;
         }else{
             throw new RuntimeException(context.toString() + "must implement BackToLobby");
+        }
+    }
+
+    public void displayNoGames(){
+        if(pastRaceButton.getTextColors().getDefaultColor() == Color.parseColor("#00203F")){
+            if(pastRaces.size() > 0){
+                noGamesIndicator.setVisibility(View.INVISIBLE);
+            }else{
+                noGamesIndicator.setVisibility(View.VISIBLE);
+            }
+        }else{
+            if(activeRaces.size() > 0){
+                noGamesIndicator.setVisibility(View.INVISIBLE);
+            }else{
+                noGamesIndicator.setVisibility(View.VISIBLE);
+            }
         }
     }
 
