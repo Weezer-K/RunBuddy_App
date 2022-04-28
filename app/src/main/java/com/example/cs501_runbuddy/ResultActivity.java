@@ -167,10 +167,10 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
             public void onClick(View view) {
                 ColorStateList cl = mapLocal.getTextColors();
                 //relative.setBackgroundColor(cl.getDefaultColor());
-                if(cl.getDefaultColor() == Color.BLUE){
+                if(cl.getDefaultColor() == (Color.parseColor("#00203F"))){
                     mapLocal.setTextColor(Color.BLACK);
                 }else{
-                    mapLocal.setTextColor(Color.BLUE);
+                    mapLocal.setTextColor(Color.parseColor("#00203F"));
                 }
                 if(!mapFragment.isVisible()) {
                     if (isPlayer1 && game.player1.playerFinished) {
@@ -344,11 +344,11 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             setMap(p, isLocal);
             if(isLocal){
-                mapLocal.setTextColor(Color.BLUE);
+                mapLocal.setTextColor(Color.parseColor("#00203F"));
                 mapOther.setTextColor(Color.BLACK);
             }else{
                 mapLocal.setTextColor(Color.BLACK);
-                mapOther.setTextColor(Color.BLUE);
+                mapOther.setTextColor(Color.parseColor("#00203F"));
             }
         }
         double lat = 0;

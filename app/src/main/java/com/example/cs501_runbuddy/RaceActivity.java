@@ -113,6 +113,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     // Used to indicate if timer is on or off
     private boolean timerOn = true;
+    private Boolean timerOn2 = true;
 
     private int maxDistance; //divide by 100 to get distance in miles
 
@@ -405,7 +406,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                         game.player1.playerFinished = true;
                                 }
                                 //stops time for other player on screen
-                                threadStopper = null;
+                                //threadStopper = null;
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
                             }
                         });
@@ -779,17 +780,29 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     if (totalDistanceOtherPlayer < maxDistance / 100) {
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
-                        }else{
+                        } else {
                             playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
                         double d = totalDistanceOtherPlayer;
 
-                        tv_otherPlayerDistance.setText("Distance: "+df.format(d)+" mi");
+                        tv_otherPlayerDistance.setText("Distance: " + df.format(d) + " mi");
                         otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
 
+                        if (otherRaceLocations.size() - 1 == otherPlayerLocationIndex) {
+                            if(isPlayer1){
+                                if (game.player2.playerFinished) {
+                                    timerOn2 = false;
+                                }
+                            }else{
+                                if (game.player1.playerFinished) {
+                                    timerOn2 = false;
+                                }
+                            }
+                        }
                     }else {
                         otherPlayerTrack.setProgress((int) (maxDistance));
+                        timerOn2 = false;
                         otherPlayerRef.removeEventListener(otherPlayerListener);
                         if (isPlayer1)
                             game.player2.playerFinished = true;
@@ -849,19 +862,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     public void updateTimeOther(){
         Thread t = new Thread(() -> {
-            while(timerOn){
-                /*
+            while(timerOn2){
                 try {
-                    double a = threadStopper.lat;
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-
-                 */
-                try{
-                    TimeUnit.SECONDS.sleep(1);
-                }catch(Exception e){
-
                 }
                 /*
                 if(isPlayer1){
