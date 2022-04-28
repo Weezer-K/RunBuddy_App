@@ -596,17 +596,19 @@ public class LobbyFragment extends Fragment {
     @Override
     public void onDetach () {
         super.onDetach();
-        if (!game.isAsync) {
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-            if (acct.getId().equals(game.player1.playerId)) {
-                if (!game.player1.playerStarted){
-                    game.player1.playerReady = false;
-                    game.writeToDatabase("player1", "playerReady");
-                }
-            } else {
-                if (!game.player2.playerStarted){
-                    game.player2.playerReady = false;
-                    game.writeToDatabase("player2", "playerReady");
+        if (game != null){
+            if (!game.isAsync) {
+                GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+                if (acct.getId().equals(game.player1.playerId)) {
+                    if (!game.player1.playerStarted) {
+                        game.player1.playerReady = false;
+                        game.writeToDatabase("player1", "playerReady");
+                    }
+                } else {
+                    if (!game.player2.playerStarted) {
+                        game.player2.playerReady = false;
+                        game.writeToDatabase("player2", "playerReady");
+                    }
                 }
             }
         }

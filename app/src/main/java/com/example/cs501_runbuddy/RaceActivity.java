@@ -331,6 +331,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         otherPlayerTrack.setClickable(false);
         localPlayerTrack.setMainColor(localColor);
         otherPlayerTrack.setMainColor(onlineColor);
+        otherPlayerTrack.setVisibility(View.INVISIBLE);
         makeTrack(localPlayerTrack, localColor);
         makeTrack(otherPlayerTrack, onlineColor);
 
@@ -397,7 +398,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                 else{
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
-                                //stops time
+                                //stops time for other player on screen
                                 threadStopper = null;
                                 otherPlayerRef.removeEventListener(otherPlayerListener);
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
@@ -728,7 +729,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
     public void updateOtherPlayerUI(){
-        otherPlayerTrack.setVisibility(View.INVISIBLE);
         double localElapsedTime = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             localElapsedTime = Instant.now().toEpochMilli() - raceStartTime;
@@ -742,6 +742,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 if (game.isAsync) {
                     updateTimeOther();
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
+                    otherPlayerTrack.setVisibility(View.VISIBLE);
                 }
             }
             else if (otherRaceLocations.size() > otherPlayerLocationIndex){
@@ -762,7 +763,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     if (totalDistanceOtherPlayer < maxDistance / 100) {
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
-                        } else {
+                        }else{
                             playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
                         double d = totalDistanceOtherPlayer;
@@ -778,6 +779,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                             break;
                         }
 
+                    }else if(totalDistanceOtherPlayer == maxDistance / 100){
+                        otherPlayerTrack.setProgress((int) (maxDistance));
                     }
                 }
             }
