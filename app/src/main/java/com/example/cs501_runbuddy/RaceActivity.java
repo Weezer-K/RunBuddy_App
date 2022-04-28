@@ -145,6 +145,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_otherPlayerDistance;
     private TextView tv_otherPlayerTimer;
     private TextView tv_otherPlayerPace;
+    private TextView tvOtherStatus;
     private LatLngDB threadStopper;
 
     private double startTimeOther;
@@ -162,6 +163,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         tv_otherPlayerDistance = (TextView) findViewById(R.id.tv_distanceOther);
         tv_otherPlayerPace = (TextView) findViewById(R.id.tv_paceOther);
         tv_otherPlayerTimer = (TextView) findViewById(R.id.tv_timeOther);
+        tvOtherStatus = (TextView) findViewById(R.id.tvOtherStatus);
         tv_distance = findViewById(R.id.tv_distance);
         threadStopper = new LatLngDB(10.0, 10.0);
         tv_time = findViewById(R.id.tv_time);
@@ -757,6 +759,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     }
                     updateTimeOther();
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
+                    tvOtherStatus.setText("Status: Running");
                     otherPlayerTrack.setVisibility(View.VISIBLE);
                 }
             }
@@ -793,11 +796,13 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                 if (game.player2.playerFinished) {
                                     timerOn2 = false;
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
+                                    tvOtherStatus.setText("Status: Quit");
                                 }
                             }else{
                                 if (game.player1.playerFinished) {
                                     timerOn2 = false;
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
+                                    tvOtherStatus.setText("Status: Quit");
                                 }
                             }
                         }
@@ -810,6 +815,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         else
                             game.player1.playerFinished = true;
                         Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
+                        tvOtherStatus.setText("Status: Finished");
                     }
                     otherPlayerLocationIndex++;
                     if(otherRaceLocations.size() > otherPlayerLocationIndex){

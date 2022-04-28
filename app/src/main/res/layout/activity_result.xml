@@ -12,7 +12,7 @@
         android:id="@+id/tvResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Game 014923"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
@@ -24,7 +24,7 @@
         android:id="@+id/winnerLoserText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="48dp"
         android:text="Winner"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
@@ -289,6 +289,16 @@
         app:layout_constraintEnd_toEndOf="@+id/winnerLoserText"
         app:layout_constraintStart_toStartOf="@+id/winnerLoserText"
         app:layout_constraintTop_toBottomOf="@+id/winnerLoserText" />
+
+    <TextView
+        android:id="@+id/tvGameDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        tools:layout_editor_absoluteX="157dp"
+        tools:layout_editor_absoluteY="55dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

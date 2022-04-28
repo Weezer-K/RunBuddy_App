@@ -56,6 +56,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
     private TextView tvResult;
     private TextView localNameTextView;
     private TextView otherNameTextView;
+    private TextView tvGameDate;
 
     private TextView distanceLocal;
     private TextView paceLocal;
@@ -99,6 +100,7 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
+        tvGameDate = (TextView) findViewById(R.id.tvGameDate);
         isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
         localNameTextView = (TextView) findViewById(R.id.localName);
         otherNameTextView = (TextView) findViewById(R.id.otherName);
@@ -122,6 +124,8 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
         info2 = (ImageView) findViewById(R.id.heartRateInfo2);
         mapLocalActivated = false;
         mapOtherActivated = false;
+
+        tvGameDate.setText(game.getStringDate());
 
         Balloon balloon = new Balloon.Builder(getApplicationContext())
                 .setArrowSize(10)
