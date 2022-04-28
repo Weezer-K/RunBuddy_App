@@ -274,6 +274,7 @@ public class LobbyFragment extends Fragment {
             startBtn.setText("Ready");
         }
 
+        setTextColorForPlayer(player1ReadyText);
         setTextColorForPlayer(player2ReadyText);
 
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
@@ -446,6 +447,7 @@ public class LobbyFragment extends Fragment {
                         @Override
                         public void onCallback(String value) {
                             player2tv.setText("Name: " + value);
+                            setTextColorForPlayer(player2ReadyText);
                             game.joinAble = false;
                             game.player2 = p2;
                             game.writeToDatabase("player2", "");
