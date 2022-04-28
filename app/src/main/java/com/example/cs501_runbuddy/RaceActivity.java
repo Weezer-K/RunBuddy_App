@@ -113,7 +113,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
 
     // Used to indicate if timer is on or off
-    private boolean timerOn = true;
+    private Boolean timerOn = true;
     private Boolean timerOn2 = true;
 
     private int maxDistance; //divide by 100 to get distance in miles
@@ -848,6 +848,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         Thread t = new Thread(() -> {
             while(timerOn){
                 if(game.totalDistance * 15 < totalTimeRan/60000){
+                    timerOn = false;
                     quitGame();
                 }
                 try {

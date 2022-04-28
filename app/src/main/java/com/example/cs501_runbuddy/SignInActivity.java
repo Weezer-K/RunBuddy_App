@@ -159,4 +159,9 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
                                         Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed(); // do not call super during a race
+    }
 }
