@@ -392,14 +392,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         game.readOtherPlayerDoubleField(isPlayer1, "totalDistanceRan", new Game.OtherPlayerDoubleFieldCallback(){
                             @Override
                             public void onCallback(Double value) {
-                                if (value.equals(game.totalDistance)) {
-                                    Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
+                                if (!value.equals(game.totalDistance)) {
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                 }
                                 //stops time for other player on screen
-                                threadStopper = null;
+//                                threadStopper = null;
                                 otherPlayerRef.removeEventListener(otherPlayerListener);
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
                             }
@@ -781,6 +778,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
                     }else if(totalDistanceOtherPlayer == maxDistance / 100){
                         otherPlayerTrack.setProgress((int) (maxDistance));
+                        Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
