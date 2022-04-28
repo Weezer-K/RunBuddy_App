@@ -685,7 +685,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 }
 
                 DecimalFormat df = new DecimalFormat("0.00");
-                tv_distance.setText("Distance: " + df.format(totalDistance) + " miles");
+                tv_distance.setText("Distance: " + df.format(totalDistance) + " mi");
 
                 //Pace calculation
                 double temp = 0;
@@ -768,7 +768,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         }
                         double d = totalDistanceOtherPlayer;
 
-                        tv_otherPlayerDistance.setText("Distance: "+df.format(d)+" miles");
+                        tv_otherPlayerDistance.setText("Distance: "+df.format(d)+" mi");
                         otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
                         otherPlayerLocationIndex++;
@@ -878,7 +878,11 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                threadStopper.setText("");
+                try {
+                    threadStopper.setText("");
+                } catch (Exception e) {
+
+                }
             }
         });
     }
@@ -929,7 +933,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         behind.setClickable(false);
         behind.setIsTouchEnabled(false);
         ahead.setClickable(false);
-
+        mapFragment.getView().bringToFront();
+        spotifyApp.getView().bringToFront();
     }
 
     @Override
