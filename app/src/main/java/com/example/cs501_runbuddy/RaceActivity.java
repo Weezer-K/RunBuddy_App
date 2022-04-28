@@ -995,6 +995,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super during a race
+        quitGame();
     }
 
     public void reDrawPolyLines(){
@@ -1007,6 +1008,19 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             p.setVisible(true);
             colorCounter++;
         }
+    }
 
+    @Override
+    protected void onDestroy() {
+        if (isPlayer1) {
+            if (!game.player1.playerFinished) {
+                quitGame();
+            }
+        } else {
+            if (!game.player2.playerFinished) {
+                quitGame();
+            }
+        }
+        super.onDestroy();
     }
 }
