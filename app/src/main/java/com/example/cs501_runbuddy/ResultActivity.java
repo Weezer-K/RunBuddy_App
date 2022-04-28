@@ -246,7 +246,6 @@ public class ResultActivity extends FragmentActivity implements LoaderManager.Lo
                         mapApi.clear();
                         if (isPlayer1 && game.player2.playerFinished) {
                             mapButtonsPressed(game.player2, false);
-                            mapOther.setBackgroundColor(Color.GRAY);
                             //mapLocal.setBackgroundColor(activateColor);
                         } else if (!isPlayer1 && game.player1.playerFinished) {
                             mapButtonsPressed(game.player1, false);

@@ -48,6 +48,8 @@ public class MyRacesFragment extends Fragment {
     private String activeText;
     private String finishedText;
 
+    private TextView noGamesIndicator;
+
     private BackToLobby listener;
 
     public MyRacesFragment() {
@@ -64,6 +66,8 @@ public class MyRacesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_my_races, container, false);
+
+        noGamesIndicator = (TextView) v.findViewById(R.id.noFinishedGamesTextView);
 
         HistoryList = v.findViewById(R.id.HistoryList);
         ActiveRaceList = v.findViewById(R.id.ActiveRacesList);
@@ -160,6 +164,19 @@ public class MyRacesFragment extends Fragment {
                         HistoryList.setAdapter(current);
 
                     }
+                    if(pastRaceButton.getTextColors().getDefaultColor() == Color.parseColor("#00203F")){
+                        if(pastRaces.size() > 0){
+                            noGamesIndicator.setVisibility(View.INVISIBLE);
+                        }else{
+                            noGamesIndicator.setVisibility(View.VISIBLE);
+                        }
+                    }else{
+                        if(activeRaces.size() > 0){
+                            noGamesIndicator.setVisibility(View.INVISIBLE);
+                        }else{
+                            noGamesIndicator.setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
 
             }
@@ -210,51 +227,3 @@ public class MyRacesFragment extends Fragment {
     }
 }
 
-class AdapterGame extends ArrayAdapter<Game>{
-
-    public AdapterGame(@NonNull Context context, ArrayList<Game> arrayList) {
-        super(context, 0, arrayList );
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View currentItemView = convertView;
-
-        // of the recyclable view is null then inflate the custom layout for the same
-        if (currentItemView == null) {
-            currentItemView = LayoutInflater.from(getContext()).inflate(R.layout.custom_list_view, parent, false);
-        }
-
-        // get the position of the view from the ArrayAdapter
-        Game currentNumberPosition = getItem(position);
-
-
-
-        // then according to the position of the view assign the desired TextView 1 for the same
-
-        TextView tvLobbyID = currentItemView.findViewById(R.id.tvLobbyID);
-        TextView tvHost = currentItemView.findViewById(R.id.tvHost);
-        TextView tvDate = currentItemView.findViewById(R.id.tvDate);
-        TextView tvDistance = currentItemView.findViewById(R.id.tvDistance);
-
-
-        User.getUserNameFromID(currentNumberPosition.player1.playerId, new User.MyCallback() {
-            @Override
-            public void onCallback(String value) {
-                tvLobbyID.setText("Game: " + currentNumberPosition.ID);
-                tvDate.setText(currentNumberPosition.getStringDate());
-                tvHost.setText("Host: " + value);
-                tvDistance.setText("Distance: " + currentNumberPosition.totalDistance);
-
-            }
-        });
-
-
-        return currentItemView;
-    }
-
-
-
-
-}

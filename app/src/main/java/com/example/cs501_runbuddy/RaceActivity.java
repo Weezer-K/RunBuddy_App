@@ -144,6 +144,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_otherPlayerPace;
     private LatLngDB threadStopper;
 
+    private double startTimeOther;
+
 
 
     //1 used to set up the UI elements and overall logic of the google map
@@ -561,6 +563,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
         updateTime();
         if (!game.isAsync) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                otherPlayerStartTime = Instant.now().toEpochMilli();
+            }
             updateTimeOther();
         }
     }
@@ -735,7 +740,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     public void updateOtherPlayerUI(){
         double localElapsedTime = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             localElapsedTime = Instant.now().toEpochMilli() - raceStartTime;
 
         }
@@ -745,6 +750,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
                 otherPlayerLocationIndex++;
                 if (game.isAsync) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        otherPlayerStartTime = Instant.now().toEpochMilli();
+                    }
                     updateTimeOther();
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
                     otherPlayerTrack.setVisibility(View.VISIBLE);
@@ -840,13 +848,25 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     public void updateTimeOther(){
         Thread t = new Thread(() -> {
             while(timerOn){
+                /*
                 try {
                     double a = threadStopper.lat;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                 */
+                if(isPlayer1){
+                    if(game.player2.playerFinished){
+                        return;
+                    }
+                }else{
+                    if(game.player1.playerFinished){
+                        return;
+                    }
+                }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    double startTimeMilis = startTime.toEpochMilli();
+                    double startTimeMilis = otherPlayerStartTime;
                     double endTimeMilis = Instant.now().toEpochMilli();
                     totalTimeRan = endTimeMilis - startTimeMilis;
                     int minutes = (int) totalTimeRan / 60000;
@@ -856,7 +876,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         secondString = "0" + secondString;
                     }
                     String timeElapsed = minutes + ":" + secondString;
-
                     //tv_time.setText("Time: " + timeElapsed);
                     setTimeOther(timeElapsed);
                 }

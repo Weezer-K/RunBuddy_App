@@ -12,6 +12,7 @@
         android:id="@+id/tvResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="Game 014923"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
@@ -267,7 +268,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/player1"
-        app:layout_constraintVertical_bias="0.758">
+        app:layout_constraintVertical_bias="0.595">
 
     </fragment>
 

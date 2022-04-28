@@ -10,34 +10,40 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
 
         <TextView
             android:id="@+id/tvGameList"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Joinable Games: (Click to Join In)"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ListView
-            android:id="@+id/GameList"
-            android:layout_width="308dp"
-            android:layout_height="483dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvGameList"
-            app:layout_constraintVertical_bias="0.099"
+            app:layout_constraintTop_toBottomOf="@+id/divider35"
+            app:layout_constraintVertical_bias="0.198" />
+
+        <ListView
+            android:id="@+id/GameList"
+            android:layout_width="match_parent"
+            android:layout_height="483dp"
+            android:divider="@color/white"
             android:dividerHeight="1dip"
-            android:divider="@color/white"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.346" />
 
         <View
             android:id="@+id/divider35"
-            android:layout_width="310sp"
+            android:layout_width="match_parent"
             android:layout_height="4dp"
             android:background="#adefd1"
             app:layout_constraintEnd_toEndOf="@+id/GameList"
@@ -47,30 +53,25 @@
 
         <View
             android:id="@+id/divider34"
-            android:layout_width="310sp"
+            android:layout_width="match_parent"
             android:layout_height="4dp"
             android:background="#adefd1"
             app:layout_constraintBottom_toTopOf="@+id/GameList"
             app:layout_constraintEnd_toEndOf="@+id/GameList"
             app:layout_constraintStart_toStartOf="@+id/GameList" />
 
-        <View
-            android:id="@+id/divider7"
-            android:layout_width="4dp"
-            android:layout_height="490sp"
-            android:background="#adefd1"
-            app:layout_constraintBottom_toBottomOf="@+id/divider35"
-            app:layout_constraintEnd_toStartOf="@+id/GameList"
-            app:layout_constraintTop_toTopOf="@+id/GameList"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <View
-            android:id="@+id/divider8"
-            android:layout_width="4dp"
-            android:layout_height="488sp"
-            android:background="#adefd1"
-            app:layout_constraintStart_toEndOf="@+id/GameList"
-            app:layout_constraintTop_toTopOf="@+id/GameList" />
+        <TextView
+            android:id="@+id/noGamesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Games\nTo Display"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/divider35"
+            app:layout_constraintEnd_toEndOf="@+id/GameList"
+            app:layout_constraintStart_toStartOf="@+id/GameList"
+            app:layout_constraintTop_toBottomOf="@+id/divider34" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

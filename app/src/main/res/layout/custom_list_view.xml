@@ -4,7 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:ignore="UselessParent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/tvLobbyID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            tools:ignore="RtlHardcoded" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#DDDDDD"
+            android:gravity="right"/>
+
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,34 +40,29 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tvLobbyID"
-            android:layout_width="223dp"
+            android:id="@+id/tvHost"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:ignore="RtlHardcoded" />
-
+            />
 
         <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="18dp"
+            android:id="@+id/asyncIndicatorTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#DDDDDD"
+            android:text="TextView"
+            android:textColor="#FFFFFF"
             android:gravity="right"/>
+
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvHost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/tvDistance"
-        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF" />
 

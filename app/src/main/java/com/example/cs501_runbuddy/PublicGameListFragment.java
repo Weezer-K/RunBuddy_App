@@ -32,6 +32,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
     private DatabaseReference gamesRef;
     private ArrayList<Double> distFilters;
     private ChildEventListener gameListener;
+    private TextView noGamesIndicator;
+
 
 
     public PublicGameListFragment() {
@@ -47,6 +49,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
         GameList = v.findViewById(R.id.GameList);
 
         activeRaces = new ArrayList<Game>(){};
+
+        noGamesIndicator = (TextView) v.findViewById(R.id.noGamesTextView);
 
 
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -70,6 +74,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                     Collections.sort(activeRaces);
                     AdapterGame current = new AdapterGame(getContext(), activeRaces);
                     GameList.setAdapter(current);
+                    noGamesIndicator.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -80,6 +85,9 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                 Collections.sort(activeRaces);
                 AdapterGame current = new AdapterGame(getContext(), activeRaces);
                 GameList.setAdapter(current);
+                if(activeRaces.size() == 0){
+                    noGamesIndicator.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

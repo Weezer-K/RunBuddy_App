@@ -17,7 +17,7 @@
             android:id="@+id/myActiveRaceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="64dp"
+            android:layout_marginEnd="52dp"
             android:backgroundTint="#ADEFD1"
             android:text="Active"
             android:textColor="#00203F"
@@ -40,7 +40,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023" />
+            app:layout_constraintVertical_bias="0.089" />
 
         <View
             android:id="@+id/divider"
@@ -49,7 +49,6 @@
             android:layout_marginTop="8dp"
             android:background="#adefd1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pastRacesButton" />
 
@@ -99,6 +98,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider2"
             app:layout_constraintVertical_bias="0.283" />
+
+        <TextView
+            android:id="@+id/noFinishedGamesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Games\nTo Display"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ActiveRacesList"
+            app:layout_constraintEnd_toEndOf="@+id/ActiveRacesList"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ActiveRacesList" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
