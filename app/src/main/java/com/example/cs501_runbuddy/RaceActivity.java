@@ -467,7 +467,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }else{
             game.player2.totalDistanceRan = totalDistance;
             game.writeToDatabase("player2", "totalDistanceRan");
-            game.player2.totalTimeRan = totalTimeRan2;
+            game.player2.totalTimeRan = totalTimeRan;
             game.writeToDatabase("player2", "totalTimeRan");
             game.player2.playerFinished = true;
             game.writeToDatabase("player2", "playerFinished");

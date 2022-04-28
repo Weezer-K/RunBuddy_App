@@ -138,7 +138,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 .setAlpha(0.9f)
                 .setIsVisibleOverlay(true)
                 .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE)
-                .setText("Show your heart rate data. In order to view your heart race you must sync your fitbit device")
+                .setText("If signed in with fitbit, make sure to sync your device in the fitbit app. This will allow RunBuddy to retrieve and display heart rate data.")
                 .setTextColor(Color.WHITE)
                 .setOverlayPadding(6f)
                 .setOverlayColor(Color.parseColor("#9900203F"))
