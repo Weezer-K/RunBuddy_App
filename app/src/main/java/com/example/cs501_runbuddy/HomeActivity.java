@@ -127,6 +127,11 @@ public class HomeActivity extends AppCompatActivity implements CreateFragment.Cr
     }
 
     @Override
+    public void onBackPressed() {
+        //super.onBackPressed(); // do not call super during a race
+    }
+
+    @Override
     public void startGame(String ID, boolean isPrivate, boolean isAsync, int totalDistance) {
         fm.beginTransaction().replace(R.id.homeFragment, LobbyFragment).commitNow();
         LobbyFragment.createGame(ID, isPrivate, isAsync, totalDistance);
