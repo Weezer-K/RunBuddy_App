@@ -145,14 +145,14 @@ public class MyRacesFragment extends Fragment {
                 //Find all the games that the users are in, either player 1 or player 2, player 1 means he's the host
                 if( userID.equals(g.player1.playerId) || (g.player2 != null && userID.equals(g.player2.playerId) )) {
 
-                    // If he is in a active game and the other player hasn't started the game, meaning the game is active but not started (by our application logic, a game start, it will have result)
+                    // If the logged in user hasn't started a game of theirs, the game is active
                     if((userID.equals(g.player1.playerId) && !g.player1.playerStarted) || (userID.equals(g.player2.playerId) && !g.player2.playerStarted)){
                         activeRaces.add(g); // add the game to the active game ArrayList
                         Collections.sort(activeRaces);// Sorted chronologically
                         AdapterGame current = new AdapterGame(getContext(), activeRaces);//Custom ArrayList adapter for object Game
                         ActiveRaceList.setAdapter(current);// Link it to the lsitview
                     }
-                    // Then the game now must have a result, belongs to a Finished game
+                    // Else, the game must have a result, belongs to a Finished game
                     else{
                         pastRaces.add(g);// add the game to the finished game ArrayList
                         Collections.sort(pastRaces);// Sorted chronologically

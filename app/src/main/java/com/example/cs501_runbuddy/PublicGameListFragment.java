@@ -74,7 +74,7 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
                 }
             }
 
-            // When a game child is changed, in our application meaning it's moved
+            // When a game child is changed, in our application meaning it's been joined
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);// Get the Game object from firebase
