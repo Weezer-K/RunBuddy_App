@@ -248,13 +248,6 @@
         app:layout_constraintTop_toBottomOf="@+id/googleMapsButton" />
 
     <TextView
-        android:id="@+id/threadStopperOther"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="85dp" />
-
-    <TextView
         android:id="@+id/tvOtherStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -187,6 +187,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
+        //raceTypeIndicator = (TextView) findViewById(R.id.rac);
         raceTypeIndicator = (TextView) findViewById(R.id.raceDistanceText);
         DecimalFormat df = new DecimalFormat("####");
         raceTypeIndicator.setText(df.format(game.totalDistance)+" mile race");

@@ -42,19 +42,20 @@ import java.util.concurrent.TimeUnit;
 
 public class LobbyFragment extends Fragment {
 
-    private Toast mToastToShow;
-    private TextView LIDtv;
-    private TextView player1tv;
-    private TextView player2tv;
-    private Button startBtn;
+    private TextView LIDtv; // Indicate the Lobby ID, aka Game ID
+    private TextView player1tv;// The name of the Host
+    private TextView player2tv;// The name of the second player
+    private Button startBtn;// Button to start the Game
+    private TextView player1ReadyText;// Indicating whether the host is ready
+    private TextView player2ReadyText;// Indicating whether player 2 is ready
 
-    private Spinner player1Color;
-    private Spinner player2Color;
+    private Spinner player1Color;// Dropbox for choosing the color for the Host's marker and track in the game
+    private Spinner player2Color;// Dropbox for choosing the color for the player2's marker and track in the game
 
-    private Integer color1;
-    private Integer color2;
+    private Integer color1;// Color of the Host
+    private Integer color2;// Color of the player 2
 
-    private Game game;
+    private Game game;// Game Object that stores the current game information that is later sent to Game Activity
     private DatabaseReference player2Ref;
     private ValueEventListener player2Listener;
 
@@ -66,18 +67,11 @@ public class LobbyFragment extends Fragment {
     private MediaPlayer startSounds;
     private AudioManager audio;
     private fragmentListener f;
-    private TextView player1ReadyText;
-    private TextView player2ReadyText;
 
-    public LobbyFragment() {
-        // Required empty public constructor
-    }
 
-    public interface fragmentListener{
-        AudioManager getAudioManager();
-       // void setTimerText(String s);
-        //void setBackgroundOn();
-    }
+    public LobbyFragment() {}
+
+    public interface fragmentListener{AudioManager getAudioManager();}
 
     @Override
     public void onAttach(Context context) {
@@ -228,19 +222,16 @@ public class LobbyFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (color1.equals(color2)) {
-                    Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
-                }else if(game.joinAble){
-                    Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
-                } else if (!game.isAsync) {
+                if (color1.equals(color2)) { Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show(); }
+                else if(game.joinAble){ Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show(); }
+                else if (!game.isAsync) {
+
                     game.player1.playerReady = !game.player1.playerReady;
                     game.writeToDatabase("player1", "playerReady");
                     setTextColorForPlayer(player1ReadyText);
-                    if (!game.player1.playerReady) {
-                        startBtn.setText("Ready");
-                    } else {
-                        startBtn.setText("Unready");
-                    }
+
+                    if (!game.player1.playerReady) { startBtn.setText("Ready"); }
+                    else { startBtn.setText("Unready");}
                     if (game.player1.playerReady && game.player2.playerReady) {
 
                         try {

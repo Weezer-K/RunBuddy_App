@@ -23,111 +23,97 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
+// Public Game List to display the public games
 public class PublicGameListFragment extends Fragment implements SearchFragment.SearchGame {
 
     private ListView GameList;//The ListView for public games
-    private ArrayList<Game> activeRaces;
-    private SearchFragment.SearchGame listener;
-    private DatabaseReference gamesRef;
-    private ArrayList<Double> distFilters;
-    private ChildEventListener gameListener;
-    private TextView noGamesIndicator;
+    private ArrayList<Game> activeRaces;//The Arraylist of the games
+    private ArrayList<Double> distFilters;//Arraylist that holds the information of chosen distance
+    private SearchFragment.SearchGame listener;//SearchGame Object that is used to join the game using its joinGame function in the interface
+    private DatabaseReference gamesRef;// Reference to access the data from firebase
+    private ChildEventListener gameListener;// Event Listener to monitor if there is a change in the firebase database
+    private TextView noGamesIndicator;// If there is no game to display, then use this textview to say that
 
-
-
-    public PublicGameListFragment() {
-        // Required empty public constructor
-    }
-
+    //Default Constructor
+    public PublicGameListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        //Binding Views
         View v = inflater.inflate(R.layout.fragment_public_game_list, container, false);
         GameList = v.findViewById(R.id.GameList);
-
-        activeRaces = new ArrayList<Game>(){};
-
         noGamesIndicator = (TextView) v.findViewById(R.id.noGamesTextView);
 
+        activeRaces = new ArrayList<Game>(){};// Instantiate Arraylist of Games
 
+        //Join the game when clicked, using the SearchGame joinGame function
         GameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Game.joinGameFromDB(activeRaces.get(i).ID, listener, getActivity());
-            }
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) { Game.joinGameFromDB(activeRaces.get(i).ID, listener, getActivity());}
         });
 
+        // Listening to data changing in the firebase regarding the games, if there is a change, this will be called
         gamesRef = RunBuddyApplication.getDatabase().getReference("games");
         gameListener = new ChildEventListener() {
+
+            // WHen a new game child is added
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Game g = snapshot.getValue(Game.class);
-                if(!g.isPrivate
-                        && g.joinAble
-                        && distFilters.contains(g.totalDistance)
-                        && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())) {
-                    activeRaces.add(g);
-                    Collections.sort(activeRaces);
-                    AdapterGame current = new AdapterGame(getContext(), activeRaces);
-                    GameList.setAdapter(current);
-                    noGamesIndicator.setVisibility(View.INVISIBLE);
+                if(!g.isPrivate // The game obviously has to be private
+                        && g.joinAble // The game must have a vacancy
+                        && distFilters.contains(g.totalDistance)// It must match the searching preference from the player regarding distances
+                        && !g.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(getActivity()).getId())// cannot see his own game obviously, he can find it in my races
+                ) {
+                    activeRaces.add(g);// add it to the arraylist of Games
+                    Collections.sort(activeRaces);// Sort it in chronological order
+                    AdapterGame current = new AdapterGame(getContext(), activeRaces);// Custom ArrayAdapter that takes a Arraylist of Games
+                    GameList.setAdapter(current);// Link it to the GameList listview
+                    noGamesIndicator.setVisibility(View.INVISIBLE);// we have games, we don't need this textview anymore.
                 }
             }
 
+            // When a game child is changed, in our application meaning it's moved
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Game g = snapshot.getValue(Game.class);
-                activeRaces.remove(g);
-                Collections.sort(activeRaces);
-                AdapterGame current = new AdapterGame(getContext(), activeRaces);
-                GameList.setAdapter(current);
-                if(activeRaces.size() == 0){
-                    noGamesIndicator.setVisibility(View.VISIBLE);
-                }
+                Game g = snapshot.getValue(Game.class);// Get the Game object from firebase
+                activeRaces.remove(g);// Remove it from the Arraylist
+                Collections.sort(activeRaces);// Sort it again in chronological order
+                AdapterGame current = new AdapterGame(getContext(), activeRaces);// Custom ArrayAdapter that takes a Arraylist of Games
+                GameList.setAdapter(current);// Link it to the GameList listview
+                if(activeRaces.size() == 0){ noGamesIndicator.setVisibility(View.VISIBLE); }// If there is no Game after removed, then we need to display this textview
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) { }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
 
+        // Inflate the View
         return v;
     }
 
     @Override
     public void searchGame(ArrayList<Double> d) {
-        distFilters = d;
-        gamesRef.addChildEventListener(gameListener);
-
-
+        distFilters = d;// Arraylist of distance wanted for search passed by the SearchFragment
+        gamesRef.addChildEventListener(gameListener);// Add the childEventListener we implement above
     }
 
+    // We just need searchGame for this one, ignore this one
     @Override
-    public void joinGame(Game game) {
-
-
-    }
+    public void joinGame(Game game) {}
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if(context instanceof SearchFragment.SearchGame){
-            listener = (SearchFragment.SearchGame) context;
+            listener = (SearchFragment.SearchGame) context; //Instantiate the interface
         }else{
             throw new RuntimeException(context.toString() + "must implement SearchGame");
         }
@@ -136,8 +122,8 @@ public class PublicGameListFragment extends Fragment implements SearchFragment.S
     @Override
     public void onDetach() {
         super.onDetach();
-        gamesRef.removeEventListener(gameListener);
-        listener = null;
+        gamesRef.removeEventListener(gameListener);// Remove event listener when leaving
+        listener = null; // Discard object when leaving
     }
 
 }
