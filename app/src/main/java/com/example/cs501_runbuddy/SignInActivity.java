@@ -31,13 +31,13 @@ import com.google.android.gms.tasks.Task;
 public class SignInActivity extends AppCompatActivity implements AuthenticationHandler {
 
     private GoogleSignInClient mGoogleSignInClient;
-    private EditText email;
-    private EditText password;
+    private int RC_SIGN_IN = 9999; // request code for implicit intent of google sign in
+    private boolean loginWithoutFitbit; // flag to determine if fitbit auth should be executed or not
+
     private Button signInAccount;
     private Button signInWithoutFitbit;
-    private boolean loginWithoutFitbit;
     private ImageView image;
-    private int RC_SIGN_IN = 9999;
+
     AudioManager audio;
     MediaPlayer signInSound;
 
@@ -46,25 +46,27 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // retrieve views from layout
         signInAccount = (Button) findViewById(R.id.signInAccount);
         signInWithoutFitbit = (Button) findViewById(R.id.signInWithoutFitbit);
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         signInAccount.setVisibility(View.INVISIBLE);
         signInWithoutFitbit.setVisibility(View.INVISIBLE);
         signInSound = MediaPlayer.create(getApplicationContext(), R.raw.signinsoundeffect);
-
         image = (ImageView) findViewById(R.id.logoSignInImage);
-
         image.setImageResource(R.drawable.run_buddy);
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, RunBuddyApplication.getGoogleSignInClient());
 
+        // default is to request fitbit auth
         loginWithoutFitbit = false;
 
         signInAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // sign in to both google and fitbit accounts
                 signInUser();
             }
         });
@@ -72,6 +74,7 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         signInWithoutFitbit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // set flag to skip fitbit auth step, then sign in just with google
                 loginWithoutFitbit = true;
                 signInUser();
             }
@@ -85,17 +88,20 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
         // Check if user is signed in (non-null) and update UI accordingly.
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
 
+        // if user signed in, go straight to dashboard
         if (acct != null) {
-            //signInUser();
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(intent);
 
-        } else {
+        }
+        // else, set sign in buttons to visible and wait for user action
+        else {
             signInAccount.setVisibility(View.VISIBLE);
             signInWithoutFitbit.setVisibility(View.VISIBLE);
         }
     }
-    //Used to sign in existing users
+
+    //Used to sign in via google authentication
     private void signInUser() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -131,22 +137,24 @@ public class SignInActivity extends AppCompatActivity implements AuthenticationH
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
+            // get signed in google account
             GoogleSignInAccount acct = completedTask.getResult(ApiException.class);
 
+            // create user object from google account and write it to the database
             User user = new User(acct.getId(), acct.getGivenName(), acct.getFamilyName(), acct.getEmail());
-
             user.writeToDatabase();
 
-            //If access token for fitbit valid
-            //Go straight to dashboard
-            if(loginWithoutFitbit || AuthenticationManager.isLoggedIn()){
+            // if access token for fitbit valid or user does not want to sign in with fitbit,
+            // go to dashboard activity
+            if(AuthenticationManager.isLoggedIn() || loginWithoutFitbit){
+                // execute sign in sound
                 if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
                     signInSound.start();
                 }
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
             }
-            //Request user to sign into fitbit
+            // else, request user to sign into fitbit
             //and store access token
             else{
                 AuthenticationManager.login(SignInActivity.this);

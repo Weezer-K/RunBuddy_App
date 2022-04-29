@@ -52,21 +52,25 @@ public class RunBuddyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // set up fitbit authentication for the run buddy app passing in necessary keys
         ClientCredentials CLIENT_CREDENTIALS = new ClientCredentials("23876X", CLIENT_SECRET, "https://finished");
         AuthenticationConfiguration config = new AuthenticationConfigurationBuilder()
                 .setClientCredentials(CLIENT_CREDENTIALS)
                 .setEncryptionKey(SECURE_KEY)
+                // these are requested scopes for fitbit when access is approved
                 .addRequiredScopes(Scope.profile, Scope.settings, Scope.heartrate, Scope.activity)
                 .build();
         AuthenticationManager.configure(this, config);
     }
 
+    // instantiate singleton instance of the firebase database
     public static FirebaseDatabase getDatabase() {
         if (database == null)
             database = FirebaseDatabase.getInstance();
         return database;
     }
 
+    // instantiate singleton instance of the google sign in client
     public static GoogleSignInOptions getGoogleSignInClient() {
         if (gso == null)
             // Configure sign-in to request the user's ID, email address, and basic
