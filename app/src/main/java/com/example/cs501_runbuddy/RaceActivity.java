@@ -113,7 +113,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
 
     // Used to indicate if timer is on or off
-    private boolean timerOn = true;
+    private Boolean timerOn = true;
     private Boolean timerOn2 = true;
 
     private int maxDistance; //divide by 100 to get distance in miles
@@ -148,8 +148,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private TextView tv_otherPlayerPace;
     private TextView tvOtherStatus;
     private LatLngDB threadStopper;
-
-    private double startTimeOther;
+    private TextView raceTypeIndicator;
 
 
 
@@ -188,6 +187,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
         // To retrieve object in second Activity
         game = (Game) getIntent().getSerializableExtra("game");
+        raceTypeIndicator = (TextView) findViewById(R.id.raceDistanceText);
+        DecimalFormat df = new DecimalFormat("####");
+        raceTypeIndicator.setText(df.format(game.totalDistance)+" mile race");
         isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
         if(isPlayer1){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -277,8 +279,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         gap.setVisibility(View.INVISIBLE);
                         localPlayerTrack.setVisibility(View.INVISIBLE);
                         otherPlayerTrack.setVisibility(View.INVISIBLE);
-                        localColorIndicator.setVisibility(View.INVISIBLE);
-                        onlineColorIndicator.setVisibility(View.INVISIBLE);
+                        raceTypeIndicator.setVisibility(View.INVISIBLE);
 
                     }else{
                         getSupportFragmentManager().beginTransaction()
@@ -289,8 +290,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         gap.setVisibility(View.VISIBLE);
                         localPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setVisibility(View.VISIBLE);
-                        localColorIndicator.setVisibility(View.VISIBLE);
-                        onlineColorIndicator.setVisibility(View.VISIBLE);
+                        raceTypeIndicator.setVisibility(View.INVISIBLE);
+
                     }
                 }catch (Exception e){
                     Toast.makeText(RaceActivity.this, "Please make sure spotify is on in the background", Toast.LENGTH_SHORT).show();
@@ -317,16 +318,14 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         gap.setVisibility(View.INVISIBLE);
                         localPlayerTrack.setVisibility(View.INVISIBLE);
                         otherPlayerTrack.setVisibility(View.INVISIBLE);
-                        localColorIndicator.setVisibility(View.INVISIBLE);
-                        onlineColorIndicator.setVisibility(View.INVISIBLE);
+                        raceTypeIndicator.setVisibility(View.INVISIBLE);
                     } else {
                         mapFragment.getView().setVisibility(View.INVISIBLE);
                         mapButton.setBackgroundColor(Color.LTGRAY);
                         gap.setVisibility(View.VISIBLE);
                         localPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setVisibility(View.VISIBLE);
-                        localColorIndicator.setVisibility(View.VISIBLE);
-                        onlineColorIndicator.setVisibility(View.VISIBLE);
+                        raceTypeIndicator.setVisibility(View.INVISIBLE);
                     }
                 }catch(Exception e){
                     Toast.makeText(RaceActivity.this, "Your gps is faulty no map data", Toast.LENGTH_SHORT).show();
@@ -449,7 +448,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
-
+        spotifyTrackManager();
         otherPlayerRef.addChildEventListener(otherPlayerListener);
         otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
         //Used to update movement data based of a specific interval
@@ -474,6 +473,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
         otherPlayerRef.removeEventListener(otherPlayerListener);
         stopLocationUpdates();
+        timerOn = false;
         Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
         intent.putExtra("game", game);
         startActivity(intent);
@@ -679,6 +679,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         if (!game.player1.playerFinished)
                             otherPlayerRef.removeEventListener(otherPlayerListener);
                     }
+                    timerOn = false;
                     Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
                     intent.putExtra("game", game);
                     startActivity(intent);
@@ -811,6 +812,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                     timerOn2 = false;
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                     tvOtherStatus.setText("Status: Quit");
+                                    tv_otherPlayerDistance.setText("Distance: " + df.format(maxDistance/100) + " mi");
                                 }
                             }
                         }
@@ -989,9 +991,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         behind.setIsTouchEnabled(false);
         ahead.setClickable(false);
         mapFragment.getView().bringToFront();
-        spotifyApp.getView().bringToFront();
     }
-
+    
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super during a race
@@ -1009,4 +1010,38 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
 
     }
+
+    public void spotifyTrackManager(){
+        Thread t = new Thread(() -> {
+            while(timerOn){
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                checkIfSpotifyUp();
+            }
+        });
+        t.start();
+
+    }
+
+    public void checkIfSpotifyUp(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(spotifyApp.getView().getVisibility() == View.VISIBLE || mapFragment.getView().getVisibility() == View.VISIBLE ){
+                    localPlayerTrack.setVisibility(View.INVISIBLE);
+                    otherPlayerTrack.setVisibility(View.INVISIBLE);
+                    raceTypeIndicator.setVisibility(View.INVISIBLE);
+                }else if(spotifyApp.getView().getVisibility() != View.VISIBLE && mapFragment.getView().getVisibility() != View.VISIBLE){
+                    localPlayerTrack.setVisibility(View.VISIBLE);
+                    otherPlayerTrack.setVisibility(View.VISIBLE);
+                    raceTypeIndicator.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
 }
+
