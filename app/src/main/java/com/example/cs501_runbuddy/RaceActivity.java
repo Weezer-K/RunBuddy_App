@@ -884,7 +884,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tvTime.setText("Time: " + time);
+                tv.setText("Time: " + time);
             }
         });
     }
@@ -926,7 +926,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
     }
-    
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super during a race
