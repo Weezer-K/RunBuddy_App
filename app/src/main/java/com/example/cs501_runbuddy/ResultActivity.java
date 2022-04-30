@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -370,11 +369,15 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         double lng = 0;
 
         if(!isLocal){
-            lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
-            lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
+            if(otherRaceLocations.size() != 0) {
+                lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
+                lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
+            }
         }else{
-            lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-            lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
+            if(localRaceLocations.size() != 0) {
+                lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
+                lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
+            }
         }
         LatLng latLng = new LatLng(lat, lng);
         mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
