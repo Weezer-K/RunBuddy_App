@@ -813,7 +813,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                     timerOn2 = false;
                                     Toast.makeText(RaceActivity.this, "Other player quit their race", Toast.LENGTH_SHORT).show();
                                     tvOtherStatus.setText("Status: Quit");
-                                    tv_otherPlayerDistance.setText("Distance: " + df.format(maxDistance/100) + " mi");
                                 }
                             }
                         }
