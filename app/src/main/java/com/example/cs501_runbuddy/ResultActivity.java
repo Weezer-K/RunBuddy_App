@@ -244,7 +244,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
         } else {
             otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerFinished");
-            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
+            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerStarted");
         }
 
         setTextViews();
@@ -288,7 +288,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     date = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 
-                                    if (date - value > game.totalDistance * 15 * 60) {
+                                    if (value.longValue() != 0 && date - value > game.totalDistance * 15 * 60) {
                                         if (isPlayer1) {
                                             game.player2.playerFinished = true;
                                             game.writeToDatabase("player2", "playerFinished");
