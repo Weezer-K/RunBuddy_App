@@ -957,7 +957,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             return 0.0;
         }else if(Double.isInfinite(dist)){
             return 0.0;
-        }else if(dist <= .0001){
+        }else if(dist <= .001){
             return 0.0;
         }
 

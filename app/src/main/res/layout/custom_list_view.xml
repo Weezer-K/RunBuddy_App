@@ -51,9 +51,8 @@
             android:id="@+id/asyncIndicatorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textColor="#FFFFFF"
-            android:gravity="right"/>
+            android:gravity="right"
+            android:textColor="#FFFFFF" />
 
 
     </LinearLayout>
