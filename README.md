@@ -6,8 +6,8 @@ Before using our repository, make sure to send us your SHA1 key. We will then up
 
 ## Important Notices:
 * Make sure to have the run configuration set to "app" instead of "app.libs" or anything else.
-* We calculate distance ran by using location data from every 5 seconds. Therefore don't run in place like on a treadmill. Instead you should run to make sure your locations are changing meaningfully. 
-* If you sit still, the UI may still display slight increases in distance travelled. This is because GPS coordinates have a slight difference between one point and the next due to a margin of error. This could be acccumulated and captured in our distance calculation. We have a threshold that removes very low distances but it is possible for some values to be high enough to be interpreted as distance ran.
+* We calculate distance ran by using location data from every second. Therefore don't run in place like on a treadmill. Instead you should run to make sure your locations are changing meaningfully. 
+* If you sit still, the UI may display very slight increases in distance travelled. This is because GPS coordinates have a slight difference between one point and the next due to a margin of error. This could be acccumulated and captured in our distance calculation. We have a threshold that removes very low distances but it is possible for some values to be high enough to be interpreted as distance ran.
 * If you choose to use a Mock GPS instead of really running to test it, follow the guidance below in "Mock GPS". If you choose to run for real
 
 ## Mock GPS:
