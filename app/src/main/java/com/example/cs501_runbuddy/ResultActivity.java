@@ -459,9 +459,11 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         if(isPlayer1){
             game.player1.heartRate = averageHeartRate;
             game.writeToDatabase("player1", "heartRate");
+            setTextViews();
         }else{
             game.player2.heartRate = averageHeartRate;
             game.writeToDatabase("player2", "heartRate");
+            setTextViews();
         }
     }
 
