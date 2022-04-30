@@ -154,6 +154,13 @@ public class MyRacesFragment extends Fragment {
                     }
                     // Else, the game must have a result, belongs to a Finished game
                     else{
+                        if (userID.equals(g.player1.playerId) && !g.player1.playerFinished) {
+                            g.player1.playerFinished = true;
+                            g.writeToDatabase("player1", "playerFinished");
+                        } else if (userID.equals(g.player2.playerId) && !g.player2.playerFinished) {
+                            g.player2.playerFinished = true;
+                            g.writeToDatabase("player2", "playerFinished");
+                        }
                         pastRaces.add(g);// add the game to the finished game ArrayList
                         Collections.sort(pastRaces);// Sorted chronologically
                         AdapterGame current = new AdapterGame(getContext(), pastRaces);//Custom ArrayList adapter for object Game

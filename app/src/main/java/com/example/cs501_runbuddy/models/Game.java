@@ -257,16 +257,7 @@ public class Game implements Serializable, Comparable<Game>{
     public void readOtherPlayer(boolean isPlayer1, Game.OtherPlayerCallback myCallback) {
 
         // create db reference listening to the other player
-        DatabaseReference otherPlayerLocationRef;
-
-        // if logged in user is player1, then create reference to player2
-        if(isPlayer1) {
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
-        }
-        // else, create reference to player1
-        else{
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1");
-        }
+        DatabaseReference otherPlayerLocationRef = getOtherPlayerRef(isPlayer1, "");
 
         // add value event listener to the reference
         otherPlayerLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -307,18 +298,7 @@ public class Game implements Serializable, Comparable<Game>{
     public void readOtherPlayerDoubleField(boolean isPlayer1, String field, Game.OtherPlayerDoubleFieldCallback myCallback) {
 
         // create db reference listening to the other player
-        DatabaseReference otherPlayerLocationRef;
-
-        // if logged in user is player1, then create reference to player2
-        if(isPlayer1) {
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games")
-                    .child(ID).child("player2").child(field);
-        }
-        // else, create reference to player1
-        else{
-            otherPlayerLocationRef = RunBuddyApplication.getDatabase().getReference("games")
-                    .child(ID).child("player1").child(field);
-        }
+        DatabaseReference otherPlayerLocationRef = getOtherPlayerRef(isPlayer1, field);
 
         // add value event listener to the reference
         otherPlayerLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -335,6 +315,61 @@ public class Game implements Serializable, Comparable<Game>{
             }
         });
 
+    }
+
+    // callback interface used so that data can be manipulated after it is retrieved
+    // workaround for the async nature of data calls
+    public interface OtherPlayerLongFieldCallback {
+        void onCallback(Long value);
+    }
+
+    // helper function read other player data specifically for a long field from db
+    // so logged in user has other player data locally
+    public void readOtherPlayerLongField(boolean isPlayer1, String field, Game.OtherPlayerLongFieldCallback myCallback) {
+
+        // create db reference listening to the other player
+        DatabaseReference otherPlayerLocationRef = getOtherPlayerRef(isPlayer1, field);
+
+        // add value event listener to the reference
+        otherPlayerLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // if retrieved data is non-null
+                if (dataSnapshot.exists()) {
+                    // execute callback function passing in retrieved value
+                    myCallback.onCallback(dataSnapshot.getValue(Long.class));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    // get db reference to other player, either the whole player or just a particular field
+    public DatabaseReference getOtherPlayerRef(boolean isPlayer1, String field) {
+        if (field.equals("")) {
+            // if logged in user is player1, then create reference to player2
+            if(isPlayer1) {
+                return RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player2");
+            }
+            // else, create reference to player1
+            else{
+                return RunBuddyApplication.getDatabase().getReference("games").child(ID).child("player1");
+            }
+        } else {
+            // if logged in user is player1, then create reference to player2
+            if(isPlayer1) {
+                return RunBuddyApplication.getDatabase().getReference("games")
+                        .child(ID).child("player2").child(field);
+            }
+            // else, create reference to player1
+            else{
+                return RunBuddyApplication.getDatabase().getReference("games")
+                        .child(ID).child("player1").child(field);
+            }
+        }
     }
 
     // override the compare function to sort games by their date

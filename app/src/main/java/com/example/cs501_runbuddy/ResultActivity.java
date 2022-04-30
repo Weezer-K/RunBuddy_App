@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +48,8 @@ import com.skydoves.balloon.BalloonSizeSpec;
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -70,8 +73,10 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
 
     private Game game;
     private boolean isPlayer1;
-    private DatabaseReference otherPlayerRef;
-    private ValueEventListener otherPlayerListener;
+    private DatabaseReference otherPlayerFinishedRef;
+    private ValueEventListener otherPlayerFinishedListener;
+    private DatabaseReference otherPlayerStartedRef;
+    private ValueEventListener otherPlayerStartedListener;
     private GoogleMap mapApi;
 
     private int colorSlowPace = Color.RED;
@@ -156,10 +161,6 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
-
-
-
-
         mapLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,22 +203,6 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 }
             }
         });
-        /*
-        resultsFromMap.setOnClickListener(new View.OnClickListener() {
-        resultsFromMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mapApi.clear();
-                mapFragment.getView().setVisibility(View.INVISIBLE);
-                mapLocal.setBackgroundColor(Color.GREEN);
-                resultsFromMap.setVisibility(View.INVISIBLE);
-                resultsFromMap.setClickable(false);
-                mapLocal.setClickable(true);
-                mapOther.setClickable(true);
-            }
-        });
-
-         */
 
         mapOther.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,21 +239,17 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
-
-
-
-
-
-
         if (isPlayer1) {
-            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
+            otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
+            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
         } else {
-            otherPlayerRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerFinished");
+            otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerFinished");
+            otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
         }
 
         setTextViews();
 
-        otherPlayerListener = new ValueEventListener() {
+        otherPlayerFinishedListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -293,7 +274,43 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         };
 
-        otherPlayerRef.addValueEventListener(otherPlayerListener);
+        otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
+
+        otherPlayerStartedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.getValue(Boolean.class)) {
+                        game.readOtherPlayerLongField(isPlayer1, "playerStartTime", new Game.OtherPlayerLongFieldCallback() {
+                            @Override
+                            public void onCallback(Long value) {
+                                Long date = null;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    date = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+                                    if (date - value > game.totalDistance * 15 * 60) {
+                                        if (isPlayer1) {
+                                            game.player2.playerFinished = true;
+                                            game.writeToDatabase("player2", "playerFinished");
+                                        } else {
+                                            game.player1.playerFinished = true;
+                                            game.writeToDatabase("player1", "playerFinished");
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
 
         tvResult = findViewById(R.id.tvResult);
 
@@ -443,17 +460,14 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             game.player2.heartRate = averageHeartRate;
             game.writeToDatabase("player2", "heartRate");
         }
-
-
-
-        //TODO display avg heart rate
     }
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super, especially after a race since you should
         // never go back to the race activity
-        otherPlayerRef.removeEventListener(otherPlayerListener);
+        otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
+        otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
         Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
         intent.putExtra("fragment", "History");
         startActivity(intent);
