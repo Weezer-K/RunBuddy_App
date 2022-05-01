@@ -65,8 +65,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private LocationRequest locationRequest;
     private LocationCallback locationCallBack;
 
-    private final int DEFAULT_UPDATE_INTERVAL = 10;
-    private final int FASTEST_UPDATE_INTERVAL = 5;
+    private final int DEFAULT_UPDATE_INTERVAL = 2;
+    private final int FASTEST_UPDATE_INTERVAL = 1;
     private final int PERMISSIONS_FINE_LOCATION = 99;
 
     private int colorSlowPace = Color.RED;
@@ -207,6 +207,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
+
 
         //This defines how often and precise we will request
         //data from the gps sensor
@@ -554,6 +555,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         behind.setIsTouchEnabled(false);
         ahead.setClickable(false);
         mapFragment.getView().bringToFront();
+        spotifyApp.getView().bringToFront();
     }
 
     public void paceColorAdder(){
@@ -578,7 +580,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
 
-        if(Double.isNaN(dist) || Double.isInfinite(dist) || dist <= .001){
+        if(Double.isNaN(dist) || Double.isInfinite(dist) || dist <= .0001){
             return 0.0;
         }
 
@@ -900,7 +902,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         Thread t = new Thread(() -> {
             while(timerOn){
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1);
+                    TimeUnit.MICROSECONDS.sleep(15);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

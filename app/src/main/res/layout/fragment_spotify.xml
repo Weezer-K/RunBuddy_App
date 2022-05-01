@@ -144,6 +144,17 @@
             app:layout_constraintEnd_toStartOf="@+id/seekBar"
             app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
+        <TextView
+            android:id="@+id/spotifyErrorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Spotify Not On Your Phone or Open please open the app"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

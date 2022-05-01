@@ -52,6 +52,7 @@ public class SpotifyFragment extends Fragment {
     ImageView songImage;
     TextView songDisplay;
     TextView backgroundColor;
+    TextView spotifyError;
 
     int spotifyBackgroundColor = Color.rgb(24, 24, 24);
 
@@ -123,11 +124,13 @@ public class SpotifyFragment extends Fragment {
 
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
+                        enableViews();
                         connected();
 
                     }
 
                     public void onFailure(Throwable throwable) {
+                        disableViews();
                     }
                 });
     }
@@ -167,6 +170,7 @@ public class SpotifyFragment extends Fragment {
 
         backgroundColor = (TextView) v.findViewById(R.id.backgroundOfSpotify);
         backgroundColor.setBackgroundColor(spotifyBackgroundColor);
+        spotifyError = (TextView) v.findViewById(R.id.spotifyErrorMessage);
 
         isPlaying = false;
 
@@ -250,6 +254,32 @@ public class SpotifyFragment extends Fragment {
     public void onStop() {
         super.onStop();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
+    private void disableViews(){
+        seeker.setVisibility(View.INVISIBLE);
+        songImage.setVisibility(View.INVISIBLE);
+        pausePlay.setVisibility(View.INVISIBLE);
+        songDisplay.setVisibility(View.INVISIBLE);
+        previousButton.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.INVISIBLE);
+        repeatButton.setVisibility(View.INVISIBLE);
+        shuffleButton.setVisibility(View.INVISIBLE);
+        spotifyError.setVisibility(View.VISIBLE);
+
+
+    }
+
+    private void enableViews(){
+        seeker.setVisibility(View.VISIBLE);
+        songImage.setVisibility(View.VISIBLE);
+        pausePlay.setVisibility(View.VISIBLE);
+        songDisplay.setVisibility(View.VISIBLE);
+        previousButton.setVisibility(View.VISIBLE);
+        nextButton.setVisibility(View.VISIBLE);
+        repeatButton.setVisibility(View.VISIBLE);
+        shuffleButton.setVisibility(View.VISIBLE);
+        spotifyError.setVisibility(View.INVISIBLE);
     }
 
     public void playPause(){
