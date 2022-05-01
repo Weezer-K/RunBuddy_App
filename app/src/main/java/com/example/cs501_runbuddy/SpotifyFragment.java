@@ -31,16 +31,11 @@ import java.util.concurrent.TimeUnit;
 
 
 public class SpotifyFragment extends Fragment {
-
-
-
-    
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String CLIENT_ID = "9bd3a819fa964513bf26880dd8db490c";
     private static final String REDIRECT_URI = "http://localhost/";
     private SpotifyAppRemote mSpotifyAppRemote;
-
     TextView threadStopper;
     TextView threadStopperOriginal;
     ImageButton pausePlay;
@@ -53,30 +48,14 @@ public class SpotifyFragment extends Fragment {
     TextView songDisplay;
     TextView backgroundColor;
     TextView spotifyError;
-
     int spotifyBackgroundColor = Color.rgb(24, 24, 24);
-
     private boolean isPlaying;
-
-
-    int mode2Color = Color.rgb(0, 150, 0);
-
     SeekBar seeker;
     int seekBarFinalPos = 0;
-
-
-    //Used in order to make sure there is one active thread
-    //For the seekbar updater
     int threadCount = 0;
-
     boolean playing = true;
     Thread t;
 
-    spotifyInterface spotInterface;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
 
 
@@ -90,7 +69,6 @@ public class SpotifyFragment extends Fragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
     public static SpotifyFragment newInstance(String param1, String param2) {
         SpotifyFragment fragment = new SpotifyFragment();
         Bundle args = new Bundle();
@@ -104,12 +82,16 @@ public class SpotifyFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
 
     }
 
+
+    //When spotfiy fragment first starts it checks
+    //If your phone is connected to the spotify app or not
+    //if not you will get a message that you need to download
+    //If not you will be able to use spotify
     @Override
     public void onStart() {
         super.onStart();
@@ -122,6 +104,7 @@ public class SpotifyFragment extends Fragment {
         SpotifyAppRemote.connect(getContext(), connectionParams,
                 new Connector.ConnectionListener() {
 
+                    //If user is connected then initalize UI
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
                         enableViews();
@@ -129,6 +112,7 @@ public class SpotifyFragment extends Fragment {
 
                     }
 
+                    //If not connected show error message for user
                     public void onFailure(Throwable throwable) {
                         disableViews();
                     }
@@ -143,7 +127,7 @@ public class SpotifyFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_spotify, container, false);
 
         bundle = savedInstanceState;
-        
+
         threadStopper = (TextView) v.findViewById(R.id.threadStopTv);//TextView used to stop thread
 
         threadStopperOriginal = (TextView) v.findViewById(R.id.threadStopTv);//Used to reset threadStopper
@@ -189,6 +173,7 @@ public class SpotifyFragment extends Fragment {
             }
         });
 
+        //Used to skip to next song
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,6 +181,7 @@ public class SpotifyFragment extends Fragment {
             }
         });
 
+        //Used to go to previous song
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,7 +203,7 @@ public class SpotifyFragment extends Fragment {
             }
         });
 
-
+        //Seekbar that is used to comb through song
         seeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -250,12 +236,15 @@ public class SpotifyFragment extends Fragment {
         return v;
     }
 
+    //Stops the media player when app stops
     @Override
     public void onStop() {
         super.onStop();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
+    //helper function for when not connected to spotify
+    //Makes only error message visible
     private void disableViews(){
         seeker.setVisibility(View.INVISIBLE);
         songImage.setVisibility(View.INVISIBLE);
@@ -270,6 +259,8 @@ public class SpotifyFragment extends Fragment {
 
     }
 
+    //Enabled everything but error message
+    //This is called when connected
     private void enableViews(){
         seeker.setVisibility(View.VISIBLE);
         songImage.setVisibility(View.VISIBLE);
@@ -282,6 +273,7 @@ public class SpotifyFragment extends Fragment {
         spotifyError.setVisibility(View.INVISIBLE);
     }
 
+    //Used to determine start/stop seekbar, play, pause audio.
     public void playPause(){
         try {
             if (isPlaying) {
@@ -305,7 +297,7 @@ public class SpotifyFragment extends Fragment {
 
         }
     }
-
+    //Enable/disable shuffle mode and set image resourece
     public void shuffle(){
         try {
             if (shuffleButton.getImageMatrix().equals(shuffle_activated)) {
@@ -319,6 +311,7 @@ public class SpotifyFragment extends Fragment {
         }
     }
 
+    //Set approprite repeatMode image
     public void repeat() {
         try {
             if (repeatButton.getImageMatrix().equals(repeat_off)) {
@@ -334,6 +327,7 @@ public class SpotifyFragment extends Fragment {
         }
     }
 
+    //Skips to next song and plays
     public void next(){
         try {
             mSpotifyAppRemote.getPlayerApi().skipNext();
@@ -344,6 +338,7 @@ public class SpotifyFragment extends Fragment {
         }
     }
 
+    //goes to previous song
     public void prev(){
         try {
             mSpotifyAppRemote.getPlayerApi().skipPrevious();
@@ -379,6 +374,9 @@ public class SpotifyFragment extends Fragment {
                     });
 
                 }
+                //Following conditionals set image resources
+                //And UI intilization
+                //Based off of spotify media player current state
                 if(playerState.isPaused){
                     pausePlay.setImageResource(R.drawable.play);
                     pausePlay.setBackgroundColor(spotifyBackgroundColor);

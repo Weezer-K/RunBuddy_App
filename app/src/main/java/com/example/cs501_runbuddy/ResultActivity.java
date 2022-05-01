@@ -59,24 +59,35 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
     private TextView localNameTextView;
     private TextView otherNameTextView;
     private TextView tvGameDate;
-
     private TextView distanceLocal;
     private TextView paceLocal;
     private TextView timeRanLocal;
-    private Button mapLocal;
-
     private TextView distanceOther;
     private TextView paceOther;
     private TextView timeRanOther;
+    private TextView localHeartRate;
+    private TextView otherHeartRate;
+    private TextView winnerLoser;
+
+    private ImageView info1;
+
+    private Button mapLocal;
     private Button mapOther;
 
     private Game game;
-    private boolean isPlayer1;
+
     private DatabaseReference otherPlayerFinishedRef;
-    private ValueEventListener otherPlayerFinishedListener;
     private DatabaseReference otherPlayerStartedRef;
+
     private ValueEventListener otherPlayerStartedListener;
+    private ValueEventListener otherPlayerFinishedListener;
+
     private GoogleMap mapApi;
+    private SupportMapFragment mapFragment;
+
+    private boolean mapLocalActivated;
+    private boolean mapOtherActivated;
+    private boolean isPlayer1;
 
     private int colorSlowPace = Color.RED;
     private int colorMediumPace = Color.YELLOW;
@@ -85,23 +96,13 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
     private ArrayList<RaceLocation> localRaceLocations;
     private ArrayList<RaceLocation> otherRaceLocations;
 
-    private SupportMapFragment mapFragment;
-
-    private TextView localHeartRate;
-    private TextView otherHeartRate;
-    private boolean mapLocalActivated;
-    private boolean mapOtherActivated;
-    private TextView winnerLoser;
-    private int activateColor = Color.parseColor("#00203F");
-    private ImageView info1;
-
-
+    //Initializes views and sets onClick for both map buttons
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        // To retrieve object in second Activity
+        // To retrieve game object from Race Activity
         game = (Game) getIntent().getSerializableExtra("game");
         tvGameDate = (TextView) findViewById(R.id.tvGameDate);
         isPlayer1 = (game.player1.playerId.equals(GoogleSignIn.getLastSignedInAccount(this).getId()));
@@ -115,8 +116,6 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         timeRanOther = (TextView) findViewById(R.id.finishTimeOtherPlayer);
         mapLocal = (Button) findViewById(R.id.localPlayerMapButton);
         mapOther = (Button) findViewById(R.id.otherPlayerMapButton);
-        //mapLocal.setBackgroundColor(Color.GRAY);
-        //mapOther.setBackgroundColor(Color.GRAY);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.localMapAPI);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
@@ -125,11 +124,20 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         winnerLoser = (TextView) findViewById(R.id.winnerLoserText);
         info1 = (ImageView) findViewById(R.id.heartRateInfo1);
         mapLocal.setTextColor(Color.GRAY);
+
+        //Used to help know if a map is on screen
         mapLocalActivated = false;
         mapOtherActivated = false;
 
+        //Sets the game textView that indicates the date
+        //the game was created on
         tvGameDate.setText(game.getStringDate());
 
+        //This is an object that helps with our info icons
+        //These icons create a nice way of displaying extra information
+        //Such as instruction on what a setting does
+        //in this case we use them to explain how to sync
+        //your fitbit heart rate to app
         Balloon balloon = new Balloon.Builder(getApplicationContext())
                 .setArrowSize(10)
                 .setArrowOrientation(ArrowOrientation.TOP)
@@ -152,7 +160,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 .setPadding(10)
                 .setBalloonAnimation(BalloonAnimation.FADE).build();
 
-
+        //Sets an on click listener for the info image so it can use the ballon
+        //object we just made
         info1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,22 +169,29 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
+        //Overall logic for mapLocal button
+        //Checks if the other map is open or not
+        //check if the local map is open already
         mapLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //used to determine what color to set the
+                //Button text. Gray for deactivated
+                //#00203F/Black like color for activated
                 ColorStateList cl = mapLocal.getTextColors();
-                //relative.setBackgroundColor(cl.getDefaultColor());
                 if(cl.getDefaultColor() == (Color.parseColor("#00203F"))){
                     mapLocal.setTextColor(Color.GRAY);
                 }else{
                     mapLocal.setTextColor(Color.parseColor("#00203F"));
                 }
+                //If the mapFragment is visible
                 if(!mapFragment.isVisible()) {
                     if (isPlayer1 && game.player1.playerFinished) {
                         mapButtonsPressed(game.player1, true);
                         mapLocalActivated = true;
                        // mapLocal.setBackgroundColor(Color.GRAY);
-                    }else if(!isPlayer1 && game.player2.playerFinished){
+                    }else if(!isPlayer1 && game.player2.playerFinished){ //If the the local user is player 2 and finished
                         mapButtonsPressed(game.player2, true);
                         mapLocalActivated = true;
                        // mapLocal.setBackgroundColor(Color.GRAY);
@@ -185,24 +201,23 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                         mapLocalActivated = false;
                         mapApi.clear();
                         mapFragment.getView().setVisibility(View.INVISIBLE);
-                        //mapLocal.setBackgroundColor(activateColor);
                     }else if(mapOtherActivated){
                         mapOtherActivated = false;
                         mapLocalActivated = true;
                         mapApi.clear();
                         if (isPlayer1 && game.player1.playerFinished){
                             mapButtonsPressed(game.player1, true);
-                            //mapLocal.setBackgroundColor(Color.GRAY);
-                            //mapOther.setBackgroundColor(activateColor);
                         }else if(!isPlayer1 && game.player2.playerFinished){
                             mapButtonsPressed(game.player2, true);
-                            //mapOther.setBackgroundColor(activateColor);
                         }
                     }
                 }
             }
         });
 
+
+        //Logic for the map button for the nonLocal player
+        //Same as mapLocal, but deals with otherPlayer map
         mapOther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,6 +253,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
+        //otherPlayerFinishedRef initalizers
         if (isPlayer1) {
             otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
             otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
@@ -246,8 +262,12 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player1").child("playerStarted");
         }
 
+        //This is a helper function that
+        //Sets all the UI
         setTextViews();
 
+        //Listener to see if the otherplayer finished
+        //if so we can set UI and determine the winner
         otherPlayerFinishedListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -272,9 +292,13 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
 
             }
         };
-
         otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
 
+        //Other player start reference
+        //Used to help in borderline case where the other player
+        //Closes app on race
+        //Will finish their race after they pass
+        //The maximum allowed time for race
         otherPlayerStartedListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -352,7 +376,9 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         return 2;
     }
 
-
+    //Helper Function for pressing buttons
+    //Takes the raceplayer associated with button
+    //And whether or not that player is the local or nonlocal player
     public void mapButtonsPressed(RacePlayer p, boolean isLocal){
         mapFragment.getView().setVisibility(View.VISIBLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -382,6 +408,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         LatLng latLng = new LatLng(lat, lng);
         mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
     }
+
 
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
@@ -467,6 +494,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
+    //When the android back button is pressed
     @Override
     public void onBackPressed() {
         //super.onBackPressed(); // do not call super, especially after a race since you should
@@ -478,6 +506,11 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         startActivity(intent);
     }
 
+    //Winner is determined as follows
+    //Whoever runs the most distance is the winner
+    //if both players run the same distance
+    //Than the one with less time wins
+    //If both have the same stats it's a tie
     public void setWinner(){
         if(isPlayer1){
             if(game.player1.totalDistanceRan > game.player2.totalDistanceRan){
@@ -489,6 +522,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                     winnerLoser.setText("You Won");
                 }else if(game.player1.totalTimeRan > game.player2.totalTimeRan){
                     winnerLoser.setText("You Lost");
+                }else{
+                    winnerLoser.setText("You Tied");
                 }
             }
         }else{
@@ -501,12 +536,15 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                     winnerLoser.setText("You Won");
                 }else if(game.player2.totalTimeRan > game.player1.totalTimeRan){
                     winnerLoser.setText("You Lost");
+                }else{
+                    winnerLoser.setText("You Tied");
                 }
             }
         }
     }
 
-
+    //Helper unction that sets all text views
+    //In the UI
     public void setTextViews(){
         if(game.player1.playerFinished && game.player2.playerFinished){
             if(isPlayer1){
@@ -542,6 +580,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
+    //Helper function that's sets the textViews for the local
+    //player UI based off of passed Raceplayer
     public void setTextViewsLocal(RacePlayer player){
         DecimalFormat df = new DecimalFormat("#,###.##");
         double minutesDouble = player.totalTimeRan/60000;
@@ -567,6 +607,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
+    //Helper function that's sets the textViews for the nonLocal
+    //player UI based off of passed Raceplayer
     public void setTextViewsOther(RacePlayer player){
         DecimalFormat df = new DecimalFormat("#,###.##");
         double minutesDouble = player.totalTimeRan/60000;
@@ -592,7 +634,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-
+    //Used to draw map
     private void setMap(RacePlayer player, boolean isLocal){
         if(isLocal) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -608,7 +650,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
-
+    //Helper function that creates polylines latlbg list
     @RequiresApi(api = Build.VERSION_CODES.N)
     private ArrayList<RaceLocation> populatePolyLists(RacePlayer p){
         try {
@@ -626,6 +668,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         return new ArrayList<RaceLocation>();
     }
 
+    //Helper function that draws the polylines on maps
     public void reDrawPolyLines(List<RaceLocation> savedLocations){
         //mapApi.clear();
         LatLng cur = new LatLng(0, 0);
@@ -657,6 +700,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         mapApi.moveCamera(CameraUpdateFactory.newLatLng(cur));
     }
 
+    //Calculates distance between points of data
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1))
@@ -667,6 +711,11 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
+
+        if(Double.isNaN(dist) || Double.isInfinite(dist) || dist <= .0001){
+            return 0.0;
+        }
+
         return (dist);
     }
 

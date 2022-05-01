@@ -44,6 +44,14 @@ import android.view.View;
 
 public class CircularSeekBar extends View {
 
+	//Kyle Peters' Note: This is not my code, I sited it. I did however make some changes to it, such as changing,
+	//the function InitPaints accept a parameter for color
+	//Disabling the glowing halo
+	//And making the draw radius of the color around the dot bigger
+	//So I can paint the seekbar dot different colors
+	//other than that his code is the sole property of the owner
+	//sited in the marketing paper
+
 	/**
 	 * Used to scale the dp units to pixels
 	 */

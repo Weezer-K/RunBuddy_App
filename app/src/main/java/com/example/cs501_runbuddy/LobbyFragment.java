@@ -69,10 +69,18 @@ public class LobbyFragment extends Fragment {
     private fragmentListener f;
 
 
-    public LobbyFragment() {}
+    public LobbyFragment() {
+    }
 
-    public interface fragmentListener{AudioManager getAudioManager();}
+    //In order for this fragment to use audio for the countdown,
+    //We need to use an interface that connects to the homeactivity
+    public interface fragmentListener {
+        //Returns the audio manager
+        AudioManager getAudioManager();
+    }
 
+
+    //Used to attach the fragmentListener
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -100,9 +108,10 @@ public class LobbyFragment extends Fragment {
         startSounds = MediaPlayer.create(getActivity(), R.raw.start_sound_effect);
         player1ReadyText = (TextView) v.findViewById(R.id.player1ReadyStatus);
         player2ReadyText = (TextView) v.findViewById(R.id.player2ReadyStatus);
-        audio = f.getAudioManager();
+        audio = f.getAudioManager(); //Call to initialize audio player
         f = (fragmentListener) getActivity();
 
+        //Used for the player 1 Color Spinner
         List<String> colorsList = new ArrayList<String>();
         //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
         colorsList.add("Red");
@@ -110,7 +119,7 @@ public class LobbyFragment extends Fragment {
         colorsList.add("Green");
         colorsList.add("Yellow");
         colorsList.add("Orange");
-        color1 = Color.RED;
+        color1 = Color.RED; //Since the first choice is red initialize color1 as red
 
         List<String> colorsList2 = new ArrayList<String>();
         //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
@@ -119,25 +128,29 @@ public class LobbyFragment extends Fragment {
         colorsList2.add("Red");
         colorsList2.add("Yellow");
         colorsList2.add("Orange");
-        color2 = Color.GREEN;
+        color2 = Color.GREEN; //Since the first choice is green initialize color1 as green
 
 
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.spinner_white_colors, colorsList);
+        //Adapters for spinners that use a custom xml that makes all the
+        // text white instead of black in the dropdown menu
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_white_colors, colorsList);
         ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), R.layout.spinner_white_colors, colorsList2);
         adapter.setDropDownViewResource(R.layout.spinner_white_colors);
         adapter2.setDropDownViewResource(R.layout.spinner_white_colors);
         player1Color.setAdapter(adapter);
         player2Color.setAdapter(adapter2);
+
+
+        //Used to set color of chosen text in spinner to it's matching color
+        //Ex the text "Red" will appear red
         player1Color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String colorPicked = player1Color.getItemAtPosition(i).toString();
                 color1 = colorValFinder(colorPicked);
-                try{
+                try {
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
-                }catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -145,14 +158,16 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 color1 = Color.RED;
-                try{
+                try {
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color1);
-                }catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }
         });
 
+        //Same as the other setOnItemSelectedListener
+        //But for player2 dropdown
         player2Color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -160,7 +175,7 @@ public class LobbyFragment extends Fragment {
                 color2 = colorValFinder(colorPicked);
                 try {
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color2);
-                }catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -168,9 +183,9 @@ public class LobbyFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 color2 = Color.GREEN;
-                try{
+                try {
                     ((TextView) adapterView.getChildAt(0)).setTextColor(color2);
-                }catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -180,22 +195,31 @@ public class LobbyFragment extends Fragment {
     }
 
 
+    //Function in charge of creating games
+    //String ID: Represents ID of game
+    //boolean isPrivate: If true game will not appear on public search and need to use join by ID
+    //boolean isAsync: If true players can start at different times
+    //double totalDistance: The distance of the race, EX value would be 5 if a 5 mile race
     public void createGame(String ID, boolean isPrivate, boolean isAsync, double totalDistance) {
-
+        //Used to get current user to help create the game object
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String player1Id = acct.getId();
 
+        //Used to initialize RacePlayer Objects in games
         RacePlayer player1 = new RacePlayer(player1Id, new HashMap<String, RaceLocation>(),
                 false, false, false, 0.0,
                 0.0, 0L, 0.0);
         RacePlayer player2 = new RacePlayer();
 
+        //Used to store date of game
+        //Specifically when it was created
         Long date = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             date = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         }
 
         //Initialize the gaming object
+        //Game joinable is set to true as game was just created
         game = new Game(ID,
                 isPrivate,
                 totalDistance,
@@ -205,43 +229,66 @@ public class LobbyFragment extends Fragment {
                 player2,
                 null,
                 date);
+        //Todo
+        game.writeToDatabase("", "");
 
-        game.writeToDatabase("",  "");
-
+        //Sets views of class to be their appropriate counter parts
+        //Ex is syncronous the startBtn text needs to be set to ready
+        //as both players need to ready up before starting
         LIDtv.setText("Game Lobby ID: " + ID);
         player1tv.setText("Name: " + acct.getGivenName());
         player2tv.setText("Name: ");
-        if(!game.isAsync){
+        if (!game.isAsync) {
             startBtn.setText("Ready");
         }
 
+        //Sets the text color for player depending on
+        //Their start ready status
+        //Start/Ready = Green
+        //Not Started/Not Ready = White
         setTextColorForPlayer(player1ReadyText);
 
         initializePlayer2Ref();
 
+        //Start Button Listener reacts diffently based on if the
+        //Game is Async or Sync
+        //Async: Button will say start and when other player is in
+        //lobby you any player can start whenever they want
+        //Sync: Button will have the text ready and require that both players press it
+        // before the game starts
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (color1.equals(color2)) { Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show(); }
-                else if(game.joinAble){ Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show(); }
-                else if (!game.isAsync) {
-
+                //Checks are as follows
+                //First check is for the drop down colors, specifically making sure they aren't the same
+                //Second check is making sure that there are two players in the lobby
+                //If first two pass then we check if the game is syncronous
+                if (color1.equals(color2)) {
+                    Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
+                } else if (game.joinAble) {
+                    Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
+                } else if (!game.isAsync) {
+                    //Makes it so player can unready if other player hasn't readied yet
                     game.player1.playerReady = !game.player1.playerReady;
+                    //Writes player1 status to database so player 2 can check if ready
                     game.writeToDatabase("player1", "playerReady");
                     setTextColorForPlayer(player1ReadyText);
-
-                    if (!game.player1.playerReady) { startBtn.setText("Ready"); }
-                    else { startBtn.setText("Unready");}
+                    if (!game.player1.playerReady) {
+                        startBtn.setText("Ready");
+                    } else {
+                        startBtn.setText("Unready");
+                    }
                     if (game.player1.playerReady && game.player2.playerReady) {
-
                         try {
                             TimeUnit.SECONDS.sleep(1);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        //If both players ready start the race
                         startRace(color1, color2);
                     }
-                } else{
+                } else {
+                    //used for async games, so one player can start without the other
                     startRace(color1, color2);
                 }
             }
@@ -249,7 +296,10 @@ public class LobbyFragment extends Fragment {
 
     }
 
+    //Function used to join a game
     public void joinGame(Game g) {
+        //Just like create game we need to know about ths signed in user
+        //To help properly fill the database with appropriate user information
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         game = g;
         game.player2 = new RacePlayer(acct.getId(), new HashMap<String, RaceLocation>(),
@@ -261,13 +311,16 @@ public class LobbyFragment extends Fragment {
         LIDtv.setText("Game Lobby: " + game.ID);
         player1tv.setText("Name: " + game.player1.playerId);
         player2tv.setText("Name: " + acct.getGivenName());
-        if(!game.isAsync){
+        if (!game.isAsync) {
             startBtn.setText("Ready");
         }
-
+        //Sets text colors based on start/ready status
+        //Start ready = Green
+        //Not start/Not Ready = white
         setTextColorForPlayer(player1ReadyText);
         setTextColorForPlayer(player2ReadyText);
 
+        //used in order to get the players name and display it on the UI
         User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
             @Override
             public void onCallback(String value) {
@@ -275,9 +328,14 @@ public class LobbyFragment extends Fragment {
             }
         });
 
+        //Used to set the start button on click listener
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Just like in create game the first check
+                //is to make sure both users didn't select
+                //the same exact item in the color spinner
+                //Then has a check and logic for sync mode
                 if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 } else if (!game.isAsync) {
@@ -299,8 +357,12 @@ public class LobbyFragment extends Fragment {
         });
     }
 
+    //Helper function for spinner
+    //Makes it so we pass in the appropriate color
+    //for the Race Activity's seekbar tracks
+    //Matches with the strings of spinner to appropriate color
     public int colorValFinder(String c) {
-       int colorPicked = Color.RED;
+        int colorPicked = Color.RED;
         if (c.equals("Blue")) {
             colorPicked = Color.parseColor("#46AEFF");
         } else if (c.equals("Red")) {
@@ -315,29 +377,40 @@ public class LobbyFragment extends Fragment {
         return colorPicked;
     }
 
-    public void rejoinGame (Game g) {
+    //Function use case is when someone leaves a lobby but hasn't
+    //started a game. This function is called so they can rejoin the lobby
+    //And start a race if needed/can deepening on the other player's status
+    public void rejoinGame(Game g) {
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+
+        //Used to get ID of current account and
+        //Reference with database
         String pId = acct.getId();
-
         game = g;
-
         LIDtv.setText("Game Lobby: " + game.ID);
 
+        //if the game isn't joinable and the ID matches with the
+        //ID of the player that was in the game
+        //Then set both player text views to display their names
         if (!game.joinAble && pId.equals(game.player1.playerId)) {
             player1tv.setText("Name: " + acct.getGivenName());
             User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
                 public void onCallback(String value) {
-                    player2tv.setText("Name: "+ value);
+                    player2tv.setText("Name: " + value);
                 }
             });
+            //Else if the game is joinable that meants player 2 hasn't joined yet
+            //And the UI must reflect that by saying the player hasn't joined yet
         } else if (pId.equals(game.player1.playerId)) {
             player1tv.setText("Name: " + acct.getGivenName());
             player2tv.setText("Name: Not Joined Yet");
             initializePlayer2Ref();
+            //Else we are player 2 and must set the player text view to the
+            //current local user and get and set the online player1's name
         } else {
-            player2tv.setText("Name: " +acct.getGivenName());
+            player2tv.setText("Name: " + acct.getGivenName());
             User.getUserNameFromID(game.player1.playerId, new User.MyCallback() {
                 @Override
                 public void onCallback(String value) {
@@ -346,7 +419,7 @@ public class LobbyFragment extends Fragment {
             });
         }
 
-        if(!game.isAsync){
+        if (!game.isAsync) {
             startBtn.setText("Ready");
         }
         setTextColorForPlayer(player1ReadyText);
@@ -358,9 +431,9 @@ public class LobbyFragment extends Fragment {
             public void onClick(View view) {
                 if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
-                }else if (game.joinAble) {
+                } else if (game.joinAble) {
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
-                }  else if (!game.isAsync) {
+                } else if (!game.isAsync) {
                     if (pId.equals(game.player1.playerId)) {
                         game.player1.playerReady = !game.player1.playerReady;
                         game.writeToDatabase("player1", "playerReady");
@@ -390,19 +463,31 @@ public class LobbyFragment extends Fragment {
         });
     }
 
+    //Function that is in charge of properly setting up DB for next intent
+    //Which is Race Activity, also starts that activity
     public void startRace(Integer localColor, Integer onlineColor) {
-        //startCountDown();
         startBtn.setEnabled(false);
 
-        if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
+        //This is used to start the countdown beeps
+        //Will check if user is in silent or vibrate mode
+        //And play sound if not in any of those modes
+        if (audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
             startSounds.start();
         }
+
+        //used to delay the intent call and display a countdown
+        //In the UI
         new CountDownTimer(4000, 1000) {
             int counter = 0;
+
             public void onTick(long millisUntilFinished) {
                 LIDtv.setText("Game Start In: " + ((millisUntilFinished / 1000)));
             }
 
+            //When the timer is finished onFinish is called
+            //It writes to the database that the player started
+            //And passes extras such as the game object
+            //and player 1 and 2's colors picked by local user
             public void onFinish() {
                 if (getActivity() != null) {
                     if (game.isAsync || (game.player1.playerReady && game.player2.playerReady)) {
@@ -422,10 +507,12 @@ public class LobbyFragment extends Fragment {
                     }
                 }
             }
-        }.start();
+        }.start(); //Starts the countDown object to execute
 
     }
 
+    //Creates a player 2 reference for listening
+    //Todo
     public void initializePlayer2Ref() {
         player2Ref = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2");
         player2Listener = new ValueEventListener() {
@@ -460,6 +547,7 @@ public class LobbyFragment extends Fragment {
         };
         player2Ref.addValueEventListener(player2Listener);
     }
+
 
     public void initializeOtherPlayerReadyRef() {
 
@@ -540,6 +628,7 @@ public class LobbyFragment extends Fragment {
         otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
     }
 
+    //helper fucntion that gets the proper player ready/start text color
     public void setTextColorForPlayer(TextView tv) {
         String s = tv.getText().toString();
         if (game.isAsync) {
@@ -547,8 +636,7 @@ public class LobbyFragment extends Fragment {
                 if (game.player1.playerStarted) {
                     tv.setText("Player 1: Started");
                     tv.setTextColor(Color.GREEN);
-                }
-                else {
+                } else {
                     tv.setText("Player 1: Not Started");
                     tv.setTextColor(Color.WHITE);
                 }
@@ -556,20 +644,17 @@ public class LobbyFragment extends Fragment {
                 if (game.player2.playerStarted) {
                     tv.setText("Player 2: Started");
                     tv.setTextColor(Color.GREEN);
-                }
-                else {
+                } else {
                     tv.setText("Player 2: Not Started");
                     tv.setTextColor(Color.WHITE);
                 }
             }
-        }
-        else{
+        } else {
             if (s.substring(0, 8).equalsIgnoreCase("Player 1")) {
                 if (game.player1.playerReady) {
                     tv.setText("Player 1: Ready");
                     tv.setTextColor(Color.GREEN);
-                }
-                else {
+                } else {
                     tv.setText("Player 1: Not Ready");
                     tv.setTextColor(Color.WHITE);
                 }
@@ -577,8 +662,7 @@ public class LobbyFragment extends Fragment {
                 if (game.player2.playerReady) {
                     tv.setText("Player 2: Ready");
                     tv.setTextColor(Color.GREEN);
-                }
-                else {
+                } else {
                     tv.setText("Player 2: Not Ready");
                     tv.setTextColor(Color.WHITE);
                 }
@@ -587,9 +671,9 @@ public class LobbyFragment extends Fragment {
     }
 
     @Override
-    public void onDetach () {
+    public void onDetach() {
         super.onDetach();
-        if (game != null){
+        if (game != null) {
             if (!game.isAsync) {
                 GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
                 if (acct.getId().equals(game.player1.playerId)) {
@@ -611,32 +695,6 @@ public class LobbyFragment extends Fragment {
             player2Ref.removeEventListener(player2Listener);
 
         f = null;
-    }
-
-
-    private void startCountDown(){
-        //f.setBackgroundOn();
-
-        int toastDurationInMilliSeconds = 10000;
-        Integer i = 3;
-
-        // Set the countdown to display the toast
-
-
-        if(audio.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE && audio.getRingerMode() != AudioManager.RINGER_MODE_SILENT){
-            startSounds.start();
-        }
-        try {
-            Toast.makeText(getActivity(), "3", Toast.LENGTH_SHORT).show();
-            TimeUnit.SECONDS.sleep(1);
-            Toast.makeText(getActivity(), "2", Toast.LENGTH_SHORT).show();
-            TimeUnit.SECONDS.sleep(1);
-            Toast.makeText(getActivity(), "1", Toast.LENGTH_SHORT).show();
-            TimeUnit.SECONDS.sleep(1);
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
 
