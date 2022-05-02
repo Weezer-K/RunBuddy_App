@@ -48,7 +48,7 @@
             android:id="@+id/finishTimeLocalPlayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time finished: NA"
+            android:text="Time: NA"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
@@ -142,7 +142,7 @@
             android:id="@+id/finishTimeOtherPlayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time finished: NA"
+            android:text="Time: NA"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
