@@ -473,47 +473,47 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
     // Todo: remove readOtherPlayerCall
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
-            game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
-                @Override
-                public void onCallback() {
-                    if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
-                        if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
-                            game.winner = game.player1.playerId;
-                        } else {
-                            game.winner = game.player2.playerId;
-                        }
-                    } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
-                        if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
-                            game.winner = game.player1.playerId;
-                        } else {
-                            game.winner = game.player2.playerId;
-                        }
-                    } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
-                        game.winner = game.player2.playerId;
-                    } else {
-                        game.winner = game.player1.playerId;
-                    }
-                    game.writeToDatabase("winner", "");
+//            game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
+//                @Override
+//                public void onCallback() {
+//                    if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
+//                        if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
+//                            game.winner = game.player1.playerId;
+//                        } else {
+//                            game.winner = game.player2.playerId;
+//                        }
+//                    } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
+//                        if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
+//                            game.winner = game.player1.playerId;
+//                        } else {
+//                            game.winner = game.player2.playerId;
+//                        }
+//                    } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
+//                        game.winner = game.player2.playerId;
+//                    } else {
+//                        game.winner = game.player1.playerId;
+//                    }
+//                    game.writeToDatabase("winner", "");
+//                }
+//            });
+            if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
+                if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
+                    game.winner = game.player1.playerId;
+                } else {
+                    game.winner = game.player2.playerId;
                 }
-            });
-//            if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
-//                if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
-//                    game.winner = game.player1.playerId;
-//                } else {
-//                    game.winner = game.player2.playerId;
-//                }
-//            } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
-//                if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
-//                    game.winner = game.player1.playerId;
-//                } else {
-//                    game.winner = game.player2.playerId;
-//                }
-//            } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
-//                game.winner = game.player2.playerId;
-//            } else {
-//                game.winner = game.player1.playerId;
-//            }
-//            game.writeToDatabase("winner", "");
+            } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
+                if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
+                    game.winner = game.player1.playerId;
+                } else {
+                    game.winner = game.player2.playerId;
+                }
+            } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
+                game.winner = game.player2.playerId;
+            } else {
+                game.winner = game.player1.playerId;
+            }
+            game.writeToDatabase("winner", "");
         }
     }
 

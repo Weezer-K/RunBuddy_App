@@ -275,6 +275,7 @@ public class LobbyFragment extends Fragment {
                     //Writes player1 status to database so player 2 can check if ready
                     game.writeToDatabase("player1", "playerReady");
                     setTextColorForPlayer(player1ReadyText);
+                    // change button text according to ready status
                     if (!game.player1.playerReady) {
                         startBtn.setText("Ready");
                     } else {
@@ -360,10 +361,12 @@ public class LobbyFragment extends Fragment {
                     } else {
                         startBtn.setText("Unready");
                     }
+                    // start race if both players ready
                     if (game.player1.playerReady && game.player2.playerReady) {
                         startRace(color2, color1);
                     }
                 } else {
+                    // start race if player clicked to start
                     startRace(color2, color1);
                 }
             }
