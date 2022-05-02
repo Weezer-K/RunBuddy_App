@@ -421,7 +421,7 @@ public class LobbyFragment extends Fragment {
             //And the UI must reflect that by saying the player hasn't joined yet
         } else if (pId.equals(game.player1.playerId)) {
             player1tv.setText("Name: " + acct.getGivenName());
-            player2tv.setText("Name: Not Joined Yet");
+            player2tv.setText("Name: ");
             initializePlayer2Ref();
             //Else we are player 2 and must set the player text view to the
             //current local user and get and set the online player1's name
