@@ -279,7 +279,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
-        //otherPlayerFinishedRef initalizers
+        //otherPlayerFinishedRef and otherPlayerStartedRef initalizers
+        // depends on if logged in player is player 1 or 2 of the game
         if (isPlayer1) {
             otherPlayerFinishedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerFinished");
             otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2").child("playerStarted");
@@ -298,10 +299,15 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // if the other player has finished their race according to db
                     if (snapshot.getValue(Boolean.class)) {
+                        // read all of their data from the db
                         game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
                             @Override
                             public void onCallback() {
+                                // once all of other player's data is retrieved, the game object
+                                // would be updated accordingly
+                                // we then attempt to find a winner and then set the text views of the page
                                 getWinner();
                                 setTextViews();
                                 mapOther.setVisibility(View.VISIBLE);
@@ -329,14 +335,23 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // if the other player has started according to db
                     if (snapshot.getValue(Boolean.class)) {
+                        // read the other player start time
                         game.readOtherPlayerLongField(isPlayer1, "playerStartTime", new Game.OtherPlayerLongFieldCallback() {
                             @Override
                             public void onCallback(Long value) {
                                 Long date = null;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    // get the current date and time
                                     date = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 
+                                    // if the difference between current time and the player start time
+                                    // is greater than the max time allotted for the race depending on the
+                                    // distance of it, fix the corrupt data by marking the other player as finished
+                                    // for example, for a 1 mile race, max time allotted is 15 min.
+                                    // if more than 15 min has passed, make sure to write to the db that the
+                                    // other player is finished
                                     if (value.longValue() != 0 && date - value > game.totalDistance * 15 * 60) {
                                         if (isPlayer1) {
                                             game.player2.playerFinished = true;
@@ -387,6 +402,10 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 }
             }
         });
+
+        // if the heart rate data isn't already set in the player object, and the user is logged into fitbit
+        // make an api call requesting heart rate data for the time interval of the race for the
+        // logged in player
         if(isPlayer1){
             if(game.player1.heartRate.equals(0.0) && AuthenticationManager.isLoggedIn()){
                 getLoaderManager().initLoader(getLoaderId(), null, this).forceLoad();
@@ -398,8 +417,26 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
+    //When the android back button is pressed
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed(); // do not call super, especially after a race since you should
+        // never go back to the race activity
+        otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
+        otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
+        Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
+        intent.putExtra("fragment", "History");
+        startActivity(intent);
+    }
+
+    // id for heart rate loader (needs to be unique across the app)
     protected int getLoaderId()  {
         return 2;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mapApi = googleMap;
     }
 
     //Helper Function for pressing buttons
@@ -431,11 +468,9 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
             }
         }
-        LatLng latLng = new LatLng(lat, lng);
-        //mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
     }
 
-
+    // Todo: remove readOtherPlayerCall
     public void getWinner() {
         if (game.player1.playerFinished && game.player2.playerFinished) {
             game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
@@ -461,75 +496,25 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                     game.writeToDatabase("winner", "");
                 }
             });
-
+//            if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
+//                if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
+//                    game.winner = game.player1.playerId;
+//                } else {
+//                    game.winner = game.player2.playerId;
+//                }
+//            } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
+//                if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
+//                    game.winner = game.player1.playerId;
+//                } else {
+//                    game.winner = game.player2.playerId;
+//                }
+//            } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
+//                game.winner = game.player2.playerId;
+//            } else {
+//                game.winner = game.player1.playerId;
+//            }
+//            game.writeToDatabase("winner", "");
         }
-    }
-
-    //The next 4 functions are used to interact
-    //with the fitbit api library
-
-    //This gets the profile and retrieves the data
-    @NonNull
-    @Override
-    public Loader<ResourceLoaderResult<HeartRateContainer>> onCreateLoader(int id, @Nullable Bundle args) {
-        if (isPlayer1)
-            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
-                    game.player1.playerStartTime,
-                    game.player1.playerStartTime + Double.valueOf(game.player1.totalTimeRan/1000 + 60).longValue());
-        else
-            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
-                    game.player2.playerStartTime,
-                    game.player2.playerStartTime + Double.valueOf(game.player2.totalTimeRan/1000 + 60).longValue());
-    }
-
-    //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui
-    @Override
-    public void onLoadFinished(Loader<ResourceLoaderResult<HeartRateContainer>> loader, ResourceLoaderResult<HeartRateContainer> data) {
-        if (data.isSuccessful()) {
-            if(data.getResult().getActivitiesHeartIntraday().getDataset().size() > 0) {
-                bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
-            }
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ResourceLoaderResult<HeartRateContainer>> loader) {
-
-    }
-
-    //Uses info obtained from fitBit and sets the appropriate
-    //Views to display them
-    public void bindHeartbeatInfo(List<HeartRateData> dataset) {
-
-        double sumRate = 0;
-
-        for (HeartRateData data : dataset) {
-            sumRate += data.getValue();
-        }
-
-        double averageHeartRate = sumRate / dataset.size();
-
-        if(isPlayer1){
-            game.player1.heartRate = averageHeartRate;
-            game.writeToDatabase("player1", "heartRate");
-            setTextViews();
-        }else{
-            game.player2.heartRate = averageHeartRate;
-            game.writeToDatabase("player2", "heartRate");
-            setTextViews();
-        }
-    }
-
-    //When the android back button is pressed
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed(); // do not call super, especially after a race since you should
-        // never go back to the race activity
-        otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
-        otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
-        Intent intent = new Intent(ResultActivity.this, HomeActivity.class);
-        intent.putExtra("fragment", "History");
-        startActivity(intent);
     }
 
     //Winner is determined as follows
@@ -700,6 +685,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         LatLng cur = new LatLng(0, 0);
         for(int i = 0; i < savedLocations.size() - 1; i+=1){
 
+            // create polyline given two coordinates
             double prevLat = savedLocations.get(i).latLng.lat;
             double prevLng = savedLocations.get(i).latLng.lng;
             double curLat = savedLocations.get(i+1).latLng.lat;
@@ -710,23 +696,28 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                     .clickable(false)
                     .add(prev, cur));
 
+            // if the start coordinate, place custom marker with start time and custom image
             if(i == 0){
                 String time = getTime(savedLocations.get(i));
                 mapApi.addMarker(new MarkerOptions().position(prev).title("Start time: "+time))
                         .setIcon(BitmapDescriptorFactory.fromBitmap(startIcon));
             }
 
+            // if the last coordinate, place custom marker with end time and custom image
             if(i == savedLocations.size() - 2){
                 String time = getTime(savedLocations.get(savedLocations.size()-1));
                 mapApi.addMarker(new MarkerOptions().position(cur).title("Finish time: "+time))
                         .setIcon(BitmapDescriptorFactory.fromBitmap(finishIcon));
             }
 
+
             if(isLocal){
                 localBounds.include(prev);
             }else{
                 otherBounds.include(prev);
             }
+
+            // calculate pace of two different coordinates using their timestamps
             double distance = distance(prevLat, prevLng, curLat, curLng);
             double t1 = savedLocations.get(i).time;
             double t2 = savedLocations.get(i+1).time;
@@ -734,6 +725,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             double timeBetweenHours = timeBetween / 60000 / 60.0;
             double curPace = distance/timeBetweenHours;
 
+            // color the polyline depending on the pace value
             if(curPace < 5){
                 p.setColor(colorSlowPace);
             }else if(curPace < 8){
@@ -742,6 +734,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 p.setColor(colorFastPace);
             }
         }
+
+        // update map camera dynamically to fit the whole race
         int padding = 75;
         if(isLocal){
             LatLngBounds b = localBounds.build();
@@ -756,6 +750,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
+    // helper function to get the time of a race location. specifically used in the google map
+    // route drawing with custom markers for start and end time of a race for a player
     public String getTime(RaceLocation l){
         Double d = l.time;
         ZonedDateTime dateTime;
@@ -789,6 +785,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
 
+        // filter out corrupt or insignificant distance calculations
         if(Double.isNaN(dist) || Double.isInfinite(dist) || dist <= .0001){
             return 0.0;
         }
@@ -796,20 +793,68 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         return (dist);
     }
 
+    // distance calculation helper functions
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
-
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
 
+    //The next 4 functions are used to interact
+    //with the fitbit api library
 
+    //This gets the profile and retrieves the data
+    @NonNull
+    @Override
+    public Loader<ResourceLoaderResult<HeartRateContainer>> onCreateLoader(int id, @Nullable Bundle args) {
+        if (isPlayer1)
+            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
+                    game.player1.playerStartTime,
+                    game.player1.playerStartTime + Double.valueOf(game.player1.totalTimeRan/1000 + 60).longValue());
+        else
+            return HeartRateService.getHeartRateSummaryLoader(ResultActivity.this,
+                    game.player2.playerStartTime,
+                    game.player2.playerStartTime + Double.valueOf(game.player2.totalTimeRan/1000 + 60).longValue());
+    }
 
-
+    //Once all the data is retrieved, if the data is successful then call bindProfilesInfo, display to ui
+    @Override
+    public void onLoadFinished(Loader<ResourceLoaderResult<HeartRateContainer>> loader, ResourceLoaderResult<HeartRateContainer> data) {
+        if (data.isSuccessful()) {
+            if(data.getResult().getActivitiesHeartIntraday().getDataset().size() > 0) {
+                bindHeartbeatInfo(data.getResult().getActivitiesHeartIntraday().getDataset());
+            }
+        }
+    }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mapApi = googleMap;
+    public void onLoaderReset(Loader<ResourceLoaderResult<HeartRateContainer>> loader) {
+
+    }
+
+    //Uses info obtained from fitBit and sets the appropriate
+    //Views to display them
+    public void bindHeartbeatInfo(List<HeartRateData> dataset) {
+
+        // calculate average heart rate given per second heart rate data
+        double sumRate = 0;
+
+        for (HeartRateData data : dataset) {
+            sumRate += data.getValue();
+        }
+
+        double averageHeartRate = sumRate / dataset.size();
+
+        // write heart rate data to db so other player can view it in their UI
+        if(isPlayer1){
+            game.player1.heartRate = averageHeartRate;
+            game.writeToDatabase("player1", "heartRate");
+            setTextViews();
+        }else{
+            game.player2.heartRate = averageHeartRate;
+            game.writeToDatabase("player2", "heartRate");
+            setTextViews();
+        }
     }
 }

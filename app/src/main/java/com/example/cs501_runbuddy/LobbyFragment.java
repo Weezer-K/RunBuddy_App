@@ -229,7 +229,8 @@ public class LobbyFragment extends Fragment {
                 player2,
                 null,
                 date);
-        //Todo
+
+        // write the entire game object to the database in its initial state
         game.writeToDatabase("", "");
 
         //Sets views of class to be their appropriate counter parts
@@ -248,6 +249,7 @@ public class LobbyFragment extends Fragment {
         //Not Started/Not Ready = White
         setTextColorForPlayer(player1ReadyText);
 
+        // initialize listener to the player 2 object
         initializePlayer2Ref();
 
         //Start Button Listener reacts diffently based on if the
@@ -306,8 +308,13 @@ public class LobbyFragment extends Fragment {
                 false, false, false, 0.0, 0.0, 0L, 0.0);
         game.joinAble = false;
 
+        // write the entire game object to the database in its joined state
         game.writeToDatabase("", "");
+
+        // Todo should change directly into other player ref. join game means player 2 ref is unnecessary
         initializePlayer2Ref();
+
+        // set UI of lobby for joined player
         LIDtv.setText("Game Lobby: " + game.ID);
         player1tv.setText("Name: " + game.player1.playerId);
         player2tv.setText("Name: " + acct.getGivenName());
@@ -419,13 +426,17 @@ public class LobbyFragment extends Fragment {
             });
         }
 
+        // update lobby UI with correct info
         if (!game.isAsync) {
             startBtn.setText("Ready");
         }
         setTextColorForPlayer(player1ReadyText);
         if (game.player2 != null)
             setTextColorForPlayer(player2ReadyText);
+
+        // Todo replace with logic to not have redundant listener
         initializePlayer2Ref();
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -499,6 +510,7 @@ public class LobbyFragment extends Fragment {
                             game.player2.playerStarted = true;
                             game.writeToDatabase("player2", "playerStarted");
                         }
+                        //Todo add playerready ref removal here if sync
                         Intent intent = new Intent(getActivity(), RaceActivity.class);
                         intent.putExtra("localPlayerColor", localColor);
                         intent.putExtra("onlinePlayerColor", onlineColor);
@@ -512,27 +524,43 @@ public class LobbyFragment extends Fragment {
     }
 
     //Creates a player 2 reference for listening
-    //Todo
     public void initializePlayer2Ref() {
+        // initialize reference listening to player 2 for the game object
         player2Ref = RunBuddyApplication.getDatabase().getReference("games").child(game.ID).child("player2");
         player2Listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // once a non-null value is retrieved, a second player has joined the game
                 if (snapshot.exists()) {
-                    // dataSnapshot is the "game" node with all children with id equal to joinId
+                    // convert the retrieved data into a race player object
                     RacePlayer p2 = snapshot.getValue(RacePlayer.class);
+
+                    // query the db for this joined player's name
                     User.getUserNameFromID(p2.playerId, new User.MyCallback() {
                         @Override
                         public void onCallback(String value) {
+                            // set the player 2 name to be the retrieved value
                             player2tv.setText("Name: " + value);
+
+                            // update the local game object given we now have a second player
                             game.joinAble = false;
                             game.player2 = p2;
+
+                            // Todo remove line below redundant
                             game.writeToDatabase("player2", "");
+
+                            // set initial ready text of other player
                             setTextColorForPlayer(player2ReadyText);
+
+                            // remove event listener for whole player 2 object
                             player2Ref.removeEventListener(player2Listener);
+
+                            // if game is synchronous, initialize listener for other player's ready field
                             if (!game.isAsync) {
                                 initializeOtherPlayerReadyRef();
-                            } else {
+                            }
+                            // else for asynchronous, initialize listener for other player's started field
+                            else {
                                 initializeOtherPlayerStartedRef();
                             }
                         }
@@ -545,15 +573,16 @@ public class LobbyFragment extends Fragment {
 
             }
         };
+        // add listener to reference defined at beginning of function
         player2Ref.addValueEventListener(player2Listener);
     }
 
 
     public void initializeOtherPlayerReadyRef() {
 
+        // initialize reference listening to other player's ready field. used in synchronous games only
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String pId = acct.getId();
-
         if (pId.equals(game.player1.playerId)) {
             otherPlayerReadyRef = RunBuddyApplication.getDatabase().getReference("games")
                     .child(game.ID).child("player2").child("playerReady");
@@ -562,19 +591,28 @@ public class LobbyFragment extends Fragment {
                     .child(game.ID).child("player1").child("playerReady");
         }
 
+        // initialize listener for other player ready field
         otherPlayerReadyListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // if change to field happens
                 if (snapshot.exists()) {
+                    // if player 1
                     if (pId.equals(game.player1.playerId)) {
+                        // updated game object with new value in player ready field
                         game.player2.playerReady = snapshot.getValue(Boolean.class);
                         setTextColorForPlayer(player2ReadyText);
+                        // if both players now ready, start the race
                         if (game.player1.playerReady && game.player2.playerReady) {
                             startRace(color1, color2);
                         }
-                    } else {
+                    }
+                    // else, player 2
+                    else {
+                        // updated game object with new value in player ready field
                         game.player1.playerReady = snapshot.getValue(Boolean.class);
                         setTextColorForPlayer(player1ReadyText);
+                        // if both players now ready, start the race
                         if (game.player1.playerReady && game.player2.playerReady) {
                             startRace(color2, color1);
                         }
@@ -587,14 +625,15 @@ public class LobbyFragment extends Fragment {
 
             }
         };
+        // add listener to reference defined at beginning of function
         otherPlayerReadyRef.addValueEventListener(otherPlayerReadyListener);
     }
 
     public void initializeOtherPlayerStartedRef() {
 
+        // initialize reference listening to other player's started field. used in asynchronous games only
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         String pId = acct.getId();
-
         if (pId.equals(game.player1.playerId)) {
             otherPlayerStartedRef = RunBuddyApplication.getDatabase().getReference("games")
                     .child(game.ID).child("player2").child("playerStarted");
@@ -603,11 +642,14 @@ public class LobbyFragment extends Fragment {
                     .child(game.ID).child("player1").child("playerStarted");
         }
 
+        // initialize listener for other started ready field
         otherPlayerStartedListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // if started field changed to true
                     if (snapshot.getValue(Boolean.class)) {
+                        // update ui and game object depending on if the other player that started was player 1 or 2
                         if (pId.equals(game.player1.playerId)) {
                             game.player2.playerStarted = true;
                             setTextColorForPlayer(player2ReadyText);
@@ -615,6 +657,7 @@ public class LobbyFragment extends Fragment {
                             game.player1.playerStarted = true;
                             setTextColorForPlayer(player1ReadyText);
                         }
+                        // remove the event listener to stop listening for changes
                         otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
                     }
                 }
@@ -625,10 +668,11 @@ public class LobbyFragment extends Fragment {
 
             }
         };
+        // add listener to reference defined at beginning of function
         otherPlayerStartedRef.addValueEventListener(otherPlayerStartedListener);
     }
 
-    //helper fucntion that gets the proper player ready/start text color
+    //helper function that gets the proper player ready/start text color
     public void setTextColorForPlayer(TextView tv) {
         String s = tv.getText().toString();
         if (game.isAsync) {
@@ -673,15 +717,22 @@ public class LobbyFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        // if game isnt null
         if (game != null) {
+            // check if game is synchronous
             if (!game.isAsync) {
                 GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+                // check if logged in user is player 1 or 2 of the game
                 if (acct.getId().equals(game.player1.playerId)) {
+                    // if player 1 and has not started, make sure they are not labelled as ready
+                    // and update db
                     if (!game.player1.playerStarted) {
                         game.player1.playerReady = false;
                         game.writeToDatabase("player1", "playerReady");
                     }
                 } else {
+                    // if player 2 and has not started, make sure they are not labelled as ready
+                    // and update db
                     if (!game.player2.playerStarted) {
                         game.player2.playerReady = false;
                         game.writeToDatabase("player2", "playerReady");
@@ -689,10 +740,12 @@ public class LobbyFragment extends Fragment {
                 }
             }
         }
+        // remove the event listener to stop listening for changes when fragment detaches
         if (otherPlayerReadyRef != null)
             otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
+        //Todo add playerstarted ref removal here
 
         f = null;
     }
