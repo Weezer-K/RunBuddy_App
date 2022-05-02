@@ -22,7 +22,7 @@ Before using our repository, make sure to send us your SHA1 key. We will then up
 
 ## Using the App (Sign in):
 * Select "Sign in with Fitbit" or "Sign in without Fitbit". For the first option, follow Step a, for the second option, follow Step b.
-* Step a: Login with a valid Gmail Account. Then sign in with a fitbit account and grants access to the app to use your data. If you don't have a fitbit account, you can use ours. (Username: pmenexas13@gmail.com Password: 8NS#?v%vTUPkPfs) Go to step 2.
+* Step a: Login with a valid Gmail Account. Then sign in with a fitbit account and grants access to the app to use your data. If you don't have a fitbit account, you can use ours. (Username: pmenexas13@gmail.com Password: cs501mobile) Go to step 2.
 * Step b: Login with a valid Gmail Account and that's it.
 * You are all set to go; Follow the final report pdf which serves as a walkthrough of the app
 
