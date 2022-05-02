@@ -1,8 +1,12 @@
 package com.example.cs501_runbuddy;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.cs501_runbuddy.models.Game;
@@ -27,6 +32,8 @@ import com.example.cs501_runbuddy.models.RacePlayer;
 import com.example.cs501_runbuddy.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,6 +75,8 @@ public class LobbyFragment extends Fragment {
     private AudioManager audio;
     private fragmentListener f;
 
+    private final int PERMISSIONS_FINE_LOCATION = 99;
+    private boolean gpsAccess;
 
     public LobbyFragment() {
     }
@@ -110,6 +119,7 @@ public class LobbyFragment extends Fragment {
         player2ReadyText = (TextView) v.findViewById(R.id.player2ReadyStatus);
         audio = f.getAudioManager(); //Call to initialize audio player
         f = (fragmentListener) getActivity();
+        gpsAccess = false;
 
         //Used for the player 1 Color Spinner
         List<String> colorsList = new ArrayList<String>();
@@ -191,6 +201,8 @@ public class LobbyFragment extends Fragment {
             }
         });
 
+        getGPSPermission();
+
         return v;
     }
 
@@ -265,7 +277,10 @@ public class LobbyFragment extends Fragment {
                 //First check is for the drop down colors, specifically making sure they aren't the same
                 //Second check is making sure that there are two players in the lobby
                 //If first two pass then we check if the game is syncronous
-                if (color1.equals(color2)) {
+                if (!gpsAccess) {
+                    Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
+                }
+                else if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 } else if (game.joinAble) {
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
@@ -350,7 +365,10 @@ public class LobbyFragment extends Fragment {
                 //is to make sure both users didn't select
                 //the same exact item in the color spinner
                 //Then has a check and logic for sync mode
-                if (color1.equals(color2)) {
+                if (!gpsAccess) {
+                    Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
+                }
+                else if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 } else if (!game.isAsync) {
                     game.player2.playerReady = !game.player2.playerReady;
@@ -409,7 +427,10 @@ public class LobbyFragment extends Fragment {
         //if the game isn't joinable and the ID matches with the
         //ID of the player that was in the game
         //Then set both player text views to display their names
-        if (!game.joinAble && pId.equals(game.player1.playerId)) {
+        if (!gpsAccess) {
+            Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
+        }
+        else if (!game.joinAble && pId.equals(game.player1.playerId)) {
             player1tv.setText("Name: " + acct.getGivenName());
             User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
@@ -726,6 +747,39 @@ public class LobbyFragment extends Fragment {
             }
         }
     }
+
+    public void getGPSPermission() {
+        //If permission is granted
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            gpsAccess = true;
+        }
+        //Request permission via helper function below
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_FINE_LOCATION);
+            }
+        }
+    }
+
+    //Requested for gps permissions
+    //If permission is granted or has been granted carry on
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSIONS_FINE_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getGPSPermission();
+                } else {
+                    gpsAccess = false;
+                }
+                break;
+        }
+    }
+
+
 
     @Override
     public void onDetach() {
