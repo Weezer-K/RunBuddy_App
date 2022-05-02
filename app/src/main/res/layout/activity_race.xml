@@ -8,6 +8,16 @@
     tools:context=".RaceActivity">
 
     <TextView
+        android:id="@+id/spotifyCurtain"
+        android:layout_width="414dp"
+        android:layout_height="326dp"
+        android:background="#181818"
+        app:layout_constraintBottom_toBottomOf="@+id/spotifyUi"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/spotifyUi"
+        app:layout_constraintTop_toTopOf="@+id/spotifyUi" />
+
+    <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -124,6 +124,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
     private DatabaseReference otherPlayerFinishedRef;
     private ValueEventListener otherPlayerFinishedListener;
+   // private TextView spotifyCurtain;
 
     //1 used to set up the UI elements and overall logic of the google map
     //And spotify
@@ -151,6 +152,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         gap.setTextColor(Color.WHITE);
         localColorIndicator = (TextView) findViewById(R.id.localColorIndicator);
         onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
+        //spotifyCurtain = (TextView) findViewById(R.id.spotifyCurtain);
         otherRaceLocations = new ArrayList<RaceLocation>();
         otherPlayerLocationIndex = 0;
         totalDistance = 0;
@@ -405,7 +407,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
-        spotifyTrackManager();
+        //spotifyTrackManager();
         otherPlayerRef.addChildEventListener(otherPlayerListener);
         otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
         //Used to update movement data based of a specific interval
@@ -735,7 +737,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             //This happens when the page first launches and
             //there is only one save location i.e. the current location
             else{
-                mapAPI.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
+                mapAPI.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f));
             }
         }
     }
@@ -759,6 +761,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
                     tvOtherStatus.setText("Status: Running");
                     otherPlayerTrack.setVisibility(View.VISIBLE);
+                    spotifyApp.getView().bringToFront();
                 }
             }
             else if (otherRaceLocations.size() > otherPlayerLocationIndex){
@@ -780,7 +783,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         double d = totalDistanceOtherPlayer;
 
                         tvOtherPlayerDistance.setText("Distance: " + df.format(d) + " mi");
-                        otherPlayerTrack.setVisibility(View.VISIBLE);
+                        //Todo why is this line important?
+                        //otherPlayerTrack.setVisibility(View.VISIBLE);
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
 
                         if (otherRaceLocations.size() - 1 == otherPlayerLocationIndex) {
@@ -909,7 +913,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 checkIfSpotifyUp();
             }
         });
-        t.start();
+        //t.start();
     }
 
     public void checkIfSpotifyUp(){

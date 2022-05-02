@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -32,7 +34,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -47,11 +52,16 @@ import com.skydoves.balloon.BalloonSizeSpec;
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation;
 
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TimeZone;
 
 public class ResultActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ResourceLoaderResult<HeartRateContainer>>, OnMapReadyCallback{
 
@@ -93,8 +103,13 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
     private int colorMediumPace = Color.YELLOW;
     private int colorFastPace = Color.GREEN;
 
+    private Bitmap startIcon;
+    private Bitmap finishIcon;
+
     private ArrayList<RaceLocation> localRaceLocations;
     private ArrayList<RaceLocation> otherRaceLocations;
+    private LatLngBounds.Builder localBounds = new LatLngBounds.Builder();;
+    private LatLngBounds.Builder otherBounds = new LatLngBounds.Builder();;
 
     //Initializes views and sets onClick for both map buttons
     @Override
@@ -124,6 +139,17 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         winnerLoser = (TextView) findViewById(R.id.winnerLoserText);
         info1 = (ImageView) findViewById(R.id.heartRateInfo1);
         mapLocal.setTextColor(Color.GRAY);
+
+        int height = 80;
+        int width = 80;
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.start_image);
+        Bitmap b=bitmapdraw.getBitmap();
+        startIcon = Bitmap.createScaledBitmap(b, width, height, false);
+
+        BitmapDrawable bitmapdraw2=(BitmapDrawable)getResources().getDrawable(R.drawable.finish_image);
+        Bitmap b2=bitmapdraw2.getBitmap();
+        finishIcon = Bitmap.createScaledBitmap(b2, width, height, false);
+
 
         //Used to help know if a map is on screen
         mapLocalActivated = false;
@@ -406,7 +432,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
         LatLng latLng = new LatLng(lat, lng);
-        mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
+        //mapApi.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.25f));
     }
 
 
@@ -639,12 +665,12 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         if(isLocal) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 localRaceLocations = populatePolyLists(player);
-                reDrawPolyLines(localRaceLocations);
+                reDrawPolyLines(localRaceLocations, true);
             }
         }else{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     otherRaceLocations = populatePolyLists(player);
-                    reDrawPolyLines(otherRaceLocations);
+                    reDrawPolyLines(otherRaceLocations, false);
                 }
         }
 
@@ -669,10 +695,11 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     //Helper function that draws the polylines on maps
-    public void reDrawPolyLines(List<RaceLocation> savedLocations){
-        //mapApi.clear();
+    public void reDrawPolyLines(List<RaceLocation> savedLocations, Boolean isLocal){
+        mapApi.clear();
         LatLng cur = new LatLng(0, 0);
         for(int i = 0; i < savedLocations.size() - 1; i+=1){
+
             double prevLat = savedLocations.get(i).latLng.lat;
             double prevLng = savedLocations.get(i).latLng.lng;
             double curLat = savedLocations.get(i+1).latLng.lat;
@@ -682,6 +709,24 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             Polyline p = mapApi.addPolyline(new PolylineOptions()
                     .clickable(false)
                     .add(prev, cur));
+
+            if(i == 0){
+                String time = getTime(savedLocations.get(i));
+                mapApi.addMarker(new MarkerOptions().position(prev).title("Start time: "+time))
+                        .setIcon(BitmapDescriptorFactory.fromBitmap(startIcon));
+            }
+
+            if(i == savedLocations.size() - 2){
+                String time = getTime(savedLocations.get(savedLocations.size()-1));
+                mapApi.addMarker(new MarkerOptions().position(cur).title("Finish time: "+time))
+                        .setIcon(BitmapDescriptorFactory.fromBitmap(finishIcon));
+            }
+
+            if(isLocal){
+                localBounds.include(prev);
+            }else{
+                otherBounds.include(prev);
+            }
             double distance = distance(prevLat, prevLng, curLat, curLng);
             double t1 = savedLocations.get(i).time;
             double t2 = savedLocations.get(i+1).time;
@@ -697,7 +742,39 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 p.setColor(colorFastPace);
             }
         }
-        mapApi.moveCamera(CameraUpdateFactory.newLatLng(cur));
+        int padding = 75;
+        if(isLocal){
+            LatLngBounds b = localBounds.build();
+            mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
+            localBounds = new LatLngBounds.Builder();
+        }else{
+            LatLngBounds b = otherBounds.build();
+            mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
+            otherBounds = new LatLngBounds.Builder();
+
+        }
+
+    }
+
+    public String getTime(RaceLocation l){
+        Double d = l.time;
+        ZonedDateTime dateTime;
+        String formatted = "";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            dateTime = Instant.ofEpochMilli(d.longValue())
+                    .atZone(ZoneId.of(TimeZone.getDefault().toZoneId().getId()));
+            formatted = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+            if(Integer.parseInt(formatted.substring(0,2)) == 12){
+                formatted = formatted + " pm";
+            }else if(Integer.parseInt(formatted.substring(0,2)) == 24){
+                formatted = formatted + " am";
+            } else if(Integer.parseInt(formatted.substring(0,2)) >= 13){
+                formatted = Integer.parseInt(formatted.substring(0,2)) - 12 + formatted.substring(2, 5)+ " pm";
+            }else{
+                formatted = formatted + " am";
+            }
+        }
+        return formatted;
     }
 
     //Calculates distance between points of data
