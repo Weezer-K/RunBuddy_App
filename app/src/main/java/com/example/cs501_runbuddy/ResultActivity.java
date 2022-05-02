@@ -470,49 +470,35 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    // Todo: remove readOtherPlayerCall
+
     public void getWinner() {
+        // if both players finished
         if (game.player1.playerFinished && game.player2.playerFinished) {
-//            game.readOtherPlayer(isPlayer1, new Game.OtherPlayerCallback() {
-//                @Override
-//                public void onCallback() {
-//                    if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
-//                        if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
-//                            game.winner = game.player1.playerId;
-//                        } else {
-//                            game.winner = game.player2.playerId;
-//                        }
-//                    } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
-//                        if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
-//                            game.winner = game.player1.playerId;
-//                        } else {
-//                            game.winner = game.player2.playerId;
-//                        }
-//                    } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
-//                        game.winner = game.player2.playerId;
-//                    } else {
-//                        game.winner = game.player1.playerId;
-//                    }
-//                    game.writeToDatabase("winner", "");
-//                }
-//            });
+            // if both players quit, check who ran the furthest and set the winner
             if (!game.player1.totalDistanceRan.equals(game.totalDistance) && !game.player2.totalDistanceRan.equals(game.totalDistance)) {
                 if (game.player1.totalDistanceRan >= game.player2.totalDistanceRan) {
                     game.winner = game.player1.playerId;
                 } else {
                     game.winner = game.player2.playerId;
                 }
-            } else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
+            }
+            // else if both players ran the full distance, compare who ran the fastest and set the winner
+            else if (game.player1.totalDistanceRan.equals(game.totalDistance) && game.player2.totalDistanceRan.equals(game.totalDistance)) {
                 if (game.player1.totalTimeRan < game.player2.totalTimeRan) {
                     game.winner = game.player1.playerId;
                 } else {
                     game.winner = game.player2.playerId;
                 }
-            } else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
+            }
+            // else if just player 1 quit, set player 2 as winner
+            else if (!game.player1.totalDistanceRan.equals(game.totalDistance)) {
                 game.winner = game.player2.playerId;
-            } else {
+            }
+            // else player 2 quit, set player 1 as the winner
+            else {
                 game.winner = game.player1.playerId;
             }
+            // write the winner of the game to the database
             game.writeToDatabase("winner", "");
         }
     }
