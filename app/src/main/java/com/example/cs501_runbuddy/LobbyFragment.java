@@ -311,8 +311,14 @@ public class LobbyFragment extends Fragment {
         // write the entire game object to the database in its joined state
         game.writeToDatabase("", "");
 
-        // Todo should change directly into other player ref. join game means player 2 ref is unnecessary
-        initializePlayer2Ref();
+        // if game is synchronous, initialize listener for other player's ready field
+        if (!game.isAsync) {
+            initializeOtherPlayerReadyRef();
+        }
+        // else for asynchronous, initialize listener for other player's started field
+        else {
+            initializeOtherPlayerStartedRef();
+        }
 
         // set UI of lobby for joined player
         LIDtv.setText("Game Lobby: " + game.ID);
@@ -431,11 +437,19 @@ public class LobbyFragment extends Fragment {
             startBtn.setText("Ready");
         }
         setTextColorForPlayer(player1ReadyText);
-        if (game.player2 != null)
+        if (game.player2 != null) {
             setTextColorForPlayer(player2ReadyText);
-
-        // Todo replace with logic to not have redundant listener
-        initializePlayer2Ref();
+            // if game is synchronous, initialize listener for other player's ready field
+            if (!game.isAsync) {
+                initializeOtherPlayerReadyRef();
+            }
+            // else for asynchronous, initialize listener for other player's started field
+            else {
+                initializeOtherPlayerStartedRef();
+            }
+        }
+        else
+            initializePlayer2Ref();
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -510,7 +524,6 @@ public class LobbyFragment extends Fragment {
                             game.player2.playerStarted = true;
                             game.writeToDatabase("player2", "playerStarted");
                         }
-                        //Todo add playerready ref removal here if sync
                         Intent intent = new Intent(getActivity(), RaceActivity.class);
                         intent.putExtra("localPlayerColor", localColor);
                         intent.putExtra("onlinePlayerColor", onlineColor);
@@ -545,9 +558,6 @@ public class LobbyFragment extends Fragment {
                             // update the local game object given we now have a second player
                             game.joinAble = false;
                             game.player2 = p2;
-
-                            // Todo remove line below redundant
-                            game.writeToDatabase("player2", "");
 
                             // set initial ready text of other player
                             setTextColorForPlayer(player2ReadyText);
@@ -743,9 +753,10 @@ public class LobbyFragment extends Fragment {
         // remove the event listener to stop listening for changes when fragment detaches
         if (otherPlayerReadyRef != null)
             otherPlayerReadyRef.removeEventListener(otherPlayerReadyListener);
+        if (otherPlayerStartedRef != null)
+            otherPlayerStartedRef.removeEventListener(otherPlayerStartedListener);
         if (player2Ref != null)
             player2Ref.removeEventListener(player2Listener);
-        //Todo add playerstarted ref removal here
 
         f = null;
     }
