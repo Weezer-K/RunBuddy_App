@@ -489,43 +489,6 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    //Winner is determined as follows
-    //Whoever runs the most distance is the winner
-    //if both players run the same distance
-    //Than the one with less time wins
-    //If both have the same stats it's a tie
-    public void setWinner(){
-        if(isPlayer1){
-            if(game.player1.totalDistanceRan > game.player2.totalDistanceRan){
-                winnerLoser.setText("You Won");
-            }else if(game.player1.totalDistanceRan < game.player2.totalDistanceRan){
-                winnerLoser.setText("You Lost");
-            }else{
-                if(game.player1.totalTimeRan < game.player2.totalTimeRan){
-                    winnerLoser.setText("You Won");
-                }else if(game.player1.totalTimeRan > game.player2.totalTimeRan){
-                    winnerLoser.setText("You Lost");
-                }else{
-                    winnerLoser.setText("You Tied");
-                }
-            }
-        }else{
-            if(game.player2.totalDistanceRan > game.player1.totalDistanceRan){
-                winnerLoser.setText("You Won");
-            }else if(game.player2.totalDistanceRan < game.player1.totalDistanceRan){
-                winnerLoser.setText("You Lost");
-            }else{
-                if(game.player2.totalTimeRan < game.player1.totalTimeRan){
-                    winnerLoser.setText("You Won");
-                }else if(game.player2.totalTimeRan > game.player1.totalTimeRan){
-                    winnerLoser.setText("You Lost");
-                }else{
-                    winnerLoser.setText("You Tied");
-                }
-            }
-        }
-    }
-
     //Helper unction that sets all text views
     //In the UI
     public void setTextViews(){
@@ -533,12 +496,9 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             if(isPlayer1){
                 setTextViewsLocal(game.player1);
                 setTextViewsOther(game.player2);
-                setWinner();
             }else{
                 setTextViewsLocal(game.player2);
                 setTextViewsOther(game.player1);
-                setWinner();
-
             }
         }else if(game.player1.playerFinished){
             if(isPlayer1){
@@ -591,6 +551,15 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                 localHeartRate.setText("BPM: NA");
             }
         }
+
+
+        if(game.winner.equals(player.playerId)){
+            winnerLoser.setText("You Won");
+        }else if(game.winner != null){
+            winnerLoser.setText("You Lost");
+        }
+
+
     }
 
     //Helper function that's sets the textViews for the nonLocal
