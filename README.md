@@ -4,6 +4,11 @@ Members: Kyle Peters, Paul Menexas, Zhaoguo Zhu
 
 Before using our repository, make sure to send us your SHA1 key. We will then update our google.json file with your key so that you can run our app on your device.
 
+## Bobus:
+* Proper request if device permission in LobbyFragment getGPSPermission.
+* Using Fragment with interfaces for communication in HomeActivity class "implements", corresponding to SearchFragment, CreateFragment, MyRacesFragment and LobbyFragment.
+* Good use of Menus in HomeActivity.
+
 ## Important Notices:
 * Make sure to have the run configuration set to "app" instead of "app.libs" or anything else.
 * We calculate distance ran by using location data from every second. Therefore don't run in place like on a treadmill. Instead you should run to make sure your locations are changing meaningfully. 
