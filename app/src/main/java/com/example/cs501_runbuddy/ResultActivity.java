@@ -541,12 +541,12 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         if(pace.isNaN() || pace.isInfinite()){
             pace = 0.0;
         }
-        paceLocal.setText("Pace: " + df.format(pace) + "mph");
+        paceLocal.setText("Pace: " + df.format(pace) + " mph");
         //mapLocal.setBackgroundColor(activateColor);
         if(player.heartRate != null){
             int heartRate = (int) Math.round(player.heartRate);
             if(heartRate != 0) {
-                localHeartRate.setText("BPM: " + heartRate + "bpm");
+                localHeartRate.setText("BPM: " + heartRate + " bpm");
             }else{
                 localHeartRate.setText("BPM: NA");
             }
@@ -577,12 +577,15 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         distanceOther.setText("Distance: " + df.format(player.totalDistanceRan) + " miles");
         timeRanOther.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
-        paceOther.setText("Pace: " + df.format(pace) + "mph");
+        if(pace.isNaN() || pace.isInfinite()){
+            pace = 0.0;
+        }
+        paceOther.setText("Pace: " + df.format(pace) + " mph");
         //mapOther.setBackgroundColor(activateColor);
         if(player.heartRate != null){
             int heartRate = (int) Math.round(player.heartRate);
             if(heartRate != 0) {
-                otherHeartRate.setText("BPM: " + heartRate + "bpm");
+                otherHeartRate.setText("BPM: " + heartRate + " bpm");
             }else{
                 otherHeartRate.setText("BPM: NA");
             }
