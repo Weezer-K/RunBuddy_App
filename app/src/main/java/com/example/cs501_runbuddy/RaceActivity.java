@@ -850,8 +850,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     // find new total distance ran by other player
                     totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat,
                             currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
-                    Double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
-                    tvOtherPlayerPace.setText("Pace : " + df.format(paceOtherPlayer)+ "mph");
+                    double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
+
 
 
                     // if the other player has not finished
@@ -866,6 +866,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                         // update UI with new total distance
                         double d = totalDistanceOtherPlayer;
                         tvOtherPlayerDistance.setText("Distance: " + df.format(d) + " mi");
+                        tvOtherPlayerPace.setText("Pace : " + df.format(paceOtherPlayer)+ " mph");
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
 
                         // if this is the last location objecct of the array
