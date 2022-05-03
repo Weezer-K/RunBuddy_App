@@ -553,7 +553,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         }
 
 
-        if(game.winner.equals(player.playerId)){
+        if(game.winner != null && game.winner.equals(player.playerId)){
             winnerLoser.setText("You Won");
         }else if(game.winner != null){
             winnerLoser.setText("You Lost");

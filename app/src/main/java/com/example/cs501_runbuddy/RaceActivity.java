@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -220,7 +219,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 .hide(spotifyApp)
                 .commit();
 
-        //todo
+        //Initialize the map fragment and set it to invisible
+        //As it should not be on screen on start
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
@@ -244,8 +244,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         };
 
-        // todo
+        //Sets the spotify on/off UI button
         //Used to display/hide spotify fragment
+        //Used to display/hide everything surrounding the spotify fragment area
         spotifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -285,7 +286,10 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         });
 
 
-        //todo
+        //Works like the spotify button
+        //except this is for the map fragment
+        //Shows/hides mapfragment
+        //Show/hides components near mapfragment
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -562,7 +566,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         mapAPI = googleMap;
     }
 
-    // todo
+    //Helper function that draws polylines on map
+    //Need to make each 2 points a seprate polyline
+    //In order to show speed colors
     public void reDrawPolyLines(){
         int colorCounter = 0;
         for(int i = 0; i < savedLocations.size() - 1; i+=1){
@@ -575,7 +581,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
     }
 
-    // todo
+    //This initalizes the player track seen on the top
+    //of the screen when running the app
     public void makeTrack(CircularSeekBar circ, int color){
         circ.initPaints(color);
         circ.setProgress(0);
@@ -596,7 +603,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         circ.setClickable(false);
     }
 
-    // todo
+    //Used to properly set the tracks UI
     public void playerAhead(CircularSeekBar behind, CircularSeekBar ahead){
         behind.bringToFront();
         behind.setCircleColor(Color.TRANSPARENT);
@@ -610,7 +617,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         spotifyApp.getView().bringToFront();
     }
 
-    // todo
+    //Helper function to fill an arraylist
+    //that stores the pace color for each poly object
     public void paceColorAdder(){
         if(currentPace < 5){
             savedPolyColors.add(colorSlowPace);
@@ -915,11 +923,16 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         }
     }
 
-    // todo
+    //Function that updates time every second
+    //Uses a thread that uses the boolean timerOn to
+    //indicate when to stop
     //Used to update the time every second
     public void updateTime(){
         Thread t = new Thread(() -> {
             while(timerOn){
+                //If you ran for more than 15 minutes * game race distance
+                //Than the game quits because you were going
+                //Extremely slow, 15 minutes per mile pace
                 if(game.totalDistance * 15 < totalTimeRan/60000){
                     timerOn = false;
                     quitGame();
@@ -949,7 +962,9 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         t.start();
     }
 
-    // todo
+    //Same as the the provious timer function
+    //But for the other/online player
+    //Uses boolean timerOn2 to indicate when to stop
     public void updateTimeOther(){
         Thread t = new Thread(() -> {
             while(timerOn2){
