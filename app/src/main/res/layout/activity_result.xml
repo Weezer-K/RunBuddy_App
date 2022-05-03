@@ -246,14 +246,15 @@
     <fragment
         android:id="@+id/localMapAPI"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="241dp"
-        android:layout_height="251dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="324dp"
+        android:layout_height="227dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/player1"
-        app:layout_constraintVertical_bias="0.595">
+        app:layout_constraintVertical_bias="0.0">
 
     </fragment>
 

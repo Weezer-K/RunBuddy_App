@@ -65,8 +65,8 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     private LocationRequest locationRequest;
     private LocationCallback locationCallBack;
 
-    private final int DEFAULT_UPDATE_INTERVAL = 2;
-    private final int FASTEST_UPDATE_INTERVAL = 1;
+    private final int DEFAULT_UPDATE_INTERVAL = 5;
+    private final int FASTEST_UPDATE_INTERVAL = 3;
     private final int PERMISSIONS_FINE_LOCATION = 99;
 
     private int colorSlowPace = Color.RED;
@@ -152,7 +152,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
         gap.setTextColor(Color.WHITE);
         localColorIndicator = (TextView) findViewById(R.id.localColorIndicator);
         onlineColorIndicator = (TextView) findViewById(R.id.onlineColorIndicator);
-        //spotifyCurtain = (TextView) findViewById(R.id.spotifyCurtain);
         otherRaceLocations = new ArrayList<RaceLocation>();
         otherPlayerLocationIndex = 0;
         totalDistance = 0;
@@ -407,7 +406,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
             }
         });
 
-        //spotifyTrackManager();
         otherPlayerRef.addChildEventListener(otherPlayerListener);
         otherPlayerFinishedRef.addValueEventListener(otherPlayerFinishedListener);
         //Used to update movement data based of a specific interval
@@ -898,37 +896,6 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     @Override
     public void spotifyNotOpen() {
         Toast.makeText(RaceActivity.this, "You didn't connect", Toast.LENGTH_SHORT).show();
-    }
-
-    public void spotifyTrackManager(){
-        Thread t = new Thread(() -> {
-            while(timerOn){
-                try {
-                    TimeUnit.MICROSECONDS.sleep(15);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                checkIfSpotifyUp();
-            }
-        });
-        //t.start();
-    }
-
-    public void checkIfSpotifyUp(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(spotifyApp.getView().getVisibility() == View.VISIBLE || mapFragment.getView().getVisibility() == View.VISIBLE ){
-                    localPlayerTrack.setVisibility(View.INVISIBLE);
-                    otherPlayerTrack.setVisibility(View.INVISIBLE);
-                    raceTypeIndicator.setVisibility(View.INVISIBLE);
-                }else if(spotifyApp.getView().getVisibility() != View.VISIBLE && mapFragment.getView().getVisibility() != View.VISIBLE){
-                    localPlayerTrack.setVisibility(View.VISIBLE);
-                    otherPlayerTrack.setVisibility(View.VISIBLE);
-                    raceTypeIndicator.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
 
     @Override
