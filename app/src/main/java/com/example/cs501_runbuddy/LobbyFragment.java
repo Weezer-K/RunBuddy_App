@@ -282,6 +282,7 @@ public class LobbyFragment extends Fragment {
                 //First check is for the drop down colors, specifically making sure they aren't the same
                 //Second check is making sure that there are two players in the lobby
                 //If first two pass then we check if the game is syncronous
+                getGPSPermission();
                 if (!gpsAccess) {
                     Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
                 }
@@ -370,6 +371,7 @@ public class LobbyFragment extends Fragment {
                 //is to make sure both users didn't select
                 //the same exact item in the color spinner
                 //Then has a check and logic for sync mode
+                getGPSPermission();
                 if (!gpsAccess) {
                     Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
                 }
@@ -462,6 +464,7 @@ public class LobbyFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getGPSPermission();
                 if (!gpsAccess) {
                     Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
                 }
