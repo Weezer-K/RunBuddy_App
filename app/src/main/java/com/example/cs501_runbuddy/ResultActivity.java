@@ -263,6 +263,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
                         mapOtherActivated = false;
                         mapApi.clear();
                         mapFragment.getView().setVisibility(View.INVISIBLE);
+                        mapOther.setTextColor(Color.GRAY);
                         //mapOther.setBackgroundColor(activateColor);
                     } else if (mapLocalActivated) {
                         mapLocalActivated = false;
