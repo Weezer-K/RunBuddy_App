@@ -892,7 +892,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     else {
                         // set their progress to complete
                         otherPlayerTrack.setProgress((int) (maxDistance));
-                        tvOtherPlayerDistance.setText("Distance: "+maxDistance/100 + "miles");
+                        tvOtherPlayerDistance.setText("Distance: "+maxDistance/100 + " miles");
 
                         // turn of their timer and remove the listener for their location data
                         timerOn2 = false;
