@@ -578,6 +578,9 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         distanceLocal.setText("Distance: " + df.format(player.totalDistanceRan) + " miles");
         timeRanLocal.setText("Time: "+ timeElapsed);
         Double pace = player.totalDistanceRan/(minutesDouble/60);
+        if(pace.isNaN() || pace.isInfinite()){
+            pace = 0.0;
+        }
         paceLocal.setText("Pace: " + df.format(pace) + "mph");
         //mapLocal.setBackgroundColor(activateColor);
         if(player.heartRate != null){
