@@ -669,23 +669,27 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                 game.addLocData(isPlayer1, latLngDB, curTime);
             }
 
-            //Clear all markers and polylines from google map
+            //Clear all markers and poly lines from google map
             mapAPI.clear();
 
-            // todo
+            // gets the current time in milliseconds
             double currentMilis = 0;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 currentMilis = Instant.now().toEpochMilli();
             }
 
-            // todo
+            // if local location list has multiple points
             if(savedLocations.size()>1) {
+                // calculate current pace
                 double temp =  currentMilis - prevMillis;
                 double hours = temp / 60000 / 60.0;
                 LatLng secondToLast = savedLocations.get(savedLocations.size() - 2);
                 currentPace = distance(currentLocation.latitude, currentLocation.longitude, secondToLast.latitude, secondToLast.longitude) / hours;
+
+                // update google map drawing with new poly line that is color coded acccording to pacce
                 paceColorAdder();
                 reDrawPolyLines();
+
                 prevMillis = currentMilis;
             }else{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -789,16 +793,25 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
     }
 
     public void updateOtherPlayerUI(){
+        // get time elapsed locally
         double localElapsedTime = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             localElapsedTime = Instant.now().toEpochMilli() - raceStartTime;
-
         }
+
+        // check if other player location data has ever been retrieved
         if (otherRaceLocations.size()>0){
+            // if not current location is set for other player, this is the first point we are processing
             if (currentLocationOtherPlayer == null) {
+                // populate other player data given location coordinate and timestamp
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 otherPlayerStartTime = otherRaceLocations.get(otherPlayerLocationIndex).time;
+
+                // increment index we use to access other player's location list
                 otherPlayerLocationIndex++;
+
+                // if game is asynchronous, now start the other player's timer and toast started status
+                // so that UI updates are in sync
                 if (game.isAsync) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         otherPlayerThreadTime = Instant.now().toEpochMilli();
@@ -807,31 +820,48 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     Toast.makeText(this, "Other player started their race", Toast.LENGTH_SHORT).show();
                     tvOtherStatus.setText("Status: Running");
                 }
+
+                // set other player's track as visible now that they are a part of the race
                 otherPlayerTrack.setVisibility(View.VISIBLE);
                 spotifyApp.getView().bringToFront();
             }
+            // if this is not the first location data of the other player
             else if (otherRaceLocations.size() > otherPlayerLocationIndex){
+                // update other player coordinate and timestamp
                 currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                 RaceLocation secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
+
+                // check if local time elapsed is greater than other player's time elapsed
+                // if so, only then display the data
                 while (currentLocationOtherPlayer.time - otherPlayerStartTime < localElapsedTime){
+                    // get pace of other player and set UI
                     DecimalFormat df = new DecimalFormat("#,###.##");
                     double hours = (currentLocationOtherPlayer.time - secondToLast.time)/60000/60;
                     double previousDistance = totalDistanceOtherPlayer;
-                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     Double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
                     tvOtherPlayerPace.setText("Pace : " + df.format(paceOtherPlayer)+ "mph");
+
+                    // find new total distance ran by other player
+                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
+
+                    // if the other player has not finished
                     if (totalDistanceOtherPlayer < maxDistance / 100) {
+                        // check with new location data who is ahead and update UI accordingly
                         if (totalDistanceOtherPlayer > totalDistance) {
                             playerAhead(localPlayerTrack, otherPlayerTrack);
                         } else {
                             playerAhead(otherPlayerTrack, localPlayerTrack);
                         }
-                        double d = totalDistanceOtherPlayer;
 
+                        // update UI with new total distance
+                        double d = totalDistanceOtherPlayer;
                         tvOtherPlayerDistance.setText("Distance: " + df.format(d) + " mi");
                         otherPlayerTrack.setProgress((int) (totalDistanceOtherPlayer * 100));
 
+                        // if this is the last location objecct of the array
                         if (otherRaceLocations.size() - 1 == otherPlayerLocationIndex) {
+                            // check if the other player is labeled as finish
+                            // if so, they must have quit. update UI accordingly
                             if(isPlayer1){
                                 if (game.player2.playerFinished) {
                                     timerOn2 = false;
@@ -846,22 +876,38 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                 }
                             }
                         }
-                    }else {
+                    }
+                    // other player has completed the full distance of the racce
+                    else {
+                        // set their progress to complete
                         otherPlayerTrack.setProgress((int) (maxDistance));
+
+                        // turn of their timer and remove the listener for their location data
                         timerOn2 = false;
                         otherPlayerRef.removeEventListener(otherPlayerListener);
+
+                        // label the other player locally as finished
                         if (isPlayer1)
                             game.player2.playerFinished = true;
                         else
                             game.player1.playerFinished = true;
+
+                        // update UI with finished notficiation and status text changed
                         Toast.makeText(RaceActivity.this, "Other player finished their race", Toast.LENGTH_SHORT).show();
                         tvOtherStatus.setText("Status: Finished");
                     }
+
+                    // increment index we use to access other player's location list
                     otherPlayerLocationIndex++;
+
+                    // if there are more points backlogged from the other user, set current values
+                    // equal to them
                     if(otherRaceLocations.size() > otherPlayerLocationIndex){
                         currentLocationOtherPlayer = otherRaceLocations.get(otherPlayerLocationIndex);
                         secondToLast = otherRaceLocations.get(otherPlayerLocationIndex - 1);
-                    }else{
+                    }
+                    // else break from while loop to continue with rest of code
+                    else{
                         break;
                     }
                 }
