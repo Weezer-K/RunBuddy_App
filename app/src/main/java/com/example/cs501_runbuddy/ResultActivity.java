@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -685,13 +686,22 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
         // update map camera dynamically to fit the whole race
         int padding = 75;
         if(isLocal){
-            LatLngBounds b = localBounds.build();
-            mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
-            localBounds = new LatLngBounds.Builder();
+            try {
+                LatLngBounds b = localBounds.build();
+                mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
+                localBounds = new LatLngBounds.Builder();
+            }catch (Exception e){
+                Toast.makeText(this, "Make sure your mock gps was set up properly", Toast.LENGTH_SHORT).show();
+            }
         }else{
-            LatLngBounds b = otherBounds.build();
-            mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
-            otherBounds = new LatLngBounds.Builder();
+            try {
+                LatLngBounds b = otherBounds.build();
+                mapApi.animateCamera(CameraUpdateFactory.newLatLngBounds(b, padding));
+                otherBounds = new LatLngBounds.Builder();
+            }catch(Exception e){
+                Toast.makeText(this, "Make sure your mock gps was set up properly", Toast.LENGTH_SHORT).show();
+
+            }
 
         }
 

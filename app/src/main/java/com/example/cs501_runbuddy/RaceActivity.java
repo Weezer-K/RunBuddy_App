@@ -405,7 +405,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                                         tvOtherStatus.setText("Status: Quit");
                                     }
                                 }
-                                //stops time for other player on screen
+                                //Remove Listener, not listening for other player finishing anymore
                                 otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
                             }
                         });
@@ -471,6 +471,7 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
 
         // remove the other player listener
         otherPlayerRef.removeEventListener(otherPlayerListener);
+        otherPlayerFinishedRef.removeEventListener(otherPlayerFinishedListener);
 
         // stop listening for gps data
         stopLocationUpdates();
