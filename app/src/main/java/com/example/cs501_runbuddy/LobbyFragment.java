@@ -63,14 +63,20 @@ public class LobbyFragment extends Fragment {
     private Integer color2;// Color of the player 2
 
     private Game game;// Game Object that stores the current game information that is later sent to Game Activity
+
+    // This is the database reference and listener for player2
     private DatabaseReference player2Ref;
     private ValueEventListener player2Listener;
 
+    // This is the database reference and listener for other player start condition check
     private DatabaseReference otherPlayerStartedRef;
     private ValueEventListener otherPlayerStartedListener;
 
+    // This is the database reference and listener for other player ready condition check
     private DatabaseReference otherPlayerReadyRef;
     private ValueEventListener otherPlayerReadyListener;
+
+    // Audio for count down
     private MediaPlayer startSounds;
     private AudioManager audio;
     private fragmentListener f;
@@ -123,7 +129,6 @@ public class LobbyFragment extends Fragment {
 
         //Used for the player 1 Color Spinner
         List<String> colorsList = new ArrayList<String>();
-        //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
         colorsList.add("Red");
         colorsList.add("Blue");
         colorsList.add("Green");
@@ -131,14 +136,14 @@ public class LobbyFragment extends Fragment {
         colorsList.add("Orange");
         color1 = Color.RED; //Since the first choice is red initialize color1 as red
 
+        //Used for the player 2 Color Spinner
         List<String> colorsList2 = new ArrayList<String>();
-        //{"Red", "Blue", "Green", "Black", "Yellow", "Cyan"};
         colorsList2.add("Green");
         colorsList2.add("Blue");
         colorsList2.add("Red");
         colorsList2.add("Yellow");
         colorsList2.add("Orange");
-        color2 = Color.GREEN; //Since the first choice is green initialize color1 as green
+        color2 = Color.GREEN; //Since the first choice is green initialize color2 as green
 
 
         //Adapters for spinners that use a custom xml that makes all the
@@ -391,25 +396,7 @@ public class LobbyFragment extends Fragment {
         });
     }
 
-    //Helper function for spinner
-    //Makes it so we pass in the appropriate color
-    //for the Race Activity's seekbar tracks
-    //Matches with the strings of spinner to appropriate color
-    public int colorValFinder(String c) {
-        int colorPicked = Color.RED;
-        if (c.equals("Blue")) {
-            colorPicked = Color.parseColor("#46AEFF");
-        } else if (c.equals("Red")) {
-            colorPicked = Color.parseColor("#FF5161");
-        } else if (c.equals("Green")) {
-            colorPicked = Color.parseColor("#47FF6F");
-        } else if (c.equals("Yellow")) {
-            colorPicked = Color.parseColor("#FFFF48");
-        } else if (c.equals("Orange")) {
-            colorPicked = Color.parseColor("#FFA946");
-        }
-        return colorPicked;
-    }
+
 
     //Function use case is when someone leaves a lobby but hasn't
     //started a game. This function is called so they can rejoin the lobby
@@ -427,10 +414,7 @@ public class LobbyFragment extends Fragment {
         //if the game isn't joinable and the ID matches with the
         //ID of the player that was in the game
         //Then set both player text views to display their names
-        if (!gpsAccess) {
-            Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
-        }
-        else if (!game.joinAble && pId.equals(game.player1.playerId)) {
+        if (!game.joinAble && pId.equals(game.player1.playerId)) {
             player1tv.setText("Name: " + acct.getGivenName());
             User.getUserNameFromID(game.player2.playerId, new User.MyCallback() {
                 @Override
@@ -478,7 +462,10 @@ public class LobbyFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (color1.equals(color2)) {
+                if (!gpsAccess) {
+                    Toast.makeText(getActivity(), "Please make sure to grant request to GPS", Toast.LENGTH_SHORT).show();
+                }
+                else if (color1.equals(color2)) {
                     Toast.makeText(getActivity(), "Please pick different colors for players 1 and 2", Toast.LENGTH_SHORT).show();
                 } else if (game.joinAble) {
                     Toast.makeText(getActivity(), "Cannot start race with just 1 player", Toast.LENGTH_SHORT).show();
@@ -779,8 +766,27 @@ public class LobbyFragment extends Fragment {
         }
     }
 
+    //Helper function for spinner
+    //Makes it so we pass in the appropriate color
+    //for the Race Activity's seekbar tracks
+    //Matches with the strings of spinner to appropriate color
+    public int colorValFinder(String c) {
+        int colorPicked = Color.RED;
+        if (c.equals("Blue")) {
+            colorPicked = Color.parseColor("#46AEFF");
+        } else if (c.equals("Red")) {
+            colorPicked = Color.parseColor("#FF5161");
+        } else if (c.equals("Green")) {
+            colorPicked = Color.parseColor("#47FF6F");
+        } else if (c.equals("Yellow")) {
+            colorPicked = Color.parseColor("#FFFF48");
+        } else if (c.equals("Orange")) {
+            colorPicked = Color.parseColor("#FFA946");
+        }
+        return colorPicked;
+    }
 
-
+    // leaving the fragment, before leave, save those data and correct them
     @Override
     public void onDetach() {
         super.onDetach();
