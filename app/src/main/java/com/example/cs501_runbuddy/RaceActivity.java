@@ -847,11 +847,12 @@ public class RaceActivity extends FragmentActivity implements SpotifyFragment.sp
                     DecimalFormat df = new DecimalFormat("#,###.##");
                     double hours = (currentLocationOtherPlayer.time - secondToLast.time)/60000/60;
                     double previousDistance = totalDistanceOtherPlayer;
+                    // find new total distance ran by other player
+                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat,
+                            currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
                     Double paceOtherPlayer = (totalDistanceOtherPlayer - previousDistance)/hours;
                     tvOtherPlayerPace.setText("Pace : " + df.format(paceOtherPlayer)+ "mph");
 
-                    // find new total distance ran by other player
-                    totalDistanceOtherPlayer += distance(currentLocationOtherPlayer.latLng.lat, currentLocationOtherPlayer.latLng.lng, secondToLast.latLng.lat, secondToLast.latLng.lng);
 
                     // if the other player has not finished
                     if (totalDistanceOtherPlayer < maxDistance / 100) {
