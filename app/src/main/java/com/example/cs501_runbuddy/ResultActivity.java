@@ -108,8 +108,8 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
 
     private ArrayList<RaceLocation> localRaceLocations;
     private ArrayList<RaceLocation> otherRaceLocations;
-    private LatLngBounds.Builder localBounds = new LatLngBounds.Builder();;
-    private LatLngBounds.Builder otherBounds = new LatLngBounds.Builder();;
+    private LatLngBounds.Builder localBounds = new LatLngBounds.Builder();
+    private LatLngBounds.Builder otherBounds = new LatLngBounds.Builder();
 
     //Initializes views and sets onClick for both map buttons
     @Override
@@ -452,20 +452,6 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             }else{
                 mapLocal.setTextColor(Color.GRAY);
                 mapOther.setTextColor(Color.parseColor("#00203F"));
-            }
-        }
-        double lat = 0;
-        double lng = 0;
-
-        if(!isLocal){
-            if(otherRaceLocations.size() != 0) {
-                lat = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lat;
-                lng = otherRaceLocations.get(otherRaceLocations.size() - 1).latLng.lng;
-            }
-        }else{
-            if(localRaceLocations.size() != 0) {
-                lat = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lat;
-                lng = localRaceLocations.get(localRaceLocations.size() - 1).latLng.lng;
             }
         }
     }
