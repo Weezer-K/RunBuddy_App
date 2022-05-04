@@ -4,7 +4,7 @@ Members: Kyle Peters, Paul Menexas, Zhaoguo Zhu
 
 Before using our repository, make sure to send us your SHA1 key. We will then update our google.json file with your key so that you can run our app on your device.
 
-## Bobus:
+## Bonus:
 * Proper request if device permission in LobbyFragment getGPSPermission.
 * Using Fragment with interfaces for communication in HomeActivity class "implements", corresponding to SearchFragment, CreateFragment, MyRacesFragment and LobbyFragment.
 * Good use of Menus in HomeActivity.
