@@ -675,6 +675,7 @@ public class ResultActivity extends AppCompatActivity implements LoaderManager.L
             double curPace = distance/timeBetweenHours;
 
             // color the polyline depending on the pace value
+            //Each value is a mph EX 5 = 5 mph
             if(curPace < 5){
                 p.setColor(colorSlowPace);
             }else if(curPace < 8){
