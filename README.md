@@ -32,3 +32,4 @@ Before using our repository, make sure to send us your SHA1 key. We will then up
 * You are all set to go; Follow the final report pdf which serves as a walkthrough of the app
 
 
+"# RunBuddy_App" 
