@@ -24,12 +24,3 @@ Before using our repository, make sure to send us your SHA1 key. We will then up
 <img src="https://user-images.githubusercontent.com/44472113/166124333-7a89f2fb-458b-4d9a-b31d-2caa0cc2033d.png" width="400" height="800" />
 
 * Note: If you first test with the Mock Locations app and then want to use your real GPS, make sure to undo each of these steps. This means, go to "Developer options" and set "Select mock location app" to "Nothing". Then, in "Settings" go to "Location" and then in the "Location Services" section, go to "Google Location Accuracy". Make sure "Improve Location Accuracy" is turned on here. Lastly, make sure to kill the mock app if it is still running in the background.
-
-## Using the App (Sign in):
-* Select "Sign in with Fitbit" or "Sign in without Fitbit". For the first option, follow Step a, for the second option, follow Step b.
-* Step a: Login with a valid Gmail Account. Then sign in with a fitbit account and grants access to the app to use your data. If you don't have a fitbit account, you can use ours. (Username: pmenexas13@gmail.com Password: cs501mobile) Go to step 2.
-* Step b: Login with a valid Gmail Account and that's it.
-* You are all set to go; Follow the final report pdf which serves as a walkthrough of the app
-
-
-"# RunBuddy_App" 
